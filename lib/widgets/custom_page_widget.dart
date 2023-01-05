@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomPageWidget extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? body;
+  final Widget? floating;
   final Widget? bottomBar;
   final bool hasPadding;
 
@@ -10,6 +11,7 @@ class CustomPageWidget extends StatelessWidget {
     super.key, 
     this.appBar,
     this.body,
+    this.floating,
     this.bottomBar,
     this.hasPadding = true,
   });
@@ -24,6 +26,7 @@ class CustomPageWidget extends StatelessWidget {
         child: body,
       ),
       bottomNavigationBar: bottomBar,
+      floatingActionButton: floating,
     );
   }
 }

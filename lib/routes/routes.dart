@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/route_controller.dart';
-import 'package:medicine/pages/home/home.dart';
+import 'package:medicine/pages/home/home_page.dart';
 
 final routes = [
   GetPage(
