@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
-import 'package:medicine/routes/routes.dart';
 
 void main() async {
   await GetStorage.init();
@@ -12,16 +11,17 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
   const MyApp({super.key});
 
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
-  // ignore: library_private_types_in_public_api
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  final RouteController _routeController = RouteController();
+
   @override
   void initState() {
     NotificationProvider.listen();
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Medicine',
       theme: ThemeData(
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF662C91),
@@ -41,11 +41,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       navigatorKey: MyApp.navigatorKey,
-      getPages: getRoutes(),
-      initialRoute: '/home',
-      initialBinding: BindingsBuilder(
-        () => Get.put<RouteController>(RouteController()),
-      ),
+      onGenerateInitialRoutes: _routeController.onGenerateInitialRoutes,
+      onGenerateRoute: _routeController.onGenerateRoute,
     );
   }
 }
