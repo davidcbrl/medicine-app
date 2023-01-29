@@ -63,7 +63,21 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          _medicinesList(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: List.generate(
+                  10,
+                  (index) => const CustomListItemWidget(),
+                ),
+              ),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -106,21 +120,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _medicinesList() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: List.generate(10, (index) => const CustomListItemWidget()),
-        ),
       ),
     );
   }
