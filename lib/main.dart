@@ -33,12 +33,40 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       title: 'Medicine',
       theme: ThemeData(
+        fontFamily: 'Manrope',
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF662C91),
           secondary: Color(0xFF3A3A3A),
           tertiary: Color(0xFFF0F0F0),
           background: Color(0xFFFFFFFF),
         ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            color: Color(0xFF662C91),
+            fontSize: 40,
+            fontWeight: FontWeight.w900,
+          ),
+          titleSmall: TextStyle(
+            color: Color(0xFF3A3A3A),
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+          labelMedium: TextStyle(
+            color: Color(0xFF3A3A3A),
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+          bodyMedium: TextStyle(
+            color: Color(0xFF3A3A3A),
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+          displayMedium: TextStyle(
+            color: Color(0xFFF0F0F0),
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+        )
       ),
       navigatorKey: MyApp.navigatorKey,
       onGenerateInitialRoutes: _routeController.onGenerateInitialRoutes,

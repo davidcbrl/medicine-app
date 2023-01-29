@@ -10,7 +10,7 @@ class NotificationController {
         channelKey: 'alerts',
         title: 'Tomar remédio agora!',
         body: '25 gotas - Paracetamol 100mg',
-        bigPicture: 'asset://assets/img/notification_map.png',
+        bigPicture: 'asset://assets/img/medicine.png',
         notificationLayout: NotificationLayout.BigPicture,
       ),
       actions: [
