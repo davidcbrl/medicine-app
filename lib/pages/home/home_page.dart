@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
+import 'package:medicine/widgets/custom_avatar_widget.dart';
+import 'package:medicine/widgets/custom_calendar_carousel_widget.dart';
+import 'package:medicine/widgets/custom_list_item_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
+import 'package:medicine/widgets/custom_select_item_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,70 +21,105 @@ class _HomePageState extends State<HomePage> {
   GetStorage box = GetStorage();
   RouteController routeController = Get.put(RouteController(), permanent: true);
   NotificationController notificationController = Get.put(NotificationController(), permanent: true);
+  ChatController chatController = Get.put(ChatController(), permanent: true);
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'Meus remédios',
+      hasPadding: false,
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 40,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomAvatarWidget(
+                  image: Image.asset(
+                    'assets/img/ben.png',
+                    width: 50,
+                  ),
+                  label: 'Tio Ben',
+                ),
+                CustomSelectItemWidget(
+                  label: 'Falar com minha família',
+                  image: Image.asset(
+                    'assets/img/whatsapp.png',
+                    width: 30,
+                  ),
+                  onPressed: () => chatController.launchWhatsapp(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const CustomCalendarCarouselWidget(),
+          const SizedBox(
+            height: 20,
+          ),
+          _medicinesList(),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiaryContainer,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () => notificationController.createMedicineNotification(),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.outgoing_mail,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      Text(
+                        'Testar alarme',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => notificationController.createMedicineNotificationScheduled(),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.access_time_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      Text(
+                        'Alarmar em 10s',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      floating: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 20),
-            FloatingActionButton(
-              heroTag: '1',
-              tooltip: 'Create New notification',
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () => notificationController.createMedicineNotification(),
-              child: Icon(
-                Icons.outgoing_mail,
-                color: Theme.of(context).colorScheme.tertiaryContainer,
-              ),
-            ),
-            const SizedBox(width: 10),
-            FloatingActionButton(
-              heroTag: '2',
-              tooltip: 'Schedule New notification',
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () => notificationController.createMedicineNotificationScheduled(),
-              child: Icon(
-                Icons.access_time_outlined,
-                color: Theme.of(context).colorScheme.tertiaryContainer,
-              ),
-            ),
-            const SizedBox(width: 10),
-            FloatingActionButton(
-              heroTag: '3',
-              tooltip: 'Reset badge counter',
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () => notificationController.resetBadgeCounter(),
-              child: Icon(
-                Icons.exposure_zero,
-                color: Theme.of(context).colorScheme.tertiaryContainer,
-              ),
-            ),
-            const SizedBox(width: 10),
-            FloatingActionButton(
-              heroTag: '4',
-              tooltip: 'Cancel all notifications',
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              onPressed: () => notificationController.cancelScheduledNotifications(),
-              child: Icon(
-                Icons.delete_forever,
-                color: Theme.of(context).colorScheme.tertiaryContainer,
-              ),
-            ),
-          ],
+    );
+  }
+
+  Widget _medicinesList() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: List.generate(10, (index) => const CustomListItemWidget()),
         ),
       ),
     );

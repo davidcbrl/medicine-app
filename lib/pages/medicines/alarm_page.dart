@@ -1,20 +1,28 @@
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 
-class AlarmPage extends StatelessWidget {
+class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key, required this.receivedAction}): super(key: key);
 
   final ReceivedAction receivedAction;
 
   @override
+  State<AlarmPage> createState() => _AlarmPageState();
+}
+
+class _AlarmPageState extends State<AlarmPage> {
+  ChatController chatController = Get.find();
+
+  @override
   Widget build(BuildContext context) {
-    bool hasLargeIcon = receivedAction.largeIconImage != null;
-    bool hasBigPicture = receivedAction.bigPictureImage != null;
+    bool hasBigPicture = widget.receivedAction.bigPictureImage != null;
     return CustomPageWidget(
       body: Column(
         children: [
@@ -37,7 +45,7 @@ class AlarmPage extends StatelessWidget {
                   'assets/img/whatsapp.png',
                   width: 30,
                 ),
-                onPressed: () {},
+                onPressed: () => ChatController(),
               ),
             ],
           ),
@@ -63,18 +71,18 @@ class AlarmPage extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (receivedAction.title?.isNotEmpty ?? false) ...[
+                      if (widget.receivedAction.title?.isNotEmpty ?? false) ...[
                         Text(
-                          receivedAction.title!,
+                          widget.receivedAction.title!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                       ],
-                      if (receivedAction.body?.isNotEmpty ?? false) ...[
+                      if (widget.receivedAction.body?.isNotEmpty ?? false) ...[
                         Text(
-                          receivedAction.body!,
+                          widget.receivedAction.body!,
                           style: Theme.of(context).textTheme.labelMedium,
                         ),
                         const SizedBox(
@@ -86,25 +94,9 @@ class AlarmPage extends StatelessWidget {
                           if (hasBigPicture) ...[
                             FadeInImage(
                               placeholder: const AssetImage('assets/img/placeholder.gif'),
-                              image: receivedAction.bigPictureImage!,
+                              image: widget.receivedAction.bigPictureImage!,
                               height: MediaQuery.of(context).size.height * 0.4,
                               fit: BoxFit.cover,
-                            ),
-                          ],
-                          if (hasLargeIcon) ...[
-                            Positioned(
-                              bottom: 10,
-                              left: 10,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                child: FadeInImage(
-                                  placeholder: const AssetImage('assets/img/placeholder.gif'),
-                                  image: receivedAction.largeIconImage!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
                             ),
                           ],
                         ],
@@ -120,13 +112,16 @@ class AlarmPage extends StatelessWidget {
           ),
           CustomButtonWidget(
             label: 'Já tomei',
-            onPressed: () {},
+            onPressed: () {
+              Get.offAllNamed('/home');
+              return;
+            },
           ),
           const SizedBox(
             height: 10,
           ),
           Text(
-            'A próxima dose será em 10 horas',
+            'A próxima dose será em 6 horas',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(

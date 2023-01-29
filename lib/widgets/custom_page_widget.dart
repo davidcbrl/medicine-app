@@ -6,6 +6,7 @@ class CustomPageWidget extends StatelessWidget {
   final Widget? floating;
   final Widget? bottomBar;
   final bool hasPadding;
+  final bool hasBackgroundImage;
 
   const CustomPageWidget({
     super.key, 
@@ -14,6 +15,7 @@ class CustomPageWidget extends StatelessWidget {
     this.floating,
     this.bottomBar,
     this.hasPadding = true,
+    this.hasBackgroundImage = true,
   });
 
   @override
@@ -23,7 +25,21 @@ class CustomPageWidget extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: hasPadding ? const EdgeInsets.all(20) : EdgeInsets.zero,
-        child: body,
+        child: Stack(
+          children: [
+            if (hasBackgroundImage) ...[
+              Positioned(
+                bottom: 80,
+                right: -20,
+                child: Image.asset(
+                  'assets/img/background.png',
+                  width: MediaQuery.of(context).size.width * 0.6,
+                ),
+              ),
+            ],
+            body ?? Container(),
+          ],
+        ),
       ),
       bottomNavigationBar: bottomBar,
       floatingActionButton: floating,
