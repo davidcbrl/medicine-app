@@ -2,9 +2,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ChatController {
   Future<void> launchWhatsapp() async {
-    Uri url = Uri.parse('https://wa.me/+5541996194517?text=Preciso%20de%20ajuda%20com%20meu%20rem%C3%A9dio');
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
+    String text = 'Preciso de ajuda com o meu medicamento';
+    Uri url = Uri.parse('https://api.whatsapp.com/send?type=phone_number&phone=5541996194517&text=$text');
+    
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+      return;
     }
+
+    throw 'Não foi possível abrir: $url';
   }
 }

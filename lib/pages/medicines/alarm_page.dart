@@ -40,7 +40,7 @@ class _AlarmPageState extends State<AlarmPage> {
                 label: 'Tio Ben',
               ),
               CustomSelectItemWidget(
-                label: 'Falar com minha família',
+                label: 'Minha família',
                 image: Image.asset(
                   'assets/img/whatsapp.png',
                   width: 30,

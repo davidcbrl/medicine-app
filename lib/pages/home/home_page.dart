@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> medicines = List.generate(10, (index) => const CustomListItemWidget());
+    List<Widget> boxes = List.generate(2, (index) => const SizedBox(height: 100));
     return CustomPageWidget(
       hasPadding: false,
       body: Column(
@@ -46,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                   label: 'Tio Ben',
                 ),
                 CustomSelectItemWidget(
-                  label: 'Falar com minha família',
+                  label: 'Minha família',
                   image: Image.asset(
                     'assets/img/whatsapp.png',
                     width: 30,
@@ -71,10 +73,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.zero,
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: List.generate(
-                  10,
-                  (index) => const CustomListItemWidget(),
-                ),
+                children: [...medicines, ...boxes],
               ),
             ),
           ),

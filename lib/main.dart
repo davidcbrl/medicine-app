@@ -39,6 +39,7 @@ class _MyAppState extends State<MyApp> {
           secondary: Color(0xFF3A3A3A),
           tertiary: Color(0xFFF0F0F0),
           background: Color(0xFFFFFFFF),
+          error: Color(0xFFEB5757),
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(
@@ -53,17 +54,17 @@ class _MyAppState extends State<MyApp> {
           ),
           labelMedium: TextStyle(
             color: Color(0xFF3A3A3A),
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w900,
           ),
           bodyMedium: TextStyle(
             color: Color(0xFF3A3A3A),
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
           displayMedium: TextStyle(
             color: Color(0xFFF0F0F0),
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w900,
           ),
         )

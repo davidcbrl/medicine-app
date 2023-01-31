@@ -72,7 +72,7 @@ class NotificationProvider {
         return AlertDialog(
           title: Text(
             'Permitir notificações',
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -92,8 +92,8 @@ class NotificationProvider {
               },
               child: Text(
                 'Não permitir',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.redAccent,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
             ),
@@ -104,8 +104,8 @@ class NotificationProvider {
               },
               child: Text(
                 'Permitir',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.green,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
