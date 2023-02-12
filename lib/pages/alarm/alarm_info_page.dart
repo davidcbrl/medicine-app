@@ -1,0 +1,348 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:medicine/controllers/chat_controller.dart';
+import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/models/alarm_type.dart';
+import 'package:medicine/models/weekday_type.dart';
+import 'package:medicine/widgets/custom_avatar_widget.dart';
+import 'package:medicine/widgets/custom_button_widget.dart';
+import 'package:medicine/widgets/custom_multiselect_item_widget.dart';
+import 'package:medicine/widgets/custom_option_field_widget.dart';
+import 'package:medicine/widgets/custom_page_widget.dart';
+import 'package:medicine/widgets/custom_select_item_widget.dart';
+import 'package:medicine/widgets/custom_stepper_widget.dart';
+import 'package:medicine/widgets/custom_text_button_widget.dart';
+
+class AlarmInfoPage extends StatefulWidget {
+  const AlarmInfoPage({super.key});
+
+  @override
+  State<AlarmInfoPage> createState() => _AlarmInfoPageState();
+}
+
+class _AlarmInfoPageState extends State<AlarmInfoPage> {
+  final ChatController chatController = Get.find();
+  final AlarmController alarmController = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPageWidget(
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomAvatarWidget(
+                image: Image.asset(
+                  'assets/img/ben.png',
+                  width: 50,
+                ),
+                label: 'Tio Ben',
+              ),
+              CustomSelectItemWidget(
+                label: 'Falar com meu \nresponsável',
+                image: Image.asset(
+                  'assets/img/whatsapp.png',
+                  width: 30,
+                ),
+                onPressed: () => chatController.launchWhatsapp(),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const CustomStepperWidget(
+            current: 2,
+            steps: [
+              CustomStepperStep(
+                icon: Icons.medication_outlined,
+                label: 'Remédio',
+              ),
+              CustomStepperStep(
+                icon: Icons.add_alarm_outlined,
+                label: 'Alarme',
+              ),
+              CustomStepperStep(
+                icon: Icons.check_circle_outline_outlined,
+                label: 'Confirmar',
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: PageView(
+              controller: alarmController.infoPageController,
+              children: const [
+                AlarmInfoTypeView(),
+                AlarmInfoTimeView(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AlarmInfoTypeView extends StatefulWidget {
+  const AlarmInfoTypeView({super.key});
+  @override
+  State<AlarmInfoTypeView> createState() => _AlarmInfoTypeViewState();
+}
+class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
+  @override
+  Widget build(BuildContext context) {
+    final AlarmController alarmController = Get.find();
+    List<AlarmType> alarmTypeList = AlarmType.getAlarmTypeList();
+    return Column(
+      children: [
+        Text(
+          'Como será o alarme?',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Toque para selecionar um tipo de recorrência',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ...alarmTypeList.map(
+                  (AlarmType alarmType) => Column(
+                    children: [
+                      CustomSelectItemWidget(
+                        label: alarmType.name,
+                        icon: Icon(
+                          Icons.chevron_right_outlined,
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: 20,
+                        ),
+                        selected: alarmType.id == alarmController.alarmType.value.id,
+                        onPressed: () {
+                          setState(() {
+                            alarmController.alarmType.value = alarmType;
+                          });
+                        },
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        CustomButtonWidget(
+          label: 'Próximo',
+          onPressed: () {
+            alarmController.infoPageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
+          },
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        CustomTextButtonWidget(
+          label: 'Voltar ao remédio',
+          onPressed: () {
+            Get.back();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class AlarmInfoTimeView extends StatefulWidget {
+  const AlarmInfoTimeView({super.key});
+  @override
+  State<AlarmInfoTimeView> createState() => _AlarmInfoTimeViewState();
+}
+class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
+  @override
+  Widget build(BuildContext context) {
+    final AlarmController alarmController = Get.find();
+    List<WeekdayType> weekdayTypeList = WeekdayType.getWeekdayTypeList();
+    return Column(
+      children: [
+        Text(
+          _getAlarmTypeLabel(alarmController.alarmType.value.id),
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomOptionFieldWidget(
+                  label: _getTimePickerLabel(alarmController.alarmType.value.id),
+                  placeholder: 'Ex: 00:00',
+                  value: _getTimeValueLabel(alarmController.alarmType.value.id, alarmController.time.value),
+                  onPressed: () async {
+                    TimeOfDay? time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (time != null) {
+                      setState(() {
+                        alarmController.time.value = time;
+                      });
+                    }
+                  },
+                ),
+                if (alarmController.alarmType.value.id == 1) ...[
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Toque para selecionar os dias da semana',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        ...weekdayTypeList.map(
+                          (WeekdayType weekdayType) => CustomMultiselectItemWidget(
+                            label: weekdayType.name,
+                            selected: alarmController.weekdayTypeIdList.contains(weekdayType.id),
+                            onPressed: () {
+                              setState(() {
+                                if (alarmController.weekdayTypeIdList.contains(weekdayType.id)) {
+                                  alarmController.weekdayTypeIdList.remove(weekdayType.id);
+                                  return;
+                                }
+                                alarmController.weekdayTypeIdList.add(weekdayType.id);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CustomSelectItemWidget(
+                        label: 'Todos os dias',
+                        onPressed: () {
+                          setState(() {
+                            if (alarmController.weekdayTypeIdList.length == 7) {
+                              alarmController.weekdayTypeIdList.clear();
+                              return;
+                            }
+                            alarmController.weekdayTypeIdList.clear();
+                            alarmController.weekdayTypeIdList.addAll([1,2,3,4,5,6,7]);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+                if (alarmController.alarmType.value.id == 2) ...[
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomOptionFieldWidget(
+                    label: 'Escolha a data de início para o alarme',
+                    placeholder: 'Ex: 01/01/2023',
+                    value: DateFormat('dd/MM/yyyy').format(alarmController.startDate.value),
+                    onPressed: () async {
+                      DateTime? startDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (startDate != null) {
+                        setState(() {
+                          alarmController.startDate.value = startDate;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        CustomButtonWidget(
+          label: 'Continuar para confirmação',
+          onPressed: () {
+            Get.toNamed('/alarm/review');
+          },
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        CustomTextButtonWidget(
+          label: 'Voltar',
+          onPressed: () {
+            alarmController.infoPageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
+          },
+        ),
+      ],
+    );
+  }
+  String _getAlarmTypeLabel(int alarmTypeId) {
+    if (alarmTypeId == 1) return 'Qual será o horário do alarme?';
+    if (alarmTypeId == 2) return 'Qual será o intervalo do alarme?';
+    return 'O tipo do alarme não foi selecionado';
+  }
+  String _getTimePickerLabel(int alarmTypeId) {
+    if (alarmTypeId == 1) return 'Toque para escolher um horário';
+    if (alarmTypeId == 2) return 'Toque para escolher um intervalo';
+    return 'O tipo do alarme não foi selecionado';
+  }
+  String _getTimeValueLabel(int alarmTypeId, TimeOfDay time) {
+    String hour = time.hour.toString().padLeft(2, '0');
+    String minute = time.minute.toString().padLeft(2, '0');
+    if (alarmTypeId == 1) return '$hour:$minute';
+    if (alarmTypeId == 2) return '$hour:$minute em $hour:$minute';
+    return 'O tipo do alarme não foi selecionado';
+  }
+}

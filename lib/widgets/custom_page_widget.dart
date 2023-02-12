@@ -15,7 +15,7 @@ class CustomPageWidget extends StatelessWidget {
     this.floating,
     this.bottomBar,
     this.hasPadding = true,
-    this.hasBackgroundImage = true,
+    this.hasBackgroundImage = false,
   });
 
   @override
@@ -28,12 +28,14 @@ class CustomPageWidget extends StatelessWidget {
         child: Stack(
           children: [
             if (hasBackgroundImage) ...[
-              Positioned(
-                bottom: 80,
-                right: -20,
-                child: Image.asset(
-                  'assets/img/background.png',
-                  width: MediaQuery.of(context).size.width * 0.6,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 60),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Image.asset(
+                    'assets/img/background.png',
+                    width: MediaQuery.of(context).size.width * 0.6,
+                  ),
                 ),
               ),
             ],

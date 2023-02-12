@@ -8,16 +8,16 @@ import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 
-class AlarmPage extends StatefulWidget {
-  const AlarmPage({Key? key, required this.receivedAction}): super(key: key);
+class NotificationPage extends StatefulWidget {
+  const NotificationPage({Key? key, required this.receivedAction}): super(key: key);
 
   final ReceivedAction receivedAction;
 
   @override
-  State<AlarmPage> createState() => _AlarmPageState();
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
-class _AlarmPageState extends State<AlarmPage> {
+class _NotificationPageState extends State<NotificationPage> {
   ChatController chatController = Get.find();
 
   @override
@@ -40,12 +40,12 @@ class _AlarmPageState extends State<AlarmPage> {
                 label: 'Tio Ben',
               ),
               CustomSelectItemWidget(
-                label: 'Minha família',
+                label: 'Falar com meu \nresponsável',
                 image: Image.asset(
                   'assets/img/whatsapp.png',
                   width: 30,
                 ),
-                onPressed: () => ChatController(),
+                onPressed: () => chatController.launchWhatsapp(),
               ),
             ],
           ),

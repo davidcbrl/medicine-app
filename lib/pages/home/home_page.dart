@@ -9,6 +9,7 @@ import 'package:medicine/widgets/custom_calendar_carousel_widget.dart';
 import 'package:medicine/widgets/custom_list_item_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
+import 'package:medicine/widgets/custom_text_button_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> boxes = List.generate(2, (index) => const SizedBox(height: 100));
     return CustomPageWidget(
       hasPadding: false,
+      hasBackgroundImage: true,
       body: Column(
         children: [
           const SizedBox(
@@ -48,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   label: 'Tio Ben',
                 ),
                 CustomSelectItemWidget(
-                  label: 'Minha família',
+                  label: 'Falar com meu \nresponsável',
                   image: Image.asset(
                     'assets/img/whatsapp.png',
                     width: 30,
@@ -78,9 +80,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiaryContainer,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,6 +100,21 @@ class _HomePageState extends State<HomePage> {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => _optionsBottomSheet(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.tertiary,
+                      size: 30,
+                    ),
                   ),
                 ),
                 InkWell(
@@ -120,6 +137,52 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _optionsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'O que deseja fazer?',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomSelectItemWidget(
+                  label: 'Criar alarme para remédio',
+                  icon: Icon(
+                    Icons.chevron_right_outlined,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                    Get.toNamed('/alarm/medicine');
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Voltar',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

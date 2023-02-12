@@ -14,12 +14,10 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
 
   @override
   Widget build(BuildContext context) {
-    DateFormat format = DateFormat('MMMM, yyyy');
-    var formattedDate = format.format(displayDate);
     return Column(
       children: [
         Text(
-          formattedDate,
+          DateFormat('MMMM, yyyy').format(displayDate),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(
@@ -83,8 +81,8 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
                       ),
                       Icon(
                         Icons.chevron_right_outlined,
-                        size: 20,
                         color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
                       ),
                     ],
                   ),

@@ -47,8 +47,8 @@ class NotificationProvider {
       await executeLongTaskInBackground();
     } else {
       MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        '/alarm',
-        (route) => (route.settings.name != '/alarm') || route.isFirst,
+        '/notification',
+        (route) => (route.settings.name != '/notification') || route.isFirst,
         arguments: receivedAction
       );
     }

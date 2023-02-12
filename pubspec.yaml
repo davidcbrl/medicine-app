@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.1.8
   flutter_native_splash: ^2.2.17
   intl: ^0.17.0
+  lottie: ^2.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,12 +1,22 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:medicine/pages/home/home_page.dart';
-import 'package:medicine/pages/medicines/alarm_page.dart';
+import 'package:medicine/pages/notification/notification_page.dart';
+import 'package:medicine/pages/alarm/alarm_info_page.dart';
+import 'package:medicine/pages/alarm/alarm_finish_page.dart';
+import 'package:medicine/pages/alarm/alarm_medicine_page.dart';
+import 'package:medicine/pages/alarm/alarm_review_page.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
-class RouteController {
+class RouteController extends GetxController {
   static const String homeRoute = '/home';
-  static const String alarmRoute = '/alarm';
+  static const String notificationRoute = '/notification';
+  static const String alarmMedicineRoute = '/alarm/medicine';
+  static const String alarmInfoRoute = '/alarm/info';
+  static const String alarmReviewRoute = '/alarm/review';
+  static const String alarmFinishRoute = '/alarm/finish';
 
   List<Route<dynamic>> onGenerateInitialRoutes(String initialRouteName) {
     List<Route<dynamic>> pageStack = [];
@@ -15,10 +25,10 @@ class RouteController {
         builder: (_) => const HomePage(),
       ),
     );
-    if (initialRouteName == alarmRoute && NotificationProvider.initialAction != null) {
+    if (initialRouteName == notificationRoute && NotificationProvider.initialAction != null) {
       pageStack.add(
         MaterialPageRoute(
-          builder: (_) => AlarmPage(
+          builder: (_) => NotificationPage(
             receivedAction: NotificationProvider.initialAction!
           ),
         ),
@@ -33,14 +43,62 @@ class RouteController {
         return MaterialPageRoute(
           builder: (_) => const HomePage(),
         );
-      case alarmRoute:
+      case notificationRoute:
         ReceivedAction receivedAction = settings.arguments as ReceivedAction;
         return MaterialPageRoute(
-          builder: (_) => AlarmPage(
+          builder: (_) => NotificationPage(
             receivedAction: receivedAction,
           ),
         );
+      case alarmMedicineRoute:
+        return CustomMaterialPageRoute(
+          builder: (_) => const AlarmMedicinePage(),
+          settings: settings,
+        );
+      case alarmInfoRoute:
+        return CustomMaterialPageRoute(
+          builder: (_) => const AlarmInfoPage(),
+          settings: settings,
+        );
+      case alarmReviewRoute:
+        return CustomMaterialPageRoute(
+          builder: (_) => const AlarmReviewPage(),
+          settings: settings,
+        );
+      case alarmFinishRoute:
+        return CustomMaterialPageRoute(
+          builder: (_) => const AlarmFinishPage(),
+          settings: settings,
+        );
     }
     return null;
+  }
+}
+
+class CustomMaterialPageRoute<T> extends MaterialPageRoute<T> {
+  CustomMaterialPageRoute({
+    required WidgetBuilder builder,
+    required RouteSettings settings,
+  }) : super(
+    builder: builder,
+    settings: settings,
+  );
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    if (settings.name == '/home') {
+      return child;
+    }
+    return CupertinoPageTransition(
+      primaryRouteAnimation: animation,
+      secondaryRouteAnimation: secondaryAnimation,
+      linearTransition: true,
+      child: child,
+    );
   }
 }

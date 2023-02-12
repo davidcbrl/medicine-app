@@ -1,7 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:get/get.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
-class NotificationController {
+class NotificationController extends GetxController {
 
   Future<void> createMedicineNotification() async {
     await NotificationProvider.create(

@@ -37,6 +37,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF662C91),
           secondary: Color(0xFF3A3A3A),
+          secondaryContainer: Color(0xFF7C7C7C),
           tertiary: Color(0xFFF0F0F0),
           background: Color(0xFFFFFFFF),
           error: Color(0xFFEB5757),
