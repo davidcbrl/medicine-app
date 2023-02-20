@@ -43,9 +43,9 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
                   child: Row(
                     children: [
                       Icon(
-                        Icons.chevron_left_outlined,
-                        size: 20,
+                        Icons.chevron_left_rounded,
                         color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
                       ),
                       const SizedBox(
                         width: 5,
@@ -80,7 +80,7 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
                         width: 5,
                       ),
                       Icon(
-                        Icons.chevron_right_outlined,
+                        Icons.chevron_right_rounded,
                         color: Theme.of(context).colorScheme.secondary,
                         size: 20,
                       ),

@@ -39,7 +39,7 @@ class CustomOptionFieldWidget extends StatelessWidget {
                     width: 10,
                   ),
                   Icon(
-                    Icons.chevron_right_outlined,
+                    Icons.chevron_right_rounded,
                     color: Theme.of(context).colorScheme.secondary,
                     size: 20,
                   ),

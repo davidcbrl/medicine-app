@@ -60,15 +60,15 @@ class _AlarmInfoPageState extends State<AlarmInfoPage> {
             current: 2,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_outlined,
+                icon: Icons.medication_rounded,
                 label: 'Remédio',
               ),
               CustomStepperStep(
-                icon: Icons.add_alarm_outlined,
+                icon: Icons.add_alarm_rounded,
                 label: 'Alarme',
               ),
               CustomStepperStep(
-                icon: Icons.check_circle_outline_outlined,
+                icon: Icons.check_circle_outline_rounded,
                 label: 'Confirmar',
               ),
             ],
@@ -128,7 +128,7 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                       CustomSelectItemWidget(
                         label: alarmType.name,
                         icon: Icon(
-                          Icons.chevron_right_outlined,
+                          Icons.chevron_right_rounded,
                           color: Theme.of(context).colorScheme.secondary,
                           size: 20,
                         ),

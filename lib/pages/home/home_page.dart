@@ -92,8 +92,9 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.outgoing_mail,
+                        Icons.mail_outline_rounded,
                         color: Theme.of(context).colorScheme.primary,
+                        size: 20,
                       ),
                       Text(
                         'Testar alarme',
@@ -111,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Icon(
-                      Icons.add,
+                      Icons.add_rounded,
                       color: Theme.of(context).colorScheme.tertiary,
                       size: 30,
                     ),
@@ -122,8 +123,9 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.access_time_outlined,
+                        Icons.access_time_rounded,
                         color: Theme.of(context).colorScheme.primary,
+                        size: 20,
                       ),
                       Text(
                         'Alarmar em 10s',
@@ -163,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                     child: CustomSelectItemWidget(
                       label: 'Criar alarme para remédio',
                       icon: Icon(
-                        Icons.chevron_right_outlined,
+                        Icons.chevron_right_rounded,
                         color: Theme.of(context).colorScheme.secondary,
                         size: 20,
                       ),

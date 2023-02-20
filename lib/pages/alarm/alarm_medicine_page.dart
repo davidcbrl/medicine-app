@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/models/dose_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
+import 'package:medicine/widgets/custom_image_picker_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
@@ -57,15 +61,15 @@ class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
             current: 1,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_outlined,
+                icon: Icons.medication_rounded,
                 label: 'Remédio',
               ),
               CustomStepperStep(
-                icon: Icons.add_alarm_outlined,
+                icon: Icons.add_alarm_rounded,
                 label: 'Alarme',
               ),
               CustomStepperStep(
-                icon: Icons.check_circle_outline_outlined,
+                icon: Icons.check_circle_outline_rounded,
                 label: 'Confirmar',
               ),
             ],
@@ -177,7 +181,7 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
                       CustomSelectItemWidget(
                         label: doseType.name,
                         icon: Icon(
-                          Icons.chevron_right_outlined,
+                          Icons.chevron_right_rounded,
                           color: Theme.of(context).colorScheme.secondary,
                           size: 20,
                         ),
@@ -280,24 +284,43 @@ class AlarmMedicineQuantityView extends StatelessWidget {
   }
 }
 
-class AlarmMedicineImageView extends StatelessWidget {
+class AlarmMedicineImageView extends StatefulWidget {
   const AlarmMedicineImageView({super.key});
+  @override
+  State<AlarmMedicineImageView> createState() => _AlarmMedicineImageViewState();
+}
+class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
     return Column(
       children: [
         Text(
-          'Deseja adicionar um foto?',
+          'Deseja adicionar uma foto?',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(
           height: 20,
         ),
         Expanded(
-          child: Text(
-            'Em construção!',
-            style: Theme.of(context).textTheme.bodyMedium,
+          child: SingleChildScrollView(
+            child: CustomImagePickerWidget(
+              label: 'Toque para escolher uma foto',
+              image: alarmController.image.value.isNotEmpty ? base64Decode(alarmController.image.value) : null,
+              icon: Icon(
+                Icons.image_search_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 20,
+              ),
+              onPressed: () async {
+                final ImagePicker picker = ImagePicker();
+                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                final bytes = await image!.readAsBytes();
+                setState(() {
+                  alarmController.image.value = base64Encode(bytes);
+                });
+              },
+            ),
           ),
         ),
         const SizedBox(

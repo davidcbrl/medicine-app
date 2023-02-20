@@ -58,15 +58,15 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
             current: 3,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_outlined,
+                icon: Icons.medication_rounded,
                 label: 'Remédio',
               ),
               CustomStepperStep(
-                icon: Icons.add_alarm_outlined,
+                icon: Icons.add_alarm_rounded,
                 label: 'Alarme',
               ),
               CustomStepperStep(
-                icon: Icons.check_circle_outline_outlined,
+                icon: Icons.check_circle_outline_rounded,
                 label: 'Confirmar',
               ),
             ],
