@@ -15,7 +15,7 @@ class AlarmController extends GetxController with StateMixin {
   var doseType = DoseType(id: 1, name: 'Gotas').obs;
   var image = ''.obs;
   var alarmType = AlarmType(id: 1, name: 'Horário fixo').obs;
-  var time = const TimeOfDay(hour: 0, minute: 0).obs;
+  var times = <TimeOfDay>[const TimeOfDay(hour: 0, minute: 0)].obs;
   var weekdayTypeIdList = <int>[].obs;
   var startDate = DateTime.now().obs;
   var observation = ''.obs;

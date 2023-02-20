@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CustomOptionFieldWidget extends StatelessWidget {
-  final String label;
   final String placeholder;
   final Function() onPressed;
   final String? value;
 
   const CustomOptionFieldWidget({
     super.key,
-    required this.label,
     required this.placeholder,
     required this.onPressed,
     this.value,
@@ -19,13 +17,6 @@ class CustomOptionFieldWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(
-          height: 5,
-        ),
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.tertiary,

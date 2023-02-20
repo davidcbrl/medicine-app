@@ -153,7 +153,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      '${_getTimeValueLabel(alarmController.alarmType.value.id, alarmController.time.value)} horas',
+                      _getTimeValueLabel(alarmController.alarmType.value.id, alarmController.times),
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(
@@ -217,12 +217,16 @@ class AlarmReviewObservationView extends StatelessWidget {
       ],
     );
   }
-  String _getTimeValueLabel(int alarmTypeId, TimeOfDay time) {
-    String hour = time.hour.toString().padLeft(2, '0');
-    String minute = time.minute.toString().padLeft(2, '0');
-    if (alarmTypeId == 1) return '$hour:$minute';
-    if (alarmTypeId == 2) return '$hour:$minute em $hour:$minute';
-    return 'O tipo do alarme não foi selecionado';
+  String _getTimeValueLabel(int alarmTypeId, List<TimeOfDay> times) {
+    String label = '';
+    for (TimeOfDay time in times) {
+      String hour = time.hour.toString().padLeft(2, '0');
+      String minute = time.minute.toString().padLeft(2, '0');
+      String separator = label == '' ? '' : 'e';
+      if (alarmTypeId == 1) label = '$label $separator $hour:$minute';
+      if (alarmTypeId == 2) label = '$label $separator $hour:$minute em $hour:$minute';
+    }
+    return label;
   }
   String _getAlarmTypeLabel(int alarmTypeId) {
     if (alarmTypeId == 1) return 'nos dias';

@@ -136,6 +136,9 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                         onPressed: () {
                           setState(() {
                             alarmController.alarmType.value = alarmType;
+                            if (alarmType.id == 2) {
+                              alarmController.times.value = [const TimeOfDay(hour: 0, minute: 0)];
+                            }
                           });
                         },
                       ),
@@ -199,29 +202,87 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomOptionFieldWidget(
-                  label: _getTimePickerLabel(alarmController.alarmType.value.id),
-                  placeholder: 'Ex: 00:00',
-                  value: _getTimeValueLabel(alarmController.alarmType.value.id, alarmController.time.value),
-                  onPressed: () async {
-                    TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      builder: (BuildContext context, Widget? child) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                          child: child!,
-                        );
-                      },
+                Text(
+                  _getTimePickerLabel(alarmController.alarmType.value.id),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ...alarmController.times.map(
+                  (TimeOfDay time) {
+                    String timeValueLabel = _getTimeValueLabel(alarmController.alarmType.value.id, time);
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CustomOptionFieldWidget(
+                            placeholder: 'Ex: 00:00',
+                            value: timeValueLabel,
+                            onPressed: () async {
+                              TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                                builder: (BuildContext context, Widget? child) {
+                                  return MediaQuery(
+                                    data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (pickedTime != null) {
+                                setState(() {
+                                  timeValueLabel = _getTimeValueLabel(alarmController.alarmType.value.id, pickedTime);
+                                  alarmController.times[alarmController.times.indexOf(time)] = pickedTime;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        if (alarmController.times.length > 1) ...[
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                alarmController.times.remove(time);
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.tertiary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     );
-                    if (time != null) {
-                      setState(() {
-                        alarmController.time.value = time;
-                      });
-                    }
-                  },
+                 },
                 ),
                 if (alarmController.alarmType.value.id == 1) ...[
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomSelectItemWidget(
+                        label: 'Adicionar outro horário',
+                        onPressed: () {
+                          setState(() {
+                            alarmController.times.add(const TimeOfDay(hour: 0, minute: 0));
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -232,34 +293,41 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                   const SizedBox(
                     height: 5,
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: (weekdayTypeList.length * 60) > MediaQuery.of(context).size.width ? const EdgeInsets.symmetric(horizontal: 40) : null,
+                    child: Column(
                       children: [
-                        ...weekdayTypeList.map(
-                          (WeekdayType weekdayType) => CustomMultiselectItemWidget(
-                            label: weekdayType.name,
-                            selected: alarmController.weekdayTypeIdList.contains(weekdayType.id),
-                            onPressed: () {
-                              setState(() {
-                                if (alarmController.weekdayTypeIdList.contains(weekdayType.id)) {
-                                  alarmController.weekdayTypeIdList.remove(weekdayType.id);
-                                  return;
-                                }
-                                alarmController.weekdayTypeIdList.add(weekdayType.id);
-                              });
-                            },
-                          ),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            ...weekdayTypeList.map(
+                              (WeekdayType weekdayType) => CustomMultiselectItemWidget(
+                                label: weekdayType.name,
+                                selected: alarmController.weekdayTypeIdList.contains(weekdayType.id),
+                                onPressed: () {
+                                  setState(() {
+                                    if (alarmController.weekdayTypeIdList.contains(weekdayType.id)) {
+                                      alarmController.weekdayTypeIdList.remove(weekdayType.id);
+                                      return;
+                                    }
+                                    alarmController.weekdayTypeIdList.add(weekdayType.id);
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomSelectItemWidget(
                         label: 'Todos os dias',
@@ -281,8 +349,14 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                   const SizedBox(
                     height: 10,
                   ),
+                  Text(
+                    'Escolha a data de início para o alarme',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   CustomOptionFieldWidget(
-                    label: 'Escolha a data de início para o alarme',
                     placeholder: 'Ex: 01/01/2023',
                     value: DateFormat('dd/MM/yyyy').format(alarmController.startDate.value),
                     onPressed: () async {

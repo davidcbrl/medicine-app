@@ -15,9 +15,11 @@ class CustomStepperWidget extends StatelessWidget {
     return Column(
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ...List.generate(
-              steps.length, (index) => Row(
+              steps.length,
+              (index) => Row(
                 children: [
                   if (index > 0) ...[
                     Container(

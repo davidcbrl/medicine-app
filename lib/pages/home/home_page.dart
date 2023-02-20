@@ -157,20 +157,25 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                CustomSelectItemWidget(
-                  label: 'Criar alarme para remédio',
-                  icon: Icon(
-                    Icons.chevron_right_outlined,
-                    color: Theme.of(context).colorScheme.secondary,
-                    size: 20,
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: CustomSelectItemWidget(
+                      label: 'Criar alarme para remédio',
+                      icon: Icon(
+                        Icons.chevron_right_outlined,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        Get.back();
+                        Get.toNamed('/alarm/medicine');
+                      },
+                    ),
                   ),
-                  onPressed: () {
-                    Get.back();
-                    Get.toNamed('/alarm/medicine');
-                  },
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 CustomTextButtonWidget(
                   label: 'Voltar',
