@@ -24,7 +24,7 @@ class AlarmMedicinePage extends StatefulWidget {
 
 class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
   final ChatController chatController = Get.find();
-  final AlarmController alarmController = Get.put(AlarmController());
+  final AlarmController alarmController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
             current: 1,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_rounded,
+                icon: Icons.medication_outlined,
                 label: 'Remédio',
               ),
               CustomStepperStep(
@@ -99,7 +99,8 @@ class AlarmMedicineNameView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
-    TextEditingController medicineNameController = TextEditingController(text: '');
+    final formKey = GlobalKey<FormState>();
+    TextEditingController medicineNameController = TextEditingController(text: alarmController.name.value);
     return Column(
       children: [
         Text(
@@ -110,10 +111,24 @@ class AlarmMedicineNameView extends StatelessWidget {
           height: 20,
         ),
         Expanded(
-          child: CustomTextFieldWidget(
-            controller: medicineNameController,
-            label: 'Escreva o remédio que precisa tomar',
-            placeholder: 'Ex: Paracetamol',
+          child: Form(
+            key: formKey,
+            child: CustomTextFieldWidget(
+              controller: medicineNameController,
+              label: 'Escreva o remédio que precisa tomar',
+              placeholder: 'Ex: Paracetamol',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Escreva o nome do remédio para continuar';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  formKey.currentState!.validate();
+                }
+              },
+            ),
           ),
         ),
         const SizedBox(
@@ -123,11 +138,13 @@ class AlarmMedicineNameView extends StatelessWidget {
           label: 'Próximo',
           onPressed: () {
             FocusManager.instance.primaryFocus?.unfocus();
-            alarmController.name.value = medicineNameController.text;
-            alarmController.medicinePageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-            );
+            if (formKey.currentState!.validate()) {
+              alarmController.name.value = medicineNameController.text;
+              alarmController.medicinePageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn,
+              );
+            }
           },
         ),
         const SizedBox(
@@ -235,8 +252,11 @@ class AlarmMedicineQuantityView extends StatelessWidget {
   const AlarmMedicineQuantityView({super.key});
   @override
   Widget build(BuildContext context) {
-    TextEditingController medicineQuantityController = TextEditingController(text: '');
     final AlarmController alarmController = Get.find();
+    final formKey = GlobalKey<FormState>();
+    TextEditingController medicineQuantityController = TextEditingController(
+      text: alarmController.quantity.value == 0 ? '' : alarmController.quantity.value.toString(),
+    );
     return Column(
       children: [
         Text(
@@ -247,10 +267,25 @@ class AlarmMedicineQuantityView extends StatelessWidget {
           height: 20,
         ),
         Expanded(
-          child: CustomTextFieldWidget(
-            controller: medicineQuantityController,
-            label: 'Preencha a quantidade que precisa tomar',
-            placeholder: 'Ex: 10',
+          child: Form(
+            key: formKey,
+            child: CustomTextFieldWidget(
+              controller: medicineQuantityController,
+              label: 'Preencha a quantidade que precisa tomar',
+              placeholder: 'Ex: 10',
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Preencha a quantidade para continuar';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  formKey.currentState!.validate();
+                }
+              },
+            ),
           ),
         ),
         const SizedBox(
@@ -260,11 +295,13 @@ class AlarmMedicineQuantityView extends StatelessWidget {
           label: 'Próximo',
           onPressed: () {
             FocusManager.instance.primaryFocus?.unfocus();
-            alarmController.quantity.value = int.tryParse(medicineQuantityController.text) ?? 0;
-            alarmController.medicinePageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-            );
+            if (formKey.currentState!.validate()) {
+              alarmController.quantity.value = int.tryParse(medicineQuantityController.text) ?? 0;
+              alarmController.medicinePageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn,
+              );
+            }
           },
         ),
         const SizedBox(

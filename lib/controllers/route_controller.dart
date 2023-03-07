@@ -29,7 +29,7 @@ class RouteController extends GetxController {
       pageStack.add(
         MaterialPageRoute(
           builder: (_) => NotificationPage(
-            receivedAction: NotificationProvider.initialAction!
+            receivedAction: NotificationProvider.initialAction!,
           ),
         ),
       );

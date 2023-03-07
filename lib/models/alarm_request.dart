@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Alarm {
   int? id;
   String name;
@@ -7,33 +5,36 @@ class Alarm {
   int doseTypeId;
   String? image;
   int alarmTypeId;
-  TimeOfDay time;
-  List<int>? weekdayTypeIdList;
+  String? time;
+  List<String> times;
+  List<int>? weekdayTypeIds;
   DateTime? startDate;
-  String observation;
+  String? observation;
 
   Alarm({
     this.id,
     required this.name,
     required this.quantity,
-    required this.doseTypeId,
     this.image,
+    required this.doseTypeId,
     required this.alarmTypeId,
-    required this.time,
-    this.weekdayTypeIdList,
+    this.time,
+    required this.times,
+    this.weekdayTypeIds,
     this.startDate,
-    required this.observation,
+    this.observation,
   });
 
   Alarm.fromJson(Map<String, dynamic> json):
     id = json['id'],
     name = json['name'],
     quantity = json['quantity'],
-    doseTypeId = json['doseTypeId'],
     image = json['image'],
+    doseTypeId = json['doseTypeId'],
     alarmTypeId = json['alarmTypeId'],
     time = json['time'],
-    weekdayTypeIdList = json['weekdayTypeIdList'],
+    times = json['times'].cast<String>(),
+    weekdayTypeIds = json['weekdayTypeIds'].cast<int>(),
     startDate = json['startDate'],
     observation = json['observation'];
 
@@ -41,11 +42,12 @@ class Alarm {
     'id': id,
     'name': name,
     'quantity': quantity,
-    'doseTypeId': doseTypeId,
     'image': image,
+    'doseTypeId': doseTypeId,
     'alarmTypeId': alarmTypeId,
     'time': time,
-    'weekdayTypeIdList': weekdayTypeIdList,
+    'times': times,
+    'weekdayTypeIds': weekdayTypeIds,
     'startDate': startDate,
     'observation': observation,
   };

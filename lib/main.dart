@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
 void main() async {
-  await GetStorage.init();
   await NotificationProvider.init();
   runApp(const MyApp());
 }
@@ -63,12 +61,17 @@ class _MyAppState extends State<MyApp> {
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
+          bodySmall: TextStyle(
+            color: Color(0xFFEB5757),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
           displayMedium: TextStyle(
             color: Color(0xFFF0F0F0),
             fontSize: 14,
             fontWeight: FontWeight.w900,
           ),
-        )
+        ),
       ),
       navigatorKey: MyApp.navigatorKey,
       onGenerateInitialRoutes: _routeController.onGenerateInitialRoutes,

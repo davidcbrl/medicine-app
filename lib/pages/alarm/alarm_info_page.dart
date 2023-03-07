@@ -60,7 +60,7 @@ class _AlarmInfoPageState extends State<AlarmInfoPage> {
             current: 2,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_rounded,
+                icon: Icons.medication_outlined,
                 label: 'Remédio',
               ),
               CustomStepperStep(
@@ -137,7 +137,7 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                           setState(() {
                             alarmController.alarmType.value = alarmType;
                             if (alarmType.id == 2) {
-                              alarmController.times.value = [const TimeOfDay(hour: 0, minute: 0)];
+                              alarmController.timeList.value = [const TimeOfDay(hour: 0, minute: 0)];
                             }
                           });
                         },
@@ -184,6 +184,7 @@ class AlarmInfoTimeView extends StatefulWidget {
   State<AlarmInfoTimeView> createState() => _AlarmInfoTimeViewState();
 }
 class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
+  String hintText = '';
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
@@ -197,6 +198,15 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
         const SizedBox(
           height: 20,
         ),
+        if (hintText.isNotEmpty) ...[
+          Text(
+            hintText,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+        ],
         Expanded(
           child: SingleChildScrollView(
             child: Column(
@@ -209,7 +219,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                 const SizedBox(
                   height: 5,
                 ),
-                ...alarmController.times.map(
+                ...alarmController.timeList.map(
                   (TimeOfDay time) {
                     String timeValueLabel = _getTimeValueLabel(alarmController.alarmType.value.id, time);
                     return Row(
@@ -233,7 +243,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                               if (pickedTime != null) {
                                 setState(() {
                                   timeValueLabel = _getTimeValueLabel(alarmController.alarmType.value.id, pickedTime);
-                                  alarmController.times[alarmController.times.indexOf(time)] = pickedTime;
+                                  alarmController.timeList[alarmController.timeList.indexOf(time)] = pickedTime;
                                 });
                               }
                             },
@@ -242,11 +252,11 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         const SizedBox(
                           width: 5,
                         ),
-                        if (alarmController.times.length > 1) ...[
+                        if (alarmController.timeList.length > 1) ...[
                           InkWell(
                             onTap: () {
                               setState(() {
-                                alarmController.times.remove(time);
+                                alarmController.timeList.remove(time);
                               });
                             },
                             child: Container(
@@ -277,7 +287,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         label: 'Adicionar outro horário',
                         onPressed: () {
                           setState(() {
-                            alarmController.times.add(const TimeOfDay(hour: 0, minute: 0));
+                            alarmController.timeList.add(const TimeOfDay(hour: 0, minute: 0));
                           });
                         },
                       ),
@@ -306,14 +316,14 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                             ...weekdayTypeList.map(
                               (WeekdayType weekdayType) => CustomMultiselectItemWidget(
                                 label: weekdayType.name,
-                                selected: alarmController.weekdayTypeIdList.contains(weekdayType.id),
+                                selected: alarmController.weekdayTypeList.map((WeekdayType element) => element.id).contains(weekdayType.id),
                                 onPressed: () {
                                   setState(() {
-                                    if (alarmController.weekdayTypeIdList.contains(weekdayType.id)) {
-                                      alarmController.weekdayTypeIdList.remove(weekdayType.id);
+                                    if (alarmController.weekdayTypeList.map((WeekdayType element) => element.id).contains(weekdayType.id)) {
+                                      alarmController.weekdayTypeList.removeWhere((WeekdayType element) => element.id == weekdayType.id);
                                       return;
                                     }
-                                    alarmController.weekdayTypeIdList.add(weekdayType.id);
+                                    alarmController.weekdayTypeList.add(weekdayType);
                                   });
                                 },
                               ),
@@ -333,12 +343,12 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         label: 'Todos os dias',
                         onPressed: () {
                           setState(() {
-                            if (alarmController.weekdayTypeIdList.length == 7) {
-                              alarmController.weekdayTypeIdList.clear();
+                            if (alarmController.weekdayTypeList.length == 7) {
+                              alarmController.weekdayTypeList.clear();
                               return;
                             }
-                            alarmController.weekdayTypeIdList.clear();
-                            alarmController.weekdayTypeIdList.addAll([1,2,3,4,5,6,7]);
+                            alarmController.weekdayTypeList.clear();
+                            alarmController.weekdayTypeList.addAll(weekdayTypeList);
                           });
                         },
                       ),
@@ -384,6 +394,18 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
         CustomButtonWidget(
           label: 'Continuar para confirmação',
           onPressed: () {
+            if ((alarmController.alarmType.value.id == 1) && alarmController.weekdayTypeList.isEmpty) {
+              setState(() {
+                hintText = 'Selecione os dias da semana para continuar';
+              });
+              return;
+            }
+            if ((alarmController.alarmType.value.id == 2) && alarmController.timeList.first.hour == 0) {
+              setState(() {
+                hintText = 'Escolha um intervalo de horas maior que 0 para continuar';
+              });
+              return;
+            }
             Get.toNamed('/alarm/review');
           },
         ),

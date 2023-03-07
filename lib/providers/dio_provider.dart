@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get_storage/get_storage.dart';
 
 class DioProvider {
   String baseUrl = '';
   final Dio _dio = Dio();
-  GetStorage box = GetStorage();
   bool isDanilo = false;
 
   DioProvider({required String baseUrl}) {

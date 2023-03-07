@@ -6,6 +6,7 @@ import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
+import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
@@ -58,7 +59,7 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
             current: 3,
             steps: [
               CustomStepperStep(
-                icon: Icons.medication_rounded,
+                icon: Icons.medication_outlined,
                 label: 'Remédio',
               ),
               CustomStepperStep(
@@ -93,7 +94,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
-    TextEditingController alarmObservationController = TextEditingController(text: '');
+    TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
     return Column(
       children: [
         Text(
@@ -153,7 +154,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      _getTimeValueLabel(alarmController.alarmType.value.id, alarmController.times),
+                      _getTimeValueLabel(alarmController.alarmType.value.id, alarmController.timeList),
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(
@@ -168,7 +169,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                     ),
                     if (alarmController.alarmType.value.id == 1) ...[
                       Text(
-                        _getWeekdayTypeLabel(alarmController.weekdayTypeIdList),
+                        _getWeekdayTypeLabel(alarmController.weekdayTypeList),
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       const SizedBox(
@@ -203,6 +204,45 @@ class AlarmReviewObservationView extends StatelessWidget {
               Get.toNamed('/alarm/finish');
               return;
             }
+            if (alarmController.status.isError) {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Ops!',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Expanded(
+                            child: CustomEmptyWidget(
+                              label: alarmController.status.errorMessage ?? 'Erro inesperado',
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          CustomTextButtonWidget(
+                            label: 'Voltar',
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+              return;
+            }
           },
         ),
         const SizedBox(
@@ -233,13 +273,12 @@ class AlarmReviewObservationView extends StatelessWidget {
     if (alarmTypeId == 2) return 'a partir do dia';
     return 'O tipo do alarme não foi selecionado';
   }
-  String _getWeekdayTypeLabel(List<int> weekdayTypeIdList) {
-    if (weekdayTypeIdList.length == 7) return 'Todos os dias';
+  String _getWeekdayTypeLabel(List<WeekdayType> weekdayTypeList) {
+    if (weekdayTypeList.length == 7) return 'Todos os dias';
     String label = '';
-    List<WeekdayType> weekdayTypeList = WeekdayType.getWeekdayTypeList();
-    for (int weekday in weekdayTypeIdList) {
+    for (WeekdayType weekday in weekdayTypeList) {
       String separator = label == '' ? '' : '-';
-      label = '$label $separator ${weekdayTypeList[weekday-1].name}';
+      label = '$label $separator ${weekday.name}';
     }
     return label;
   }

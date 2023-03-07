@@ -6,7 +6,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final String placeholder;
   final Icon? icon;
   final bool hideText;
-  final String? mask;
+  final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
   final Function(String)? onChanged;
   final bool readOnly;
@@ -21,7 +21,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.onChanged,
     this.hideText = false,
     this.validator,
-    this.mask,
+    this.keyboardType,
     this.onTap,
     this.readOnly = false
   });
@@ -47,6 +47,7 @@ class CustomTextFieldWidget extends StatelessWidget {
           style: Theme.of(context).textTheme.labelMedium,
           obscureText: hideText,
           validator: validator,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.only(left: 20),
             hintText: placeholder,
