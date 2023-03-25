@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 class CustomListItemWidget extends StatelessWidget {
   final String label;
   final Function() onPressed;
-  final String buttonLabel;
   final String? prefixLabel;
   final String? description;
+  final String? suffixLabel;
+  final Icon? icon;
 
   const CustomListItemWidget({
     super.key,
     required this.label,
     required this.onPressed,
-    required this.buttonLabel,
     this.prefixLabel,
     this.description,
+    this.suffixLabel,
+    this.icon,
   });
 
   @override
@@ -79,13 +81,21 @@ class CustomListItemWidget extends StatelessWidget {
                 const SizedBox(
                   width: 15,
                 ),
-                Text(
-                  buttonLabel,
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.titleSmall,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
+                if (suffixLabel != null) ... [
+                  Text(
+                    suffixLabel ?? '',
+                    textAlign: TextAlign.end,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                ],
+                if (icon != null) ... [
+                  icon ?? Container(),
+                ],
               ],
             ),
           ),

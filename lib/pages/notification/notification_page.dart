@@ -1,8 +1,11 @@
 
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/chat_controller.dart';
+import 'package:medicine/models/alarm_request.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
@@ -23,7 +26,10 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     bool hasBigPicture = widget.receivedAction.bigPictureImage != null;
+    Map<String, dynamic> payload = jsonDecode(widget.receivedAction.payload!['json'] ?? '{}');
+    Alarm alarm = Alarm.fromJson(payload);
     return CustomPageWidget(
+      hasBackgroundImage: true,
       body: Column(
         children: [
           const SizedBox(
@@ -57,7 +63,7 @@ class _NotificationPageState extends State<NotificationPage> {
               child: Column(
                 children: [
                   Text(
-                    '10:00',
+                    alarm.time ?? '',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -80,15 +86,13 @@ class _NotificationPageState extends State<NotificationPage> {
                           height: 10,
                         ),
                       ],
-                      if (widget.receivedAction.body?.isNotEmpty ?? false) ...[
-                        Text(
-                          widget.receivedAction.body!,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
+                      Text(
+                        alarm.name,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Stack(
                         children: [
                           if (hasBigPicture) ...[
@@ -111,7 +115,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
           ),
           CustomButtonWidget(
-            label: 'Já tomei',
+            label: 'Pronto, voltar para alarmes',
             onPressed: () {
               Get.offAllNamed('/home');
               return;

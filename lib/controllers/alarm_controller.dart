@@ -29,8 +29,8 @@ class AlarmController extends GetxController with StateMixin {
   var loading = false.obs;
 
   Future<void> save() async {
-    change([], status: RxStatus.loading());
     loading.value = true;
+    change([], status: RxStatus.loading());
     try {
       AlarmRequest request = AlarmRequest(
         alarm: Alarm(
@@ -63,8 +63,8 @@ class AlarmController extends GetxController with StateMixin {
   }
 
   Future<void> get() async {
-    change([], status: RxStatus.loading());
     loading.value = true;
+    change([], status: RxStatus.loading());
     try {
       String json = await StorageProvider.readJson('/alarms');
       if (json == '{}') {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
@@ -6,6 +8,7 @@ import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/models/alarm_request.dart';
+import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_calendar_carousel_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -76,44 +79,49 @@ class _HomePageState extends State<HomePage> {
             height: 20,
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Obx(
-                () => LazyLoadScrollView(
-                  isLoading: alarmController.loading.value,
-                  scrollOffset: 10,
-                  onEndOfPage: () => () {},
-                  child: RefreshIndicator(
-                    onRefresh: () => alarmController.get(),
-                    child: ListView(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        if (alarmController.status.isLoading) ...[
-                          CustomLoadingWidget(
-                            loading: alarmController.status.isLoading,
-                          ),
-                        ],
-                        if (alarmController.status.isEmpty) ...[
-                          const CustomEmptyWidget(
-                            label: 'Nenhum alarme',
-                          ),
-                        ],
-                        if (alarmController.status.isError) ...[
-                          CustomEmptyWidget(
-                            label: alarmController.status.errorMessage ?? 'Erro inesperado',
-                          ),
-                        ],
-                        if (alarmController.status.isSuccess) ...[
-                          ..._buildWidgetList(),
-                          const SizedBox(
-                            height: 100,
-                          ),
-                        ],
+            child: Obx(
+              () => LazyLoadScrollView(
+                isLoading: alarmController.loading.value,
+                scrollOffset: 10,
+                onEndOfPage: () => () {},
+                child: RefreshIndicator(
+                  onRefresh: () => alarmController.get(),
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      if (alarmController.status.isLoading) ...[
+                        CustomLoadingWidget(
+                          loading: alarmController.status.isLoading,
+                        ),
                       ],
-                    ),
+                      if (alarmController.status.isEmpty) ...[
+                        const CustomEmptyWidget(
+                          label: 'Nenhum alarme',
+                        ),
+                      ],
+                      if (alarmController.status.isError) ...[
+                        CustomEmptyWidget(
+                          label: alarmController.status.errorMessage ?? 'Erro inesperado',
+                        ),
+                      ],
+                      if (alarmController.status.isSuccess) ...[
+                        Text(
+                          'Toque em um alarme abaixo para tomar o remédio',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ..._buildWidgetList(),
+                        const SizedBox(
+                          height: 100,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
@@ -128,19 +136,38 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () => notificationController.createMedicineNotification(),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.mail_outline_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                      Text(
-                        'Testar alarme',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
+                  onTap: () => notificationController.createMedicineNotification(
+                    MedicineNotification(
+                      title: 'Hora de tomar seu remédio',
+                      image: 'asset://assets/img/medicine2.png',
+                      payload: {
+                        'json': jsonEncode(Alarm(
+                          name: 'Vitamina B12',
+                          alarmTypeId: 1,
+                          doseTypeId: 1,
+                          quantity: 15,
+                          time: '12:00',
+                          times: ['12:00'],
+                          weekdayTypeIds: [1,2,3,4,5,6,7],
+                        ).toJson()),
+                      }
+                    ),
+                  ),
+                  child: SizedBox(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.alarm_rounded,
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: 25,
+                        ),
+                        Text(
+                          'Testar alarme',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 InkWell(
@@ -159,19 +186,22 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => notificationController.createMedicineNotificationScheduled(),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                      Text(
-                        'Alarmar em 10s',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
+                  onTap: () {},
+                  child: SizedBox(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.settings_outlined,
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: 25,
+                        ),
+                        Text(
+                          'Opções',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -195,14 +225,33 @@ class _HomePageState extends State<HomePage> {
       int valueB = int.parse(b.time!.split(':')[0]);
       return valueA.compareTo(valueB);
     });
-    return list.map((Alarm alarm) => CustomListItemWidget(
-      label: alarm.name,
-      prefixLabel: alarm.time,
-      buttonLabel: 'Toque para tomar',
-      onPressed: () {
-        alarmController.select(alarm);
-      },
-    )).toList();
+    return list.map((Alarm alarm) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: CustomListItemWidget(
+          label: alarm.name,
+          prefixLabel: alarm.time,
+          icon: Icon(
+            Icons.chevron_right_rounded,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 20,
+          ),
+          onPressed: () async {
+            await notificationController.createMedicineNotification(
+              MedicineNotification(
+                title: 'Hora de tomar seu remédio',
+                body: alarm.name,
+                image: 'asset://assets/img/medicine1.png',
+                largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                payload: {
+                  'json': jsonEncode(alarm.toJson()),
+                },
+              ),
+            );
+          },
+        ),
+      );
+    }).toList();
   }
 
   void _optionsBottomSheet(BuildContext context) {

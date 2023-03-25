@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
@@ -93,6 +95,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   const AlarmReviewObservationView({super.key});
   @override
   Widget build(BuildContext context) {
+    final NotificationController notificationController = Get.find();
     final AlarmController alarmController = Get.find();
     TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
     return Column(
@@ -195,12 +198,26 @@ class AlarmReviewObservationView extends StatelessWidget {
           height: 20,
         ),
         CustomButtonWidget(
-          label: 'Confirmar e criar alarme para remédio',
+          label: 'Confirmar e criar alarme',
           onPressed: () async {
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
             await alarmController.save();
             if (alarmController.status.isSuccess) {
+              for (WeekdayType weekday in alarmController.weekdayTypeList) {
+                for (TimeOfDay time in alarmController.timeList) {
+                  await notificationController.createMedicineNotificationScheduled(
+                    MedicineNotification(
+                      weekday: weekday,
+                      time: time,
+                      title: 'Hora de tomar seu remédio',
+                      body: alarmController.name.value,
+                      image: 'asset://assets/img/medicine2.png',
+                      largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                    ),
+                  );
+                }
+              }
               Get.toNamed('/alarm/finish');
               return;
             }

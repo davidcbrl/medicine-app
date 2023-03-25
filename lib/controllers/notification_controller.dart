@@ -1,29 +1,26 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:get/get.dart';
+import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
 class NotificationController extends GetxController {
 
-  Future<void> createMedicineNotification() async {
+  Future<void> createMedicineNotification(MedicineNotification notification) async {
     await NotificationProvider.create(
       content: NotificationContent(
         id: -1,
         channelKey: 'alerts',
-        title: 'Tomar remédio agora!',
-        body: '25 gotas - Paracetamol 100mg',
-        bigPicture: 'asset://assets/img/medicine1.png',
+        title: notification.title,
+        body: notification.body,
+        bigPicture: notification.image,
+        largeIcon: notification.largeIcon,
         notificationLayout: NotificationLayout.BigPicture,
+        payload: notification.payload,
       ),
       actions: [
         NotificationActionButton(
           key: 'REDIRECT',
           label: 'Tomar agora',
-        ),
-        NotificationActionButton(
-          key: 'REPLY',
-          label: 'Adiar',
-          requireInputText: true,
-          actionType: ActionType.SilentAction,
         ),
         NotificationActionButton(
           key: 'DISMISS',
@@ -35,34 +32,37 @@ class NotificationController extends GetxController {
     );
   }
 
-  Future<void> createMedicineNotificationScheduled() async {
+  Future<void> createMedicineNotificationScheduled(MedicineNotification notification) async {
     await NotificationProvider.create(
       content: NotificationContent(
         id: -1,
         channelKey: 'alerts',
-        title: 'Tomar remédio agendado!',
-        body: '6/6 horas - Vitamina',
-        bigPicture: 'asset://assets/img/medicine2.png',
-        largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+        title: notification.title,
+        body: notification.body,
+        bigPicture: notification.image,
+        largeIcon: notification.largeIcon,
         notificationLayout: NotificationLayout.BigPicture,
         locked: true,
         wakeUpScreen: true,
         criticalAlert: true,
         autoDismissible: false,
-        payload: {
-          'notificationId': '1234567890'
-        },
+        payload: notification.payload,
       ),
+      schedule: notification.fixedDate != null
+        ? NotificationCalendar.fromDate(
+            date: notification.fixedDate!,
+          )
+        : NotificationCalendar(
+            hour: notification.time!.hour,
+            minute: notification.time!.minute,
+            weekday: notification.weekday!.id,
+            allowWhileIdle: true,
+            repeats: true,
+          ),
       actions: [
         NotificationActionButton(
           key: 'REDIRECT',
           label: 'Tomar agora',
-        ),
-        NotificationActionButton(
-          key: 'REPLY',
-          label: 'Adiar',
-          requireInputText: true,
-          actionType: ActionType.SilentAction,
         ),
         NotificationActionButton(
           key: 'DISMISS',
@@ -71,11 +71,6 @@ class NotificationController extends GetxController {
           isDangerousOption: true,
         ),
       ],
-      schedule: NotificationCalendar.fromDate(
-        date: DateTime.now().add(
-          const Duration(seconds: 10),
-        ),
-      ),
     );
   }
 
