@@ -132,7 +132,12 @@ class NotificationProvider {
     );
   }
 
-  static Future<void> cancel() async {
+  static Future<void> cancel({int? id}) async {
+    if (id != null) {
+      await AwesomeNotifications().cancelSchedule(id);
+      return;
+    }
+
     await AwesomeNotifications().cancelAllSchedules();
   }
 

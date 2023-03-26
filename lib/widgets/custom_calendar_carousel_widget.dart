@@ -16,13 +16,6 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          DateFormat('MMMM, yyyy').format(displayDate),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
@@ -51,12 +44,16 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
                         width: 5,
                       ),
                       Text(
-                        'Mês anterior',
+                        'Mês ant.',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
                 ),
+              ),
+              Text(
+                DateFormat('MMMM, yyyy').format(displayDate),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               InkWell(
                 onTap: () {
@@ -73,7 +70,7 @@ class _CustomCalendarCarouselWidgetState extends State<CustomCalendarCarouselWid
                   child: Row(
                     children: [
                       Text(
-                        'Próximo mês',
+                        'Próx. mês',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(

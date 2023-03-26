@@ -138,18 +138,22 @@ class _HomePageState extends State<HomePage> {
                 InkWell(
                   onTap: () => notificationController.createMedicineNotification(
                     MedicineNotification(
+                      id: 0,
                       title: 'Hora de tomar seu remédio',
-                      image: 'asset://assets/img/medicine2.png',
+                      image: 'asset://assets/img/background.png',
                       payload: {
-                        'json': jsonEncode(Alarm(
-                          name: 'Vitamina B12',
-                          alarmTypeId: 1,
-                          doseTypeId: 1,
-                          quantity: 15,
-                          time: '12:00',
-                          times: ['12:00'],
-                          weekdayTypeIds: [1,2,3,4,5,6,7],
-                        ).toJson()),
+                        'json': jsonEncode(
+                          Alarm(
+                            id: 0,
+                            name: 'Vitamina B12',
+                            alarmTypeId: 1,
+                            doseTypeId: 1,
+                            quantity: 15,
+                            time: '12:00',
+                            times: ['12:00'],
+                            weekdayTypeIds: [],
+                          ).toJson(),
+                        ),
                       }
                     ),
                   ),
@@ -171,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => _optionsBottomSheet(context),
+                  onTap: () => _newOptionsBottomSheet(context),
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -236,25 +240,166 @@ class _HomePageState extends State<HomePage> {
             color: Theme.of(context).colorScheme.secondary,
             size: 20,
           ),
-          onPressed: () async {
-            await notificationController.createMedicineNotification(
-              MedicineNotification(
-                title: 'Hora de tomar seu remédio',
-                body: alarm.name,
-                image: 'asset://assets/img/medicine1.png',
-                largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                payload: {
-                  'json': jsonEncode(alarm.toJson()),
-                },
-              ),
-            );
-          },
+          border: Border.all(
+            color: Theme.of(context).colorScheme.tertiary,
+            width: 1,
+          ),
+          onPressed: () => _alarmOptionsBottomSheet(context, alarm),
         ),
       );
     }).toList();
   }
 
-  void _optionsBottomSheet(BuildContext context) {
+  void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'O que deseja fazer?',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        CustomSelectItemWidget(
+                          label: 'Alarmar agora para tomar remédio',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () async {
+                            Get.back();
+                            await notificationController.createMedicineNotification(
+                              MedicineNotification(
+                                id: alarm.id ?? 0,
+                                title: 'Hora de tomar seu remédio',
+                                body: alarm.name,
+                                image: 'asset://assets/img/background.png',
+                                largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                                payload: {
+                                  'json': jsonEncode(alarm.toJson()),
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomSelectItemWidget(
+                          label: 'Editar alarme',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            alarmController.select(alarm);
+                            Get.back();
+                            Get.toNamed('/alarm/medicine');
+                          },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomSelectItemWidget(
+                          label: 'Remover alarme',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                            _removeConfirmationBottomSheet(context, alarm);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Voltar',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _removeConfirmationBottomSheet(BuildContext context, Alarm alarm) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Tem certeza que deseja remover esse alarme?',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: CustomSelectItemWidget(
+                      label: 'Sim',
+                      icon: Icon(
+                        Icons.chevron_right_rounded,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () async {
+                        await alarmController.remove(id: alarm.id);
+                        await notificationController.cancelScheduledNotifications(id: alarm.id);
+                        Get.back();
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Não, voltar',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _newOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

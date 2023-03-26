@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/models/alarm_request.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
@@ -206,14 +209,31 @@ class AlarmReviewObservationView extends StatelessWidget {
             if (alarmController.status.isSuccess) {
               for (WeekdayType weekday in alarmController.weekdayTypeList) {
                 for (TimeOfDay time in alarmController.timeList) {
+                  String decoratedTime = _decorateTime(time);
                   await notificationController.createMedicineNotificationScheduled(
                     MedicineNotification(
+                      id: alarmController.id.value,
                       weekday: weekday,
                       time: time,
                       title: 'Hora de tomar seu remédio',
                       body: alarmController.name.value,
-                      image: 'asset://assets/img/medicine2.png',
+                      image: 'asset://assets/img/backgroud.png',
                       largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                      payload: {
+                        'json': jsonEncode(
+                          Alarm(
+                            id: alarmController.id.value,
+                            name: alarmController.name.value,
+                            alarmTypeId: alarmController.alarmType.value.id,
+                            doseTypeId: alarmController.doseType.value.id,
+                            quantity: alarmController.quantity.value,
+                            time: decoratedTime,
+                            times: [decoratedTime],
+                            weekdayTypeIds: [weekday.id],
+                            image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
+                          ).toJson(),
+                        ),
+                      },
                     ),
                   );
                 }
@@ -298,5 +318,10 @@ class AlarmReviewObservationView extends StatelessWidget {
       label = '$label $separator ${weekday.name}';
     }
     return label;
+  }
+  String _decorateTime(TimeOfDay time) {
+    String hour = time.hour.toString().padLeft(2, '0');
+    String minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }

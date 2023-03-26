@@ -29,7 +29,6 @@ class _NotificationPageState extends State<NotificationPage> {
     Map<String, dynamic> payload = jsonDecode(widget.receivedAction.payload!['json'] ?? '{}');
     Alarm alarm = Alarm.fromJson(payload);
     return CustomPageWidget(
-      hasBackgroundImage: true,
       body: Column(
         children: [
           const SizedBox(
@@ -95,18 +94,43 @@ class _NotificationPageState extends State<NotificationPage> {
                       ),
                       Stack(
                         children: [
-                          if (hasBigPicture) ...[
+                          if (alarm.image != null) ...[
+                            FadeInImage(
+                              placeholder: const AssetImage('assets/img/placeholder.gif'),
+                              image: Image.memory(
+                                base64Decode(alarm.image ?? '')
+                              ).image,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                          if (alarm.image == null && hasBigPicture) ...[
                             FadeInImage(
                               placeholder: const AssetImage('assets/img/placeholder.gif'),
                               image: widget.receivedAction.bigPictureImage!,
                               height: MediaQuery.of(context).size.height * 0.4,
                               fit: BoxFit.cover,
                             ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                           ],
                         ],
                       ),
+                      if (alarm.observation != null) ...[
+                        Text(
+                          alarm.observation ?? '',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                     ],
                   ),
@@ -120,13 +144,6 @@ class _NotificationPageState extends State<NotificationPage> {
               Get.offAllNamed('/home');
               return;
             },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'A próxima dose será em 6 horas',
-            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(
             height: 10,

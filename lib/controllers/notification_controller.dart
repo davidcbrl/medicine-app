@@ -74,8 +74,8 @@ class NotificationController extends GetxController {
     );
   }
 
-  Future<void> cancelScheduledNotifications() async {
-    await NotificationProvider.cancel();
+  Future<void> cancelScheduledNotifications({int? id}) async {
+    await NotificationProvider.cancel(id: id);
   }
 
   Future<void> resetBadgeCounter() async {

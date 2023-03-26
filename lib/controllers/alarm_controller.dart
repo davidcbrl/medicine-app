@@ -34,7 +34,7 @@ class AlarmController extends GetxController with StateMixin {
     try {
       AlarmRequest request = AlarmRequest(
         alarm: Alarm(
-          id: id.value == 0 ? null : id.value,
+          id: id.value == 0 ? UniqueKey().hashCode : id.value,
           name: name.value,
           quantity: quantity.value,
           image: image.isNotEmpty ? image.value : null,
@@ -46,6 +46,9 @@ class AlarmController extends GetxController with StateMixin {
           observation: observation.isNotEmpty ? observation.value : null,
         ),
       );
+      if (request.alarm.id == id.value) {
+        alarmList.removeWhere((element) => element.id == id.value);
+      }
       alarmList.add(request.alarm);
       String json = jsonEncode(alarmList);
       bool result = await StorageProvider.writeJson('/alarms', json);
@@ -80,6 +83,26 @@ class AlarmController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao buscar alarmes'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> remove({int? id}) async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      alarmList.removeWhere((element) => element.id == id);
+      String json = jsonEncode(alarmList);
+      bool result = await StorageProvider.writeJson('/alarms', json);
+      if (!result) {
+        throw Exception('Falha ao remover alarme');
+      }
+      get();
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao remover alarme'));
       loading.value = false;
     }
   }

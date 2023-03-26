@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medicine/models/weekday_type.dart';
 
 class MedicineNotification {
+  int id;
   String title;
   String image;
   String? body;
@@ -12,6 +13,7 @@ class MedicineNotification {
   Map<String, String?>? payload;
 
   MedicineNotification({
+    required this.id,
     required this.title,
     required this.image,
     this.largeIcon,
@@ -23,6 +25,7 @@ class MedicineNotification {
   });
 
   MedicineNotification.fromJson(Map<String, dynamic> json):
+    id = json['id'],
     title = json['title'],
     image = json['image'],
     body = json['body'],
@@ -33,6 +36,7 @@ class MedicineNotification {
     payload = json['payload'];
 
   Map<String, dynamic> toJson() => {
+    'id': id,
     'title': title,
     'image': image,
     'body': body,
