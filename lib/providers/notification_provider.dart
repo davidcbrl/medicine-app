@@ -8,7 +8,7 @@ class NotificationProvider {
   static ReceivedAction? initialAction;
 
   static Future<void> init() async {
-    AwesomeNotifications().initialize(
+    await AwesomeNotifications().initialize(
       null,
       [
         NotificationChannel(
@@ -20,8 +20,9 @@ class NotificationProvider {
           defaultPrivacy: NotificationPrivacy.Private,
           defaultColor: const Color(0xFF662C91),
           ledColor: const Color(0xFF662C91),
+          defaultRingtoneType: DefaultRingtoneType.Alarm,
           playSound: true,
-          onlyAlertOnce: true,
+          onlyAlertOnce: false,
           locked: true,
           enableVibration: true,
           criticalAlerts: true,
@@ -63,25 +64,25 @@ class NotificationProvider {
     if (kDebugMode) print("Tarefa em segundo plano finalizada");
   }
 
-  static Future<bool> displayNotificationRationale() async {
+  static Future<bool> displayNotificationRationale({required BuildContext context}) async {
     bool userAuthorized = false;
-    BuildContext context = MyApp.navigatorKey.currentContext!;
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
             'Permitir notificações',
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
-              SizedBox(
+            children: [
+              const SizedBox(
                 height: 20
               ),
               Text(
-                'Permita que o aplicativo envie notificações',
+                'Para que os alarmes funcionem corretamente, permita o envio de notificações',
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
@@ -116,14 +117,128 @@ class NotificationProvider {
     return userAuthorized && await AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
+  static Future<List<NotificationPermission>> requestUserPermissions({
+    required BuildContext context,
+    required String? channelKey,
+    required List<NotificationPermission> permissionList,
+  }) async {
+    if (!await AwesomeNotifications().requestPermissionToSendNotifications()) {
+      return [];
+    }
+
+    List<NotificationPermission> permissionsAllowed = await AwesomeNotifications().checkPermissionList(
+      channelKey: channelKey,
+      permissions: permissionList,
+    );
+
+    if (permissionsAllowed.length == permissionList.length) {
+      return permissionsAllowed;
+    }
+
+    List<NotificationPermission> permissionsNeeded = permissionList.toSet().difference(
+      permissionsAllowed.toSet(),
+    ).toList();
+
+    List<NotificationPermission> lockedPermissions = await AwesomeNotifications().shouldShowRationaleToRequest(
+      channelKey: channelKey,
+      permissions: permissionsNeeded,
+    );
+
+    if (lockedPermissions.isEmpty) {
+      await AwesomeNotifications().requestPermissionToSendNotifications(
+        channelKey: channelKey,
+        permissions: permissionsNeeded,
+      );
+      permissionsAllowed = await AwesomeNotifications().checkPermissionList(
+        channelKey: channelKey,
+        permissions: permissionsNeeded,
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: Text(
+            'Permitir recursos extras',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Para que os alarmes funcionem corretamente, precisamos que permita os recursos a seguir:',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                lockedPermissions.join(', ').replaceAll('NotificationPermission.', ''),
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Não permitir',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              )
+            ),
+            TextButton(
+              onPressed: () async {
+                await AwesomeNotifications().requestPermissionToSendNotifications(
+                  channelKey: channelKey,
+                  permissions: lockedPermissions,
+                );
+                permissionsAllowed = await AwesomeNotifications().checkPermissionList(
+                  channelKey: channelKey,
+                  permissions: lockedPermissions,
+                );
+              },
+              child: Text(
+                'Permitir',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return permissionsAllowed;
+  }
+
   static Future<void> create({
     required NotificationContent content,
     List<NotificationActionButton>? actions,
     NotificationSchedule? schedule,
   }) async {
+    BuildContext context = MyApp.navigatorKey.currentContext!;
+
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-    if (!isAllowed) isAllowed = await displayNotificationRationale();
+    if (!isAllowed) isAllowed = await displayNotificationRationale(context: context);
     if (!isAllowed) return;
+
+    await requestUserPermissions(
+      context: context,
+      channelKey: 'alerts',
+      permissionList: [
+        NotificationPermission.Alert,
+        NotificationPermission.Sound,
+        // NotificationPermission.Badge,
+        NotificationPermission.Light,
+        NotificationPermission.Vibration,
+        NotificationPermission.PreciseAlarms,
+        // NotificationPermission.CriticalAlert,
+        // NotificationPermission.OverrideDnD,
+      ],
+    );
 
     await AwesomeNotifications().createNotification(
       content: content,

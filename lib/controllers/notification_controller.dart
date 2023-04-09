@@ -42,10 +42,13 @@ class NotificationController extends GetxController {
         bigPicture: notification.image,
         largeIcon: notification.largeIcon,
         notificationLayout: NotificationLayout.BigPicture,
+        category: NotificationCategory.Alarm,
         locked: true,
         wakeUpScreen: true,
         criticalAlert: true,
         autoDismissible: false,
+        displayOnForeground: true,
+        displayOnBackground: true,
         payload: notification.payload,
       ),
       schedule: notification.fixedDate != null
