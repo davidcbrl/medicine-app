@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomStepperWidget extends StatelessWidget {
@@ -23,7 +24,7 @@ class CustomStepperWidget extends StatelessWidget {
                 children: [
                   if (index > 0) ...[
                     Container(
-                      width: MediaQuery.of(context).size.width / steps.length,
+                      width: (kIsWeb ? 360 : MediaQuery.of(context).size.width) / steps.length,
                       height: 2.5,
                       color: (index + 1) <= current ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
                     ),
