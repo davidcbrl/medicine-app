@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomPageWidget extends StatelessWidget {
@@ -34,7 +35,7 @@ class CustomPageWidget extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: Image.asset(
                     'assets/img/background.png',
-                    width: MediaQuery.of(context).size.width * 0.6,
+                    width: (kIsWeb ? 400 : MediaQuery.of(context).size.width) * 0.6,
                   ),
                 ),
               ),

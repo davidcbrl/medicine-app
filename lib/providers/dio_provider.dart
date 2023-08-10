@@ -2,15 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class DioProvider {
-  String baseUrl = '';
   final Dio _dio = Dio();
+  String baseUrl = '';
   bool isDanilo = false;
 
   DioProvider({required String baseUrl}) {
     _dio.options = BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: 10000,
-      receiveTimeout: 10000,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
     );
     _setupInterceptor();
   }
@@ -41,7 +41,7 @@ class DioProvider {
     }, onResponse: (response, handler) {
       if (kDebugMode) print('RESPONSE[${response.statusCode}]');
       return handler.next(response);
-    }, onError: (DioError error, handler) {
+    }, onError: (DioException error, handler) {
       if (kDebugMode) print('ERROR\n[\n$error]');
       return handler.next(error);
     }));

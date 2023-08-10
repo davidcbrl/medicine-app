@@ -9,7 +9,7 @@ class ApiProvider {
     try {
       Response response = await DioProvider(baseUrl: baseUrl).get(path);
       return response.data;
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (kDebugMode) print(error.response);
       return throw Exception('4XX');
     } catch (error) {
@@ -21,7 +21,7 @@ class ApiProvider {
     try {
       Response response = await DioProvider(baseUrl: baseUrl).put(path, data);
       return response.data;
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (kDebugMode) print(error.response);
       return throw Exception('4XX');
     } catch (error) {
@@ -33,7 +33,7 @@ class ApiProvider {
     try {
       Response response = await DioProvider(baseUrl: baseUrl).post(path, data);
       return response.data;
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       if (kDebugMode) print(error.response);
       return throw Exception('4XX');
     } catch (error) {
