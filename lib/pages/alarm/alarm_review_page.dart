@@ -184,7 +184,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                     ],
                     if (alarmController.alarmType.value.id == 2) ...[
                       Text(
-                        DateFormat('dd MMMM yyyy').format(alarmController.startDate.value),
+                        DateFormat('dd MMMM yyyy').format(alarmController.startDateTime.value),
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       const SizedBox(
@@ -241,43 +241,8 @@ class AlarmReviewObservationView extends StatelessWidget {
               Get.toNamed('/alarm/finish');
               return;
             }
-            if (alarmController.status.isError) {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Ops!',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Expanded(
-                            child: CustomEmptyWidget(
-                              label: alarmController.status.errorMessage ?? 'Erro inesperado',
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          CustomTextButtonWidget(
-                            label: 'Voltar',
-                            onPressed: () {
-                              Get.back();
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
+            if (alarmController.status.isError && context.mounted) {
+              _alarmErrorBottomSheet(context, alarmController);
               return;
             }
           },
@@ -292,6 +257,45 @@ class AlarmReviewObservationView extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Ops!',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: CustomEmptyWidget(
+                    label: alarmController.status.errorMessage ?? 'Erro inesperado',
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Voltar',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
   String _getTimeValueLabel(int alarmTypeId, List<TimeOfDay> times) {

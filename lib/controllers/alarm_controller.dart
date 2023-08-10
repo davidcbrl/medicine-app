@@ -17,12 +17,12 @@ class AlarmController extends GetxController with StateMixin {
   var id = 0.obs;
   var name = ''.obs;
   var quantity = 0.obs;
-  var doseType = DoseType(id: 1, name: 'Gotas').obs;
   var image = ''.obs;
+  var doseType = DoseType(id: 1, name: 'Gotas').obs;
   var alarmType = AlarmType(id: 1, name: 'Horário fixo').obs;
   var timeList = <TimeOfDay>[const TimeOfDay(hour: 0, minute: 0)].obs;
   var weekdayTypeList = <WeekdayType>[].obs;
-  var startDate = DateTime.now().obs;
+  var startDateTime = DateTime.now().obs;
   var observation = ''.obs;
   var alarmList = <Alarm>[].obs;
 
@@ -42,7 +42,7 @@ class AlarmController extends GetxController with StateMixin {
           alarmTypeId: alarmType.value.id,
           times: timeList.map((TimeOfDay element) => _decorateTime(element)).toList(),
           weekdayTypeIds: alarmType.value.id == 1 ? weekdayTypeList.map((WeekdayType element) => element.id).toList() : null,
-          startDate: alarmType.value.id == 2 ? startDate.value : null,
+          startDate: alarmType.value.id == 2 ? startDateTime.value.toString() : null,
           observation: observation.isNotEmpty ? observation.value : null,
         ),
       );
@@ -126,7 +126,7 @@ class AlarmController extends GetxController with StateMixin {
     weekdayTypeList.value = WeekdayType.getWeekdayTypeList().where(
       (WeekdayType element) => alarm.weekdayTypeIds!.contains(element.id),
     ).toList();
-    startDate.value = alarm.startDate ?? DateTime.now();
+    startDateTime.value = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
     observation.value = alarm.observation ?? '';
   }
 
@@ -139,7 +139,7 @@ class AlarmController extends GetxController with StateMixin {
     alarmType = AlarmType(id: 1, name: 'Horário fixo').obs;
     timeList = <TimeOfDay>[const TimeOfDay(hour: 0, minute: 0)].obs;
     weekdayTypeList = <WeekdayType>[].obs;
-    startDate = DateTime.now().obs;
+    startDateTime = DateTime.now().obs;
     observation = ''.obs;
   }
 

@@ -34,7 +34,7 @@ class CustomLoadingWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   text ?? '',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
           ],

@@ -153,7 +153,7 @@ class NotificationProvider {
         channelKey: channelKey,
         permissions: permissionsNeeded,
       );
-    } else {
+    } else if (context.mounted) {
       await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -222,23 +222,25 @@ class NotificationProvider {
     BuildContext context = MyApp.navigatorKey.currentContext!;
 
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-    if (!isAllowed) isAllowed = await displayNotificationRationale(context: context);
+    if (!isAllowed && context.mounted) isAllowed = await displayNotificationRationale(context: context);
     if (!isAllowed) return;
 
-    await requestUserPermissions(
-      context: context,
-      channelKey: 'alerts',
-      permissionList: [
-        NotificationPermission.Alert,
-        NotificationPermission.Sound,
-        // NotificationPermission.Badge,
-        NotificationPermission.Light,
-        NotificationPermission.Vibration,
-        NotificationPermission.PreciseAlarms,
-        // NotificationPermission.CriticalAlert,
-        // NotificationPermission.OverrideDnD,
-      ],
-    );
+    if (context.mounted) {
+      await requestUserPermissions(
+        context: context,
+        channelKey: 'alerts',
+        permissionList: [
+          NotificationPermission.Alert,
+          NotificationPermission.Sound,
+          // NotificationPermission.Badge,
+          NotificationPermission.Light,
+          NotificationPermission.Vibration,
+          NotificationPermission.PreciseAlarms,
+          // NotificationPermission.CriticalAlert,
+          // NotificationPermission.OverrideDnD,
+        ],
+      );
+    }
 
     await AwesomeNotifications().createNotification(
       content: content,

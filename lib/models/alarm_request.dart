@@ -8,7 +8,7 @@ class Alarm {
   String? time;
   List<String> times;
   List<int>? weekdayTypeIds;
-  DateTime? startDate;
+  String? startDate;
   String? observation;
 
   Alarm({
@@ -33,8 +33,8 @@ class Alarm {
     doseTypeId = json['doseTypeId'],
     alarmTypeId = json['alarmTypeId'],
     time = json['time'],
-    times = json['times'].cast<String>(),
-    weekdayTypeIds = json['weekdayTypeIds'].cast<int>(),
+    times = json['times']?.cast<String>(),
+    weekdayTypeIds = json['weekdayTypeIds']?.cast<int>(),
     startDate = json['startDate'],
     observation = json['observation'];
 
