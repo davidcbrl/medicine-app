@@ -55,7 +55,7 @@ class AlarmController extends GetxController with StateMixin {
       if (!result) {
         throw Exception('Falha ao salvar alarme');
       }
-      get();
+      get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {
@@ -65,7 +65,7 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> get() async {
+  Future<void> get({DateTime? selectedDate}) async {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
@@ -76,8 +76,28 @@ class AlarmController extends GetxController with StateMixin {
         loading.value = false;
         return;
       }
-      List<dynamic> alo = jsonDecode(json);
-      alarmList.value = alo.map((element) => Alarm.fromJson(element)).toList();
+      List<dynamic> list = jsonDecode(json);
+      alarmList.value = list.map((element) => Alarm.fromJson(element)).toList();
+      if (selectedDate != null) {
+        alarmList.value = alarmList.where(
+          (Alarm alarm) {
+            if (alarm.alarmTypeId == 1) {
+              return alarm.weekdayTypeIds!.contains(selectedDate.weekday);
+            }
+            if (alarm.alarmTypeId == 2) {
+              DateTime start = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
+              return start.isAtSameMomentAs(selectedDate) || start.isBefore(selectedDate);
+            }
+            return false;
+          },
+        ).toList();
+      }
+      if (alarmList.isEmpty) {
+        alarmList.value = [];
+        change([], status: RxStatus.empty());
+        loading.value = false;
+        return;
+      }
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {

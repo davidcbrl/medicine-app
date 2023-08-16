@@ -190,6 +190,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_calendar_carousel:
+    dependency: "direct main"
+    description:
+      name: flutter_calendar_carousel
+      sha256: da198154b3a7254757ead8d40eee4f2fa53d4500fe8a226cccb951e8763f988b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
   flutter_launcher_icons:
     dependency: "direct main"
     description:

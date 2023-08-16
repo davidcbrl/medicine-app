@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
@@ -10,7 +12,6 @@ import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/models/alarm_request.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
-import 'package:medicine/widgets/custom_calendar_carousel_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_list_item_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -32,9 +33,11 @@ class _HomePageState extends State<HomePage> {
   AlarmController alarmController = Get.put(AlarmController(), permanent: true);
   final ScrollController _scrollController = ScrollController();
 
+  DateTime selectedDate = DateTime.now();
+
   @override
   void initState() {
-    alarmController.get();
+    alarmController.get(selectedDate: selectedDate);
     super.initState();
   }
 
@@ -72,11 +75,64 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
-          const CustomCalendarCarouselWidget(),
+          CalendarCarousel<Event>(
+            height: 140,
+            locale: 'pt-br',
+            showHeader: true,
+            headerMargin: EdgeInsets.zero,
+            headerTextStyle: Theme.of(context).textTheme.bodyMedium,
+            showHeaderButton: true,
+            leftButtonIcon: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Icon(
+                Icons.chevron_left_rounded,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+            rightButtonIcon: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Icon(
+                Icons.chevron_right_rounded,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+            weekFormat: true,
+            daysHaveCircularBorder: true,
+            customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
+            showWeekDays: true,
+            weekDayFormat: WeekdayFormat.short,
+            weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,
+            weekendTextStyle: Theme.of(context).textTheme.labelMedium,
+            daysTextStyle: Theme.of(context).textTheme.labelMedium,
+            dayButtonColor: Theme.of(context).colorScheme.tertiary,
+            todayTextStyle: Theme.of(context).textTheme.titleSmall,
+            todayButtonColor: Theme.of(context).colorScheme.tertiary,
+            todayBorderColor: Theme.of(context).colorScheme.primary,
+            selectedDayTextStyle: Theme.of(context).textTheme.displayMedium,
+            selectedDayButtonColor: Theme.of(context).colorScheme.primary,
+            selectedDayBorderColor: Theme.of(context).colorScheme.primary,
+            minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
+            maxSelectedDate: selectedDate.add(const Duration(days: 30)),
+            selectedDateTime: selectedDate,
+            onDayPressed: (DateTime date, List<Event> events) async {
+              setState(() {
+                selectedDate = date;
+              });
+              await alarmController.get(selectedDate: selectedDate);
+            },
+          ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           Expanded(
             child: Obx(
@@ -85,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                 scrollOffset: 10,
                 onEndOfPage: () => () {},
                 child: RefreshIndicator(
-                  onRefresh: () => alarmController.get(),
+                  onRefresh: () => alarmController.get(selectedDate: selectedDate),
                   child: ListView(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
