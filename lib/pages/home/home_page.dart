@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
             height: 10,
           ),
           CalendarCarousel<Event>(
-            height: 140,
+            height: MediaQuery.of(context).size.height * 0.15,
             locale: 'pt-br',
             showHeader: true,
             headerMargin: EdgeInsets.zero,
@@ -108,7 +108,6 @@ class _HomePageState extends State<HomePage> {
             ),
             weekFormat: true,
             daysHaveCircularBorder: true,
-            customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
             showWeekDays: true,
             weekDayFormat: WeekdayFormat.short,
             weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,

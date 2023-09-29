@@ -15,17 +15,17 @@ class NotificationProvider {
           channelKey: 'alerts',
           channelName: 'Alertas',
           channelDescription: 'Alertas',
-          groupAlertBehavior: GroupAlertBehavior.Children,
+          groupAlertBehavior: GroupAlertBehavior.All,
           importance: NotificationImportance.High,
-          defaultPrivacy: NotificationPrivacy.Private,
+          // defaultPrivacy: NotificationPrivacy.Private,
           defaultColor: const Color(0xFF662C91),
           ledColor: const Color(0xFF662C91),
           defaultRingtoneType: DefaultRingtoneType.Alarm,
           playSound: true,
-          onlyAlertOnce: false,
-          locked: true,
+          // onlyAlertOnce: true,
+          // locked: true,
           enableVibration: true,
-          criticalAlerts: true,
+          // criticalAlerts: true,
         ),
       ],
       debug: true,
@@ -66,6 +66,45 @@ class NotificationProvider {
 
   static Future<bool> displayNotificationRationale({required BuildContext context}) async {
     bool userAuthorized = false;
+    if (kIsWeb) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'Atenção',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 20
+                ),
+                Text(
+                  'As notificações não estão disponíveis na versão de navegador, somente via aplicativo.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return userAuthorized;
+    }
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -156,7 +195,7 @@ class NotificationProvider {
     } else if (context.mounted) {
       await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (BuildContext ctx) => AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.background,
           title: Text(
             'Permitir recursos extras',
@@ -181,7 +220,9 @@ class NotificationProvider {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
               child: Text(
                 'Não permitir',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -191,6 +232,7 @@ class NotificationProvider {
             ),
             TextButton(
               onPressed: () async {
+                Navigator.of(ctx).pop();
                 await AwesomeNotifications().requestPermissionToSendNotifications(
                   channelKey: channelKey,
                   permissions: lockedPermissions,

@@ -217,7 +217,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                       time: time,
                       title: 'Hora de tomar seu remédio',
                       body: alarmController.name.value,
-                      image: 'asset://assets/img/backgroud.png',
+                      image: 'asset://assets/img/background.png',
                       largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
                       payload: {
                         'json': jsonEncode(
