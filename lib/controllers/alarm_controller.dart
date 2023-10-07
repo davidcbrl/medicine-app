@@ -51,7 +51,7 @@ class AlarmController extends GetxController with StateMixin {
       }
       alarmList.add(request.alarm);
       String json = jsonEncode(alarmList);
-      bool result = await StorageProvider.writeJson('/alarms', json);
+      bool result = await StorageProvider.writeJson(key: '/alarms', json: json);
       if (!result) {
         throw Exception('Falha ao salvar alarme');
       }
@@ -69,7 +69,7 @@ class AlarmController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      String json = await StorageProvider.readJson('/alarms');
+      String json = await StorageProvider.readJson(key: '/alarms');
       if (json == '{}') {
         alarmList.value = [];
         change([], status: RxStatus.empty());
@@ -113,7 +113,7 @@ class AlarmController extends GetxController with StateMixin {
     try {
       alarmList.removeWhere((element) => element.id == id);
       String json = jsonEncode(alarmList);
-      bool result = await StorageProvider.writeJson('/alarms', json);
+      bool result = await StorageProvider.writeJson(key: '/alarms', json: json);
       if (!result) {
         throw Exception('Falha ao remover alarme');
       }

@@ -6,6 +6,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   NotificationController notificationController = Get.put(NotificationController(), permanent: true);
   ChatController chatController = Get.put(ChatController(), permanent: true);
   AlarmController alarmController = Get.put(AlarmController(), permanent: true);
+  AuthController authController = Get.put(AuthController(), permanent: true);
   final ScrollController _scrollController = ScrollController();
 
   DateTime selectedDate = DateTime.now();
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> {
             height: 10,
           ),
           CalendarCarousel<Event>(
-            height: MediaQuery.of(context).size.height * 0.15,
+            height: MediaQuery.of(context).size.height * 0.175,
             locale: 'pt-br',
             showHeader: true,
             headerMargin: EdgeInsets.zero,
@@ -245,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => _settingsBottomSheet(context),
                   child: SizedBox(
                     width: 100,
                     child: Column(
@@ -485,6 +487,58 @@ class _HomePageState extends State<HomePage> {
                         alarmController.clear();
                         Get.back();
                         Get.toNamed('/alarm/medicine');
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Voltar',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _settingsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Opções',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: CustomSelectItemWidget(
+                      label: 'Sair do app',
+                      icon: Icon(
+                        Icons.chevron_right_rounded,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        authController.logout();
+                        Get.back();
+                        Get.offAllNamed('/auth');
                       },
                     ),
                   ),

@@ -2,6 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:medicine/pages/auth/auth_page.dart';
 import 'package:medicine/pages/home/home_page.dart';
 import 'package:medicine/pages/notification/notification_page.dart';
 import 'package:medicine/pages/alarm/alarm_info_page.dart';
@@ -11,6 +12,7 @@ import 'package:medicine/pages/alarm/alarm_review_page.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
 class RouteController extends GetxController {
+  static const String authRoute = '/auth';
   static const String homeRoute = '/home';
   static const String notificationRoute = '/notification';
   static const String alarmMedicineRoute = '/alarm/medicine';
@@ -22,7 +24,7 @@ class RouteController extends GetxController {
     List<Route<dynamic>> pageStack = [];
     pageStack.add(
       MaterialPageRoute(
-        builder: (_) => const HomePage(),
+        builder: (_) => const AuthPage(),
       ),
     );
     if (initialRouteName == notificationRoute && NotificationProvider.initialAction != null) {
@@ -39,6 +41,10 @@ class RouteController extends GetxController {
 
   Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case authRoute:
+        return MaterialPageRoute(
+          builder: (_) => const AuthPage(),
+        );
       case homeRoute:
         return MaterialPageRoute(
           builder: (_) => const HomePage(),

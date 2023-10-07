@@ -298,6 +298,7 @@ class AlarmReviewObservationView extends StatelessWidget {
       },
     );
   }
+
   String _getTimeValueLabel(int alarmTypeId, List<TimeOfDay> times) {
     String label = '';
     for (TimeOfDay time in times) {
