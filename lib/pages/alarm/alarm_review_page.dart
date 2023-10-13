@@ -238,7 +238,9 @@ class AlarmReviewObservationView extends StatelessWidget {
                   );
                 }
               }
-              Get.toNamed('/alarm/finish');
+              if (context.mounted) {
+                _alarmSuccessBottomSheet(context, alarmController);
+              }
               return;
             }
             if (alarmController.status.isError && context.mounted) {
@@ -257,6 +259,56 @@ class AlarmReviewObservationView extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  void _alarmSuccessBottomSheet(BuildContext context, AlarmController authController) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Alarme para remédio criado com sucesso!',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Você receberá uma notificação quando estiver na hora de tomar o remédio, mas você também pode visualizar os alarmes na tela inicial.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Image.asset(
+                        'assets/img/success.gif',
+                        width: 150,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Ok, voltar para o início',
+                  onPressed: () {
+                    Get.offAllNamed('/home');
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

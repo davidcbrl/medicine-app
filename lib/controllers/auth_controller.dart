@@ -6,8 +6,11 @@ import 'package:medicine/models/auth.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class AuthController extends GetxController with StateMixin {
+  var name = ''.obs;
+  var phone = ''.obs;
   var email = ''.obs;
   var password = ''.obs;
+  var confirmation = ''.obs;
 
   var loading = false.obs;
 
@@ -51,6 +54,19 @@ class AuthController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao redefinir a senha'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> register() async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao criar nova conta'));
       loading.value = false;
     }
   }

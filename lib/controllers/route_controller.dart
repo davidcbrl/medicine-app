@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/pages/auth/auth_page.dart';
 import 'package:medicine/pages/auth/auth_password_page.dart';
+import 'package:medicine/pages/auth/auth_register_page.dart';
 import 'package:medicine/pages/home/home_page.dart';
 import 'package:medicine/pages/notification/notification_page.dart';
 import 'package:medicine/pages/alarm/alarm_info_page.dart';
-import 'package:medicine/pages/alarm/alarm_finish_page.dart';
 import 'package:medicine/pages/alarm/alarm_medicine_page.dart';
 import 'package:medicine/pages/alarm/alarm_review_page.dart';
 import 'package:medicine/providers/notification_provider.dart';
@@ -15,12 +15,12 @@ import 'package:medicine/providers/notification_provider.dart';
 class RouteController extends GetxController {
   static const String authRoute = '/auth';
   static const String authPasswordRoute = '/auth/password';
+  static const String authRegisterRoute = '/auth/register';
   static const String homeRoute = '/home';
   static const String notificationRoute = '/notification';
   static const String alarmMedicineRoute = '/alarm/medicine';
   static const String alarmInfoRoute = '/alarm/info';
   static const String alarmReviewRoute = '/alarm/review';
-  static const String alarmFinishRoute = '/alarm/finish';
 
   List<Route<dynamic>> onGenerateInitialRoutes({required String initialRouteName, bool isAuthenticated = false}) {
     List<Route<dynamic>> pageStack = [];
@@ -51,6 +51,10 @@ class RouteController extends GetxController {
         return MaterialPageRoute(
           builder: (_) => const AuthPasswordPage(),
         );
+      case authRegisterRoute:
+        return MaterialPageRoute(
+          builder: (_) => const AuthRegisterPage(),
+        );
       case homeRoute:
         return MaterialPageRoute(
           builder: (_) => const HomePage(),
@@ -75,11 +79,6 @@ class RouteController extends GetxController {
       case alarmReviewRoute:
         return CustomMaterialPageRoute(
           builder: (_) => const AlarmReviewPage(),
-          settings: settings,
-        );
-      case alarmFinishRoute:
-        return CustomMaterialPageRoute(
-          builder: (_) => const AlarmFinishPage(),
           settings: settings,
         );
     }

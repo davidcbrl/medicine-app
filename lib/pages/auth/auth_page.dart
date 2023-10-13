@@ -39,7 +39,14 @@ class _AuthPageState extends State<AuthPage> {
                 height: 80,
               ),
               const SizedBox(
-                height: 40,
+                height: 20,
+              ),
+              Text(
+                'Seja bem vindo!',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(
+                height: 20,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -116,6 +123,20 @@ class _AuthPageState extends State<AuthPage> {
                       return;
                     }
                   }
+                },
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              Text(
+                'Não possui conta?',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              CustomTextButtonWidget(
+                label: 'Cadastre-se',
+                style: Theme.of(context).textTheme.titleSmall,
+                onPressed: () {
+                  Get.toNamed('/auth/register');
                 },
               ),
             ],
