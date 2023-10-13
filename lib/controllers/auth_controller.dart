@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:medicine/models/auth_request.dart';
+import 'package:medicine/models/auth.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class AuthController extends GetxController with StateMixin {
@@ -15,12 +15,6 @@ class AuthController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      AuthRequest request = AuthRequest(
-        auth: Auth(
-          email: email.value,
-          password: password.value,
-        ),
-      );
       String json = jsonEncode(AuthResponse(token: 's3cr3t').toJson());
       StorageProvider.writeJson(key: '/auth/login', json: json);
       change([], status: RxStatus.success());
@@ -44,6 +38,19 @@ class AuthController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao realizar logout'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> reset() async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao redefinir a senha'));
       loading.value = false;
     }
   }

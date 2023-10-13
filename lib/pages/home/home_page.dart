@@ -10,7 +10,7 @@ import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
-import 'package:medicine/models/alarm_request.dart';
+import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';

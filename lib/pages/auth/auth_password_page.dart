@@ -8,21 +8,20 @@ import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_text_button_widget.dart';
 import 'package:medicine/widgets/custom_text_field_widget.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+class AuthPasswordPage extends StatefulWidget {
+  const AuthPasswordPage({super.key});
 
   @override
-  State<AuthPage> createState() => _AuthPageState();
+  State<AuthPasswordPage> createState() => _AuthPasswordPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthPasswordPageState extends State<AuthPasswordPage> {
   final AuthController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
-    TextEditingController passwordController = TextEditingController(text: authController.password.value);
     return CustomPageWidget(
       body: Obx(
         () => authController.loading.value
@@ -54,41 +53,9 @@ class _AuthPageState extends State<AuthPage> {
                           placeholder: 'tio@ben.com',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Escreva o seu e-mail para entrar';
+                              return 'Escreva o seu e-mail para receber sua nova senha';
                             }
                             return null;
-                          },
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              formKey.currentState!.validate();
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        CustomTextFieldWidget(
-                          controller: passwordController,
-                          label: 'Qual é a sua senha?',
-                          placeholder: '*****',
-                          hideText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Escreva a sua senha para entrar';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              formKey.currentState!.validate();
-                            }
-                          },
-                        ),
-                        CustomTextButtonWidget(
-                          label: 'Esqueci minha senha',
-                          style: Theme.of(context).textTheme.titleSmall,
-                          onPressed: () {
-                            Get.toNamed('/auth/password');
                           },
                         ),
                       ],
@@ -100,22 +67,28 @@ class _AuthPageState extends State<AuthPage> {
                 height: 40,
               ),
               CustomButtonWidget(
-                label: 'Entrar',
+                label: 'Receber nova senha',
                 onPressed: () async {
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (formKey.currentState!.validate()) {
                     authController.email.value = emailController.text;
-                    authController.password.value = passwordController.text;
-                    await authController.login();
+                    await authController.reset();
                     if (authController.status.isSuccess) {
-                      Get.offAllNamed('/home');
+                      Get.back();
                       return;
                     }
                     if (authController.status.isError && context.mounted) {
-                      _authErrorBottomSheet(context, authController);
+                      _passwordResetErrorBottomSheet(context, authController);
                       return;
                     }
                   }
+                },
+              ),
+              CustomTextButtonWidget(
+                label: 'Lembrei minha senha, voltar',
+                style: Theme.of(context).textTheme.titleSmall,
+                onPressed: () {
+                  Get.back();
                 },
               ),
             ],
@@ -124,7 +97,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _authErrorBottomSheet(BuildContext context, AuthController authController) {
+  void _passwordResetErrorBottomSheet(BuildContext context, AuthController authController) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

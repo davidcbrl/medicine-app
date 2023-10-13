@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medicine/models/alarm_request.dart';
+import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/alarm_type.dart';
 import 'package:medicine/models/dose_type.dart';
 import 'package:medicine/models/weekday_type.dart';
