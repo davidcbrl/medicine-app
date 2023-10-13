@@ -20,11 +20,11 @@ class RouteController extends GetxController {
   static const String alarmReviewRoute = '/alarm/review';
   static const String alarmFinishRoute = '/alarm/finish';
 
-  List<Route<dynamic>> onGenerateInitialRoutes(String initialRouteName) {
+  List<Route<dynamic>> onGenerateInitialRoutes({required String initialRouteName, bool isAuthenticated = false}) {
     List<Route<dynamic>> pageStack = [];
     pageStack.add(
       MaterialPageRoute(
-        builder: (_) => const AuthPage(),
+        builder: (_) => !isAuthenticated ? const AuthPage() : const HomePage(),
       ),
     );
     if (initialRouteName == notificationRoute && NotificationProvider.initialAction != null) {
@@ -39,7 +39,7 @@ class RouteController extends GetxController {
     return pageStack;
   }
 
-  Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  Route<dynamic>? onGenerateRoute({required RouteSettings settings}) {
     switch (settings.name) {
       case authRoute:
         return MaterialPageRoute(

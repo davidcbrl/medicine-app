@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
 
 void main() async {
   await NotificationProvider.init();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -19,7 +22,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final RouteController _routeController = RouteController();
+  final RouteController _routeController = Get.put(RouteController(), permanent: true);
+  final AuthController _authController = Get.put(AuthController(), permanent: true);
 
   @override
   void initState() {
@@ -80,8 +84,13 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       navigatorKey: MyApp.navigatorKey,
-      onGenerateInitialRoutes: _routeController.onGenerateInitialRoutes,
-      onGenerateRoute: _routeController.onGenerateRoute,
+      onGenerateInitialRoutes: (initialRouteName) => _routeController.onGenerateInitialRoutes(
+        initialRouteName: initialRouteName,
+        isAuthenticated: _authController.isAuthenticated(),
+      ),
+      onGenerateRoute: (settings) => _routeController.onGenerateRoute(
+        settings: settings,
+      ),
     );
   }
 

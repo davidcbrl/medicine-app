@@ -16,7 +16,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final AuthController authController = Get.put(AuthController(), permanent: true);
+  final AuthController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {

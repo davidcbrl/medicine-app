@@ -1,19 +1,19 @@
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 class StorageProvider {
-  static Future<bool> writeJson({required String key, required String json}) async {
-    final preferences = await SharedPreferences.getInstance();
-    return preferences.setString(key, json);
+  static void writeJson({required String key, required String json}) {
+    GetStorage storage = GetStorage();
+    storage.write(key, json);
   }
 
-  static Future<String> readJson({required String key}) async {
-    final preferences = await SharedPreferences.getInstance();
-    return preferences.getString(key) ?? '{}';
+  static String readJson({required String key}) {
+    GetStorage storage = GetStorage();
+    return storage.read(key) ?? '{}';
   }
 
-  static Future<bool> removeJson({required String key}) async {
-    final preferences = await SharedPreferences.getInstance();
-    return preferences.remove(key);
+  static void removeJson({required String key}) {
+    GetStorage storage = GetStorage();
+    storage.remove(key);
   }
 }

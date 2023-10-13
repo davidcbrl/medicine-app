@@ -38,7 +38,7 @@ class AlarmFinishPage extends StatelessWidget {
           CustomButtonWidget(
             label: 'Voltar para o início',
             onPressed: () {
-              Get.offAllNamed('/auth');
+              Get.offAllNamed('/home');
             },
           ),
         ],

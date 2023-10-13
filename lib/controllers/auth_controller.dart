@@ -22,10 +22,7 @@ class AuthController extends GetxController with StateMixin {
         ),
       );
       String json = jsonEncode(AuthResponse(token: 's3cr3t').toJson());
-      bool result = await StorageProvider.writeJson(key: '/auth/login', json: json);
-      if (!result) {
-        throw Exception('Falha ao realizar login');
-      }
+      StorageProvider.writeJson(key: '/auth/login', json: json);
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {
@@ -39,8 +36,8 @@ class AuthController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      if (await isAuthenticated()) {
-        await StorageProvider.removeJson(key: '/auth/login');
+      if (isAuthenticated()) {
+        StorageProvider.removeJson(key: '/auth/login');
       }
       change([], status: RxStatus.success());
       loading.value = false;
@@ -51,10 +48,10 @@ class AuthController extends GetxController with StateMixin {
     }
   }
 
-  Future<bool> isAuthenticated() async {
-    String json = await StorageProvider.readJson(key: '/auth/login');
+  bool isAuthenticated() {
+    String json = StorageProvider.readJson(key: '/auth/login');
     Map<String, dynamic> element = jsonDecode(json);
-    String token = AuthResponse.fromJson(element).token;
+    String token = element.isEmpty ? '' : AuthResponse.fromJson(element).token;
     return token.isNotEmpty;
   }
 }

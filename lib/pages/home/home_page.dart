@@ -28,11 +28,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  RouteController routeController = Get.put(RouteController(), permanent: true);
+  RouteController routeController = Get.find();
+  AuthController authController = Get.find();
   NotificationController notificationController = Get.put(NotificationController(), permanent: true);
   ChatController chatController = Get.put(ChatController(), permanent: true);
   AlarmController alarmController = Get.put(AlarmController(), permanent: true);
-  AuthController authController = Get.put(AuthController(), permanent: true);
   final ScrollController _scrollController = ScrollController();
 
   DateTime selectedDate = DateTime.now();
