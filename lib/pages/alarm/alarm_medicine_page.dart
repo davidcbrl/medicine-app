@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/dose_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
@@ -25,6 +26,7 @@ class AlarmMedicinePage extends StatefulWidget {
 class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
   final ChatController chatController = Get.find();
   final AlarmController alarmController = Get.find();
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +40,11 @@ class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomAvatarWidget(
-                image: Image.asset(
-                  'assets/img/ben.png',
-                  width: 50,
+                  image: userController.image.value.isNotEmpty
+                    ? Image.memory(base64Decode(userController.image.value))
+                    : Image.asset('assets/img/ben.png'),
+                  label: userController.name.value,
                 ),
-                label: 'Tio Ben',
-              ),
               CustomSelectItemWidget(
                 label: 'Falar com meu \nresponsável',
                 image: Image.asset(

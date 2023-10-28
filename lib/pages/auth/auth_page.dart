@@ -39,14 +39,7 @@ class _AuthPageState extends State<AuthPage> {
                 height: 80,
               ),
               const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Seja bem vindo!',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(
-                height: 20,
+                height: 40,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -133,10 +126,10 @@ class _AuthPageState extends State<AuthPage> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               CustomTextButtonWidget(
-                label: 'Cadastre-se',
+                label: 'Criar nova conta',
                 style: Theme.of(context).textTheme.titleSmall,
                 onPressed: () {
-                  Get.toNamed('/auth/register');
+                  Get.toNamed('/user/register');
                 },
               ),
             ],
@@ -150,7 +143,7 @@ class _AuthPageState extends State<AuthPage> {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

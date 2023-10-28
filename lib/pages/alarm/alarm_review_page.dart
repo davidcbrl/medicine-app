@@ -6,12 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
+import 'package:medicine/widgets/custom_loading_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
@@ -28,67 +30,73 @@ class AlarmReviewPage extends StatefulWidget {
 class _AlarmReviewPageState extends State<AlarmReviewPage> {
   final ChatController chatController = Get.find();
   final AlarmController alarmController = Get.find();
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomAvatarWidget(
-                image: Image.asset(
-                  'assets/img/ben.png',
-                  width: 50,
+      body: Obx(
+        () => alarmController.loading.value
+        ? CustomLoadingWidget(
+            loading: alarmController.loading.value,
+          )
+        : Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomAvatarWidget(
+                  image: userController.image.value.isNotEmpty
+                    ? Image.memory(base64Decode(userController.image.value))
+                    : Image.asset('assets/img/ben.png'),
+                  label: userController.name.value,
                 ),
-                label: 'Tio Ben',
-              ),
-              CustomSelectItemWidget(
-                label: 'Falar com meu \nresponsável',
-                image: Image.asset(
-                  'assets/img/whatsapp.png',
-                  width: 30,
+                CustomSelectItemWidget(
+                  label: 'Falar com meu \nresponsável',
+                  image: Image.asset(
+                    'assets/img/whatsapp.png',
+                    width: 30,
+                  ),
+                  onPressed: () => chatController.launchWhatsapp(),
                 ),
-                onPressed: () => chatController.launchWhatsapp(),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomStepperWidget(
-            current: 3,
-            steps: [
-              CustomStepperStep(
-                icon: Icons.medication_outlined,
-                label: 'Remédio',
-              ),
-              CustomStepperStep(
-                icon: Icons.add_alarm_rounded,
-                label: 'Alarme',
-              ),
-              CustomStepperStep(
-                icon: Icons.check_circle_outline_rounded,
-                label: 'Confirmar',
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: PageView(
-              controller: alarmController.reviewPageController,
-              children: const [
-                AlarmReviewObservationView(),
               ],
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            const CustomStepperWidget(
+              current: 3,
+              steps: [
+                CustomStepperStep(
+                  icon: Icons.medication_outlined,
+                  label: 'Remédio',
+                ),
+                CustomStepperStep(
+                  icon: Icons.add_alarm_rounded,
+                  label: 'Alarme',
+                ),
+                CustomStepperStep(
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'Confirmar',
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: PageView(
+                controller: alarmController.reviewPageController,
+                children: const [
+                  AlarmReviewObservationView(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -268,7 +276,7 @@ class AlarmReviewObservationView extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.45,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -290,7 +298,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                       ),
                       Image.asset(
                         'assets/img/success.gif',
-                        width: 150,
+                        width: MediaQuery.of(context).size.height * 0.15,
                       ),
                     ],
                   ),
@@ -317,7 +325,7 @@ class AlarmReviewObservationView extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

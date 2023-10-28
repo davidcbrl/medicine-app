@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -8,29 +8,29 @@ import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_text_button_widget.dart';
 import 'package:medicine/widgets/custom_text_field_widget.dart';
 
-class AuthRegisterPage extends StatefulWidget {
-  const AuthRegisterPage({super.key});
+class UserRegisterPage extends StatefulWidget {
+  const UserRegisterPage({super.key});
 
   @override
-  State<AuthRegisterPage> createState() => _AuthRegisterPageState();
+  State<UserRegisterPage> createState() => _UserRegisterPageState();
 }
 
-class _AuthRegisterPageState extends State<AuthRegisterPage> {
-  final AuthController authController = Get.put(AuthController(), permanent: true);
+class _UserRegisterPageState extends State<UserRegisterPage> {
+  final UserController userController = Get.put(UserController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    TextEditingController nameController = TextEditingController(text: authController.name.value);
-    TextEditingController phoneController = TextEditingController(text: authController.phone.value);
-    TextEditingController emailController = TextEditingController(text: authController.email.value);
-    TextEditingController passwordController = TextEditingController(text: authController.password.value);
-    TextEditingController confirmationController = TextEditingController(text: authController.confirmation.value);
+    TextEditingController nameController = TextEditingController(text: '');
+    TextEditingController phoneController = TextEditingController(text: '');
+    TextEditingController emailController = TextEditingController(text: '');
+    TextEditingController passwordController = TextEditingController(text: '');
+    TextEditingController confirmationController = TextEditingController(text: '');
     return CustomPageWidget(
       body: Obx(
-        () => authController.loading.value
+        () => userController.loading.value
         ? CustomLoadingWidget(
-            loading: authController.loading.value,
+            loading: userController.loading.value,
           )
         : Column(
             children: [
@@ -45,8 +45,8 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                 height: 20,
               ),
               Text(
-                'Cadastro',
-                style: Theme.of(context).textTheme.bodyMedium,
+                'Criar nova conta',
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(
                 height: 20,
@@ -124,8 +124,14 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                             if (value == null || value.isEmpty) {
                               return 'Escreva a confirmação da senha para se cadastrar';
                             }
+                            if (value.isNotEmpty && value != passwordController.text) {
+                              return 'A senha e a confirmação precisam ser iguais para se cadastrar';
+                            }
                             return null;
                           },
+                        ),
+                        const SizedBox(
+                          height: 40,
                         ),
                       ],
                     ),
@@ -140,18 +146,17 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                 onPressed: () async {
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (formKey.currentState!.validate()) {
-                    authController.name.value = nameController.text;
-                    authController.phone.value = phoneController.text;
-                    authController.email.value = emailController.text;
-                    authController.password.value = passwordController.text;
-                    authController.confirmation.value = confirmationController.text;
-                    await authController.register();
-                    if (authController.status.isSuccess && context.mounted) {
-                      _authRegisterSuccessBottomSheet(context, authController);
+                    userController.name.value = nameController.text;
+                    userController.phone.value = phoneController.text;
+                    userController.email.value = emailController.text;
+                    userController.password.value = passwordController.text;
+                    await userController.save();
+                    if (userController.status.isSuccess && context.mounted) {
+                      _userRegisterSuccessBottomSheet(context, userController);
                       return;
                     }
-                    if (authController.status.isError && context.mounted) {
-                      _authRegisterErrorBottomSheet(context, authController);
+                    if (userController.status.isError && context.mounted) {
+                      _userRegisterErrorBottomSheet(context, userController);
                       return;
                     }
                   }
@@ -170,13 +175,13 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
     );
   }
 
-  void _authRegisterSuccessBottomSheet(BuildContext context, AuthController authController) {
+  void _userRegisterSuccessBottomSheet(BuildContext context, UserController userController) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.45,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -198,7 +203,7 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                       ),
                       Image.asset(
                         'assets/img/success.gif',
-                        width: 150,
+                        width: MediaQuery.of(context).size.height * 0.15,
                       ),
                     ],
                   ),
@@ -207,7 +212,7 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                   height: 20,
                 ),
                 CustomTextButtonWidget(
-                  label: 'Ok, voltar',
+                  label: 'Ok, voltar para login',
                   onPressed: () {
                     Get.offAllNamed('/auth');
                   },
@@ -220,12 +225,12 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
     );
   }
 
-  void _authRegisterErrorBottomSheet(BuildContext context, AuthController authController) {
+  void _userRegisterErrorBottomSheet(BuildContext context, UserController userController) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -239,7 +244,7 @@ class _AuthRegisterPageState extends State<AuthRegisterPage> {
                 ),
                 Expanded(
                   child: CustomEmptyWidget(
-                    label: authController.status.errorMessage ?? 'Erro inesperado',
+                    label: userController.status.errorMessage ?? 'Erro inesperado',
                   ),
                 ),
                 const SizedBox(

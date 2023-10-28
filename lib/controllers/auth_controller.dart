@@ -6,11 +6,8 @@ import 'package:medicine/models/auth.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class AuthController extends GetxController with StateMixin {
-  var name = ''.obs;
-  var phone = ''.obs;
   var email = ''.obs;
   var password = ''.obs;
-  var confirmation = ''.obs;
 
   var loading = false.obs;
 
@@ -19,7 +16,7 @@ class AuthController extends GetxController with StateMixin {
     change([], status: RxStatus.loading());
     try {
       String json = jsonEncode(AuthResponse(token: 's3cr3t').toJson());
-      StorageProvider.writeJson(key: '/auth/login', json: json);
+      StorageProvider.writeJson(key: '/auth', json: json);
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {
@@ -34,7 +31,7 @@ class AuthController extends GetxController with StateMixin {
     change([], status: RxStatus.loading());
     try {
       if (isAuthenticated()) {
-        StorageProvider.removeJson(key: '/auth/login');
+        StorageProvider.removeJson(key: '/auth');
       }
       change([], status: RxStatus.success());
       loading.value = false;
@@ -58,21 +55,8 @@ class AuthController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> register() async {
-    loading.value = true;
-    change([], status: RxStatus.loading());
-    try {
-      change([], status: RxStatus.success());
-      loading.value = false;
-    } catch (error) {
-      if (kDebugMode) print(error);
-      change([], status: RxStatus.error('Falha ao criar nova conta'));
-      loading.value = false;
-    }
-  }
-
   bool isAuthenticated() {
-    String json = StorageProvider.readJson(key: '/auth/login');
+    String json = StorageProvider.readJson(key: '/auth');
     Map<String, dynamic> element = jsonDecode(json);
     String token = element.isEmpty ? '' : AuthResponse.fromJson(element).token;
     return token.isNotEmpty;

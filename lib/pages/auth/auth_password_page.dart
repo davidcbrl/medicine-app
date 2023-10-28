@@ -103,7 +103,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.45,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -125,7 +125,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                       ),
                       Image.asset(
                         'assets/img/success.gif',
-                        width: 150,
+                        width: MediaQuery.of(context).size.height * 0.15,
                       ),
                     ],
                   ),
@@ -152,7 +152,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

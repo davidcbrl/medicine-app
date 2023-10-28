@@ -24,6 +24,7 @@ class AlarmController extends GetxController with StateMixin {
   var weekdayTypeList = <WeekdayType>[].obs;
   var startDateTime = DateTime.now().obs;
   var observation = ''.obs;
+
   var alarmList = <Alarm>[].obs;
 
   var loading = false.obs;

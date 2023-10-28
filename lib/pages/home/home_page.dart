@@ -10,6 +10,7 @@ import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   NotificationController notificationController = Get.put(NotificationController(), permanent: true);
   ChatController chatController = Get.put(ChatController(), permanent: true);
   AlarmController alarmController = Get.put(AlarmController(), permanent: true);
+  UserController userController = Get.put(UserController(), permanent: true);
   final ScrollController _scrollController = ScrollController();
 
   DateTime selectedDate = DateTime.now();
@@ -40,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     alarmController.get(selectedDate: selectedDate);
+    userController.get();
     super.initState();
   }
 
@@ -59,11 +62,10 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomAvatarWidget(
-                  image: Image.asset(
-                    'assets/img/ben.png',
-                    width: 50,
-                  ),
-                  label: 'Tio Ben',
+                  image: userController.image.value.isNotEmpty
+                    ? Image.memory(base64Decode(userController.image.value))
+                    : Image.asset('assets/img/ben.png'),
+                  label: userController.name.value,
                 ),
                 CustomSelectItemWidget(
                   label: 'Falar com meu \nresponsável',
@@ -83,6 +85,8 @@ class _HomePageState extends State<HomePage> {
             height: MediaQuery.of(context).size.height * 0.175,
             locale: 'pt-br',
             showHeader: true,
+            pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
+            customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
             headerMargin: EdgeInsets.zero,
             headerTextStyle: Theme.of(context).textTheme.bodyMedium,
             showHeaderButton: true,
@@ -380,7 +384,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           onPressed: () {
                             Get.back();
-                            _removeConfirmationBottomSheet(context, alarm);
+                            _removeCheckBottomSheet(context, alarm);
                           },
                         ),
                       ],
@@ -404,7 +408,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _removeConfirmationBottomSheet(BuildContext context, Alarm alarm) {
+  void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -513,7 +517,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.3,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -528,18 +532,36 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    child: CustomSelectItemWidget(
-                      label: 'Sair do app',
-                      icon: Icon(
-                        Icons.chevron_right_rounded,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        authController.logout();
-                        Get.back();
-                        Get.offAllNamed('/auth');
-                      },
+                    child: Column(
+                      children: [
+                        CustomSelectItemWidget(
+                          label: 'Editar informações pessoais',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                            Get.toNamed('/user/info');
+                          },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomSelectItemWidget(
+                          label: 'Sair do app',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            authController.logout();
+                            Get.offAllNamed('/auth');
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
