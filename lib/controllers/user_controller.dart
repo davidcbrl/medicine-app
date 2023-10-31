@@ -15,6 +15,12 @@ class UserController extends GetxController with StateMixin {
 
   var loading = false.obs;
 
+  @override
+  onInit() {
+    get();
+    super.onInit();
+  }
+
   Future<void> save() async {
     loading.value = true;
     change([], status: RxStatus.loading());

@@ -28,6 +28,13 @@ class AlarmController extends GetxController with StateMixin {
   var alarmList = <Alarm>[].obs;
 
   var loading = false.obs;
+  var allEmpty = false.obs;
+
+  @override
+  onInit() {
+    get(selectedDate: DateTime.now());
+    super.onInit();
+  }
 
   Future<void> save() async {
     loading.value = true;
@@ -65,12 +72,14 @@ class AlarmController extends GetxController with StateMixin {
 
   Future<void> get({DateTime? selectedDate}) async {
     loading.value = true;
+    allEmpty.value = false;
     change([], status: RxStatus.loading());
     try {
       String json = StorageProvider.readJson(key: '/alarms');
       if (json == '{}') {
         alarmList.value = [];
         change([], status: RxStatus.empty());
+        allEmpty.value = true;
         loading.value = false;
         return;
       }

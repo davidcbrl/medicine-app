@@ -32,9 +32,14 @@ class CustomAvatarWidget extends StatelessWidget {
         const SizedBox(
           width: 10,
         ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelMedium,
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.20,
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
         ),
       ],
     );

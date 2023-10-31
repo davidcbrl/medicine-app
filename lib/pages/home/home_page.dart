@@ -40,237 +40,273 @@ class _HomePageState extends State<HomePage> {
   DateTime selectedDate = DateTime.now();
 
   @override
-  void initState() {
-    alarmController.get(selectedDate: selectedDate);
-    userController.get();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
       hasPadding: false,
       hasBackgroundImage: true,
-      body: Column(
+      body: Obx(
+        () => userController.loading.value
+        ? CustomLoadingWidget(
+            loading: userController.loading.value,
+          )
+        : Column(
+          children: [
+            const SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomAvatarWidget(
+                    image: userController.image.value.isNotEmpty
+                      ? Image.memory(base64Decode(userController.image.value))
+                      : Image.asset('assets/img/ben.png'),
+                    label: userController.name.value.isNotEmpty
+                      ? userController.name.value
+                      : 'Tio Ben',
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Falar com meu \nresponsável',
+                    image: Image.asset(
+                      'assets/img/whatsapp.png',
+                      width: 30,
+                    ),
+                    onPressed: () => chatController.launchWhatsapp(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CalendarCarousel<Event>(
+              height: MediaQuery.of(context).size.height * 0.175,
+              locale: 'pt-br',
+              showHeader: true,
+              pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
+              customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
+              headerMargin: EdgeInsets.zero,
+              headerTextStyle: Theme.of(context).textTheme.bodyMedium,
+              showHeaderButton: true,
+              leftButtonIcon: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Icon(
+                  Icons.chevron_left_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 25,
+                ),
+              ),
+              rightButtonIcon: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 25,
+                ),
+              ),
+              weekFormat: true,
+              daysHaveCircularBorder: true,
+              showWeekDays: true,
+              weekDayFormat: WeekdayFormat.short,
+              weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,
+              weekendTextStyle: Theme.of(context).textTheme.labelMedium,
+              daysTextStyle: Theme.of(context).textTheme.labelMedium,
+              dayButtonColor: Theme.of(context).colorScheme.tertiary,
+              todayTextStyle: Theme.of(context).textTheme.titleSmall,
+              todayButtonColor: Theme.of(context).colorScheme.tertiary,
+              todayBorderColor: Theme.of(context).colorScheme.primary,
+              selectedDayTextStyle: Theme.of(context).textTheme.displayMedium,
+              selectedDayButtonColor: Theme.of(context).colorScheme.primary,
+              selectedDayBorderColor: Theme.of(context).colorScheme.primary,
+              minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
+              maxSelectedDate: selectedDate.add(const Duration(days: 30)),
+              selectedDateTime: selectedDate,
+              onDayPressed: (DateTime date, List<Event> events) async {
+                setState(() {
+                  selectedDate = date;
+                });
+                await alarmController.get(selectedDate: selectedDate);
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: Obx(
+                () => LazyLoadScrollView(
+                  isLoading: alarmController.loading.value,
+                  scrollOffset: 10,
+                  onEndOfPage: () => () {},
+                  child: RefreshIndicator(
+                    onRefresh: () => alarmController.get(selectedDate: selectedDate),
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        if (alarmController.status.isLoading) ...[
+                          CustomLoadingWidget(
+                            loading: alarmController.status.isLoading,
+                          ),
+                        ],
+                        if (alarmController.status.isEmpty) ...[
+                          if (alarmController.allEmpty.value) ...[
+                            _welcomeMessage(context),
+                          ] else ...[
+                            const CustomEmptyWidget(
+                              label: 'Nenhum alarme para esse dia',
+                            ),
+                          ]
+                        ],
+                        if (alarmController.status.isError) ...[
+                          CustomEmptyWidget(
+                            label: alarmController.status.errorMessage ?? 'Erro inesperado',
+                          ),
+                        ],
+                        if (alarmController.status.isSuccess) ...[
+                          Text(
+                            'Toque em um alarme abaixo para tomar o remédio',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ..._buildWidgetList(),
+                          const SizedBox(
+                            height: 100,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () => notificationController.createMedicineNotification(
+                      MedicineNotification(
+                        id: 0,
+                        title: 'Hora de tomar seu remédio',
+                        image: 'asset://assets/img/background.png',
+                        payload: {
+                          'json': jsonEncode(
+                            Alarm(
+                              id: 0,
+                              name: 'Vitamina B12',
+                              alarmTypeId: 1,
+                              doseTypeId: 1,
+                              quantity: 15,
+                              time: '12:00',
+                              times: ['12:00'],
+                              weekdayTypeIds: [],
+                            ).toJson(),
+                          ),
+                        }
+                      ),
+                    ),
+                    child: SizedBox(
+                      width: 100,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.alarm_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 25,
+                          ),
+                          Text(
+                            'Testar alarme',
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => _newOptionsBottomSheet(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.add_rounded,
+                        color: Theme.of(context).colorScheme.tertiary,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => _settingsBottomSheet(context),
+                    child: SizedBox(
+                      width: 100,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.settings_outlined,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 25,
+                          ),
+                          Text(
+                            'Opções',
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _welcomeMessage(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(40),
+      child: Column(
         children: [
-          const SizedBox(
-            height: 40,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomAvatarWidget(
-                  image: userController.image.value.isNotEmpty
-                    ? Image.memory(base64Decode(userController.image.value))
-                    : Image.asset('assets/img/ben.png'),
-                  label: userController.name.value,
-                ),
-                CustomSelectItemWidget(
-                  label: 'Falar com meu \nresponsável',
-                  image: Image.asset(
-                    'assets/img/whatsapp.png',
-                    width: 30,
-                  ),
-                  onPressed: () => chatController.launchWhatsapp(),
-                ),
-              ],
-            ),
+          Text(
+            'Seja bem vindo!',
+            style: Theme.of(context).textTheme.labelMedium,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(
             height: 10,
           ),
-          CalendarCarousel<Event>(
-            height: MediaQuery.of(context).size.height * 0.175,
-            locale: 'pt-br',
-            showHeader: true,
-            pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
-            customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
-            headerMargin: EdgeInsets.zero,
-            headerTextStyle: Theme.of(context).textTheme.bodyMedium,
-            showHeaderButton: true,
-            leftButtonIcon: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: 25,
-              ),
-            ),
-            rightButtonIcon: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: 25,
-              ),
-            ),
-            weekFormat: true,
-            daysHaveCircularBorder: true,
-            showWeekDays: true,
-            weekDayFormat: WeekdayFormat.short,
-            weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,
-            weekendTextStyle: Theme.of(context).textTheme.labelMedium,
-            daysTextStyle: Theme.of(context).textTheme.labelMedium,
-            dayButtonColor: Theme.of(context).colorScheme.tertiary,
-            todayTextStyle: Theme.of(context).textTheme.titleSmall,
-            todayButtonColor: Theme.of(context).colorScheme.tertiary,
-            todayBorderColor: Theme.of(context).colorScheme.primary,
-            selectedDayTextStyle: Theme.of(context).textTheme.displayMedium,
-            selectedDayButtonColor: Theme.of(context).colorScheme.primary,
-            selectedDayBorderColor: Theme.of(context).colorScheme.primary,
-            minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
-            maxSelectedDate: selectedDate.add(const Duration(days: 30)),
-            selectedDateTime: selectedDate,
-            onDayPressed: (DateTime date, List<Event> events) async {
-              setState(() {
-                selectedDate = date;
-              });
-              await alarmController.get(selectedDate: selectedDate);
-            },
+          Text(
+            'Vamos criar seu primeiro alarme para remédio? Toque no botão "+" da barra inferior para começar!',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: Obx(
-              () => LazyLoadScrollView(
-                isLoading: alarmController.loading.value,
-                scrollOffset: 10,
-                onEndOfPage: () => () {},
-                child: RefreshIndicator(
-                  onRefresh: () => alarmController.get(selectedDate: selectedDate),
-                  child: ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      if (alarmController.status.isLoading) ...[
-                        CustomLoadingWidget(
-                          loading: alarmController.status.isLoading,
-                        ),
-                      ],
-                      if (alarmController.status.isEmpty) ...[
-                        const CustomEmptyWidget(
-                          label: 'Nenhum alarme',
-                        ),
-                      ],
-                      if (alarmController.status.isError) ...[
-                        CustomEmptyWidget(
-                          label: alarmController.status.errorMessage ?? 'Erro inesperado',
-                        ),
-                      ],
-                      if (alarmController.status.isSuccess) ...[
-                        Text(
-                          'Toque em um alarme abaixo para tomar o remédio',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        ..._buildWidgetList(),
-                        const SizedBox(
-                          height: 100,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () => notificationController.createMedicineNotification(
-                    MedicineNotification(
-                      id: 0,
-                      title: 'Hora de tomar seu remédio',
-                      image: 'asset://assets/img/background.png',
-                      payload: {
-                        'json': jsonEncode(
-                          Alarm(
-                            id: 0,
-                            name: 'Vitamina B12',
-                            alarmTypeId: 1,
-                            doseTypeId: 1,
-                            quantity: 15,
-                            time: '12:00',
-                            times: ['12:00'],
-                            weekdayTypeIds: [],
-                          ).toJson(),
-                        ),
-                      }
-                    ),
-                  ),
-                  child: SizedBox(
-                    width: 100,
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.alarm_rounded,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 25,
-                        ),
-                        Text(
-                          'Testar alarme',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () => _newOptionsBottomSheet(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Icon(
-                      Icons.add_rounded,
-                      color: Theme.of(context).colorScheme.tertiary,
-                      size: 30,
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () => _settingsBottomSheet(context),
-                  child: SizedBox(
-                    width: 100,
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.settings_outlined,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 25,
-                        ),
-                        Text(
-                          'Opções',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          Text(
+            'Quando terminar, o seu alarme aparecerá aqui na tela inicial',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
           ),
         ],
       ),

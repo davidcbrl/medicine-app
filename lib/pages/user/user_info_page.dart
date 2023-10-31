@@ -27,12 +27,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
   UserController userController = Get.find();
 
   @override
-  void initState() {
-    userController.get();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: userController.email.value);
@@ -56,7 +50,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   image: userController.image.value.isNotEmpty
                     ? Image.memory(base64Decode(userController.image.value))
                     : Image.asset('assets/img/ben.png'),
-                  label: userController.name.value,
+                  label: userController.name.value.isNotEmpty
+                    ? userController.name.value
+                    : 'Tio Ben',
                 ),
                 CustomSelectItemWidget(
                   label: 'Falar com meu \nresponsável',

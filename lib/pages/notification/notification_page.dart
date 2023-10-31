@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
@@ -24,6 +25,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   ChatController chatController = Get.find();
   UserController userController = Get.find();
+  AlarmController alarmController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +42,13 @@ class _NotificationPageState extends State<NotificationPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomAvatarWidget(
-                  image: userController.image.value.isNotEmpty
-                    ? Image.memory(base64Decode(userController.image.value))
-                    : Image.asset('assets/img/ben.png'),
-                  label: userController.name.value,
-                ),
+                image: userController.image.value.isNotEmpty
+                  ? Image.memory(base64Decode(userController.image.value))
+                  : Image.asset('assets/img/ben.png'),
+                label: userController.name.value.isNotEmpty
+                  ? userController.name.value
+                  : 'Tio Ben',
+              ),
               CustomSelectItemWidget(
                 label: 'Falar com meu \nresponsável',
                 image: Image.asset(

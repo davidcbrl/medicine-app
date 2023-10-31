@@ -41,11 +41,13 @@ class _AlarmInfoPageState extends State<AlarmInfoPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomAvatarWidget(
-                  image: userController.image.value.isNotEmpty
-                    ? Image.memory(base64Decode(userController.image.value))
-                    : Image.asset('assets/img/ben.png'),
-                  label: userController.name.value,
-                ),
+                image: userController.image.value.isNotEmpty
+                  ? Image.memory(base64Decode(userController.image.value))
+                  : Image.asset('assets/img/ben.png'),
+                label: userController.name.value.isNotEmpty
+                  ? userController.name.value
+                  : 'Tio Ben',
+              ),
               CustomSelectItemWidget(
                 label: 'Falar com meu \nresponsável',
                 image: Image.asset(
