@@ -37,13 +37,6 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
               const SizedBox(
                 height: 40,
               ),
-              Image.asset(
-                'assets/img/logo.png',
-                height: 80,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
               Text(
                 'Criar nova conta',
                 style: Theme.of(context).textTheme.titleSmall,
@@ -58,6 +51,13 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                     key: formKey,
                     child: Column(
                       children: [
+                        Image.asset(
+                          'assets/img/logo.png',
+                          height: 80,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         CustomTextFieldWidget(
                           controller: nameController,
                           label: 'Qual é o seu nome?',

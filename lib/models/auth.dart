@@ -1,19 +1,23 @@
 class Auth {
   String email;
   String password;
+  String device;
 
   Auth({
     required this.email,
     required this.password,
+    required this.device,
   });
 
   Auth.fromJson(Map<String, dynamic> json):
     email = json['email'],
-    password = json['password'];
+    password = json['password'],
+    device = json['device'];
 
   Map<String, dynamic> toJson() => {
     'email': email,
     'password': password,
+    'device_name': device,
   };
 }
 

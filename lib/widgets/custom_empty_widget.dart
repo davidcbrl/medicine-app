@@ -17,7 +17,7 @@ class CustomEmptyWidget extends StatelessWidget {
       children: [
         Image.asset(
           'assets/img/empty.png',
-          height: size ?? 150,
+          height: size ?? 125,
         ),
         const SizedBox(
           height: 10,

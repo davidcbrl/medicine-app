@@ -23,6 +23,7 @@ class _AuthPageState extends State<AuthPage> {
     final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
     TextEditingController passwordController = TextEditingController(text: authController.password.value);
+    authController.getDeviceName();
     return CustomPageWidget(
       body: Obx(
         () => authController.loading.value
@@ -34,13 +35,6 @@ class _AuthPageState extends State<AuthPage> {
               const SizedBox(
                 height: 40,
               ),
-              Image.asset(
-                'assets/img/logo.png',
-                height: 80,
-              ),
-              const SizedBox(
-                height: 40,
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -48,6 +42,13 @@ class _AuthPageState extends State<AuthPage> {
                     key: formKey,
                     child: Column(
                       children: [
+                        Image.asset(
+                          'assets/img/logo.png',
+                          height: 80,
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
                         CustomTextFieldWidget(
                           controller: emailController,
                           label: 'Qual é o seu e-mail?',
@@ -118,15 +119,8 @@ class _AuthPageState extends State<AuthPage> {
                   }
                 },
               ),
-              const SizedBox(
-                height: 40,
-              ),
-              Text(
-                'Não possui conta?',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
               CustomTextButtonWidget(
-                label: 'Criar nova conta',
+                label: 'Não possui conta? Criar nova conta',
                 style: Theme.of(context).textTheme.titleSmall,
                 onPressed: () {
                   Get.toNamed('/user/register');
