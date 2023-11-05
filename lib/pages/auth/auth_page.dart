@@ -57,6 +57,10 @@ class _AuthPageState extends State<AuthPage> {
                             if (value == null || value.isEmpty) {
                               return 'Escreva o seu e-mail para entrar';
                             }
+                            RegExp regex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$');
+                            if (!regex.hasMatch(value)) {
+                              return 'Email invalido, verifique a formatacao';
+                            }
                             return null;
                           },
                           onChanged: (value) {

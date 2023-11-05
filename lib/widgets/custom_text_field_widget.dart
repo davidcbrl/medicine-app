@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -7,6 +8,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final Icon? icon;
   final bool hideText;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? formatters;
   final FormFieldValidator<String>? validator;
   final Function(String)? onChanged;
   final bool readOnly;
@@ -22,6 +24,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.hideText = false,
     this.validator,
     this.keyboardType,
+    this.formatters,
     this.onTap,
     this.readOnly = false
   });
@@ -44,10 +47,11 @@ class CustomTextFieldWidget extends StatelessWidget {
           enabled: !readOnly,
           onTap: onTap,
           controller: controller,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: readOnly ? Theme.of(context).textTheme.bodyMedium : Theme.of(context).textTheme.labelMedium,
           obscureText: hideText,
           validator: validator,
           keyboardType: keyboardType,
+          inputFormatters: formatters,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.only(left: 20),
             hintText: placeholder,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -37,13 +38,6 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
               const SizedBox(
                 height: 40,
               ),
-              Text(
-                'Criar nova conta',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -54,6 +48,13 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                         Image.asset(
                           'assets/img/logo.png',
                           height: 80,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Criar nova conta',
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(
                           height: 20,
@@ -70,12 +71,19 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         CustomTextFieldWidget(
                           controller: phoneController,
                           label: 'Qual é o seu contato?',
                           placeholder: '(99) 99999-9999',
+                          formatters: [
+                            MaskTextInputFormatter(
+                              mask: '(##) #####-####',
+                              filter: { "#": RegExp(r'[0-9]') },
+                              type: MaskAutoCompletionType.lazy,
+                            ),
+                          ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Escreva o seu contato para se cadastrar';
@@ -84,7 +92,7 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         CustomTextFieldWidget(
                           controller: emailController,
@@ -94,11 +102,15 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                             if (value == null || value.isEmpty) {
                               return 'Escreva o seu e-mail para se cadastrar';
                             }
+                            RegExp regex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$');
+                            if (!regex.hasMatch(value)) {
+                              return 'Email invalido, verifique a formatacao';
+                            }
                             return null;
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         CustomTextFieldWidget(
                           controller: passwordController,
@@ -109,11 +121,15 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                             if (value == null || value.isEmpty) {
                               return 'Escreva uma senha para se cadastrar';
                             }
+                            RegExp regex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+                            if (!regex.hasMatch(value)) {
+                              return 'Senha invalida, verifique as regras de criacao de senha abaixo';
+                            }
                             return null;
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         CustomTextFieldWidget(
                           controller: confirmationController,
@@ -128,6 +144,13 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                               return 'A senha e a confirmação precisam ser iguais para se cadastrar';
                             }
                             return null;
+                          },
+                        ),
+                        CustomTextButtonWidget(
+                          label: 'Regras de criacao de senha',
+                          style: Theme.of(context).textTheme.titleSmall,
+                          onPressed: () {
+                            _passwordRulesBottomSheet(context);
                           },
                         ),
                         const SizedBox(
@@ -172,6 +195,67 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
             ],
           ),
       ),
+    );
+  }
+  
+  void _passwordRulesBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Sua senha deve conter:',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        'No minimo 8 caracteres',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'No minimo 1 caractere maiusculo e 1 caractere minusculo',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'No minimo 1 caractere numerico',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'No minimo 1 caractere especial',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextButtonWidget(
+                  label: 'Ok, entendi',
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

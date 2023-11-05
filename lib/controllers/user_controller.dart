@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:medicine/models/user.dart';
+import 'package:medicine/providers/api_provider.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class UserController extends GetxController with StateMixin {
@@ -33,7 +36,12 @@ class UserController extends GetxController with StateMixin {
           email: email.value,
           password: password.value,
           image: image.isNotEmpty ? image.value : null,
+          device: await getDeviceName(),
         ),
+      );
+      await ApiProvider.post(
+        path: '/register',
+        data: request.user.toJson(),
       );
       String json = jsonEncode(request.user.toJson());
       StorageProvider.writeJson(key: '/user', json: json);
@@ -85,5 +93,22 @@ class UserController extends GetxController with StateMixin {
     email.value = '';
     password.value = '';
     image = ''.obs;
+  }
+
+  Future<String> getDeviceName() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return '${androidInfo.manufacturer} ${androidInfo.device}';
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return '${iosInfo.model} ${iosInfo.name}';
+    }
+    if (kIsWeb) {
+      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+      return '${webBrowserInfo.userAgent}';
+    }
+    return 'Unknown';
   }
 }
