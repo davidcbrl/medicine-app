@@ -350,8 +350,10 @@ class _HomePageState extends State<HomePage> {
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -447,8 +449,10 @@ class _HomePageState extends State<HomePage> {
   void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.3,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -499,8 +503,10 @@ class _HomePageState extends State<HomePage> {
   void _newOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.3,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -551,8 +557,10 @@ class _HomePageState extends State<HomePage> {
   void _settingsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),

@@ -139,8 +139,10 @@ class _AuthPageState extends State<AuthPage> {
   void _authErrorBottomSheet(BuildContext context, AuthController authController) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),
