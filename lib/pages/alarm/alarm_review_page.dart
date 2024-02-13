@@ -278,6 +278,7 @@ class AlarmReviewObservationView extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.45,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -325,8 +326,10 @@ class AlarmReviewObservationView extends StatelessWidget {
   void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),

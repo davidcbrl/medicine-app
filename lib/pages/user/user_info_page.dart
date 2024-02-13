@@ -229,6 +229,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.45,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -271,8 +272,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
   void _userInfoErrorBottomSheet(BuildContext context, UserController userController) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
       builder: (BuildContext context) {
         return SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.4,
           child: Padding(
             padding: const EdgeInsets.all(20),

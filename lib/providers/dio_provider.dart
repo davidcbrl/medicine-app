@@ -8,8 +8,8 @@ class DioProvider {
   DioProvider({required String baseUrl}) {
     _dio.options = BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
+      connectTimeout: const Duration(seconds: 3),
+      receiveTimeout: const Duration(seconds: 3),
     );
     _setupInterceptor();
   }
