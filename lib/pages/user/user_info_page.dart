@@ -7,6 +7,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_image_picker_widget.dart';
@@ -224,89 +225,71 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   void _userInfoSuccessBottomSheet(BuildContext context, UserController userController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.45,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Informações salvas com sucesso!',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
             child: Column(
               children: [
-                Text(
-                  'Informações salvas com sucesso!',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/img/success.gif',
-                        width: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Ok, voltar para o início',
-                  onPressed: () {
-                    Get.offAllNamed('/home');
-                  },
+                Image.asset(
+                  'assets/img/success.gif',
+                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, voltar para o início',
+            onPressed: () {
+              Get.offAllNamed('/home');
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _userInfoErrorBottomSheet(BuildContext context, UserController userController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Ops!',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: CustomEmptyWidget(
-                    label: userController.status.errorMessage ?? 'Erro inesperado',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+      height: MediaQuery.of(context).size.height * 0.4,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: userController.status.errorMessage ?? 'Erro inesperado',
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

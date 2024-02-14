@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -59,14 +60,9 @@ class _AuthPageState extends State<AuthPage> {
                             }
                             RegExp regex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$');
                             if (!regex.hasMatch(value)) {
-                              return 'Email invalido, verifique a formatacao';
+                              return 'Email inválido, verifique a formatação';
                             }
                             return null;
-                          },
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              formKey.currentState!.validate();
-                            }
                           },
                         ),
                         const SizedBox(
@@ -82,11 +78,6 @@ class _AuthPageState extends State<AuthPage> {
                               return 'Escreva a sua senha para entrar';
                             }
                             return null;
-                          },
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              formKey.currentState!.validate();
-                            }
                           },
                         ),
                         CustomTextButtonWidget(
@@ -137,43 +128,34 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _authErrorBottomSheet(BuildContext context, AuthController authController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Ops!',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: CustomEmptyWidget(
-                    label: authController.status.errorMessage ?? 'Erro inesperado',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+      height: MediaQuery.of(context).size.height * 0.3,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: authController.status.errorMessage ?? 'Erro inesperado',
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

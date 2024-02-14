@@ -14,6 +14,7 @@ import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_list_item_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -348,281 +349,245 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'O que deseja fazer?',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        CustomSelectItemWidget(
-                          label: 'Alarmar agora para tomar remédio',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () async {
-                            Get.back();
-                            await notificationController.createMedicineNotification(
-                              MedicineNotification(
-                                id: alarm.id ?? 0,
-                                title: 'Hora de tomar seu remédio',
-                                body: alarm.name,
-                                image: 'asset://assets/img/background.png',
-                                largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                                payload: {
-                                  'json': jsonEncode(alarm.toJson()),
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        CustomSelectItemWidget(
-                          label: 'Editar alarme',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            alarmController.select(alarm);
-                            Get.back();
-                            Get.toNamed('/alarm/medicine');
-                          },
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        CustomSelectItemWidget(
-                          label: 'Remover alarme',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            Get.back();
-                            _removeCheckBottomSheet(context, alarm);
-                          },
-                        ),
-                      ],
+      height: MediaQuery.of(context).size.height * 0.4,
+      body: Column(
+        children: [
+          Text(
+            'O que deseja fazer?',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  CustomSelectItemWidget(
+                    label: 'Alarmar agora para tomar remédio',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
                     ),
+                    onPressed: () async {
+                      Get.back();
+                      await notificationController.createMedicineNotification(
+                        MedicineNotification(
+                          id: alarm.id ?? 0,
+                          title: 'Hora de tomar seu remédio',
+                          body: alarm.name,
+                          image: 'asset://assets/img/background.png',
+                          largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                          payload: {
+                            'json': jsonEncode(alarm.toJson()),
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Editar alarme',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      alarmController.select(alarm);
+                      Get.back();
+                      Get.toNamed('/alarm/medicine');
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Remover alarme',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                      _removeCheckBottomSheet(context, alarm);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Tem certeza que deseja remover esse alarme?',
-                  style: Theme.of(context).textTheme.titleSmall,
+      height: MediaQuery.of(context).size.height * 0.3,
+      body: Column(
+        children: [
+          Text(
+            'Tem certeza que deseja remover esse alarme?',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: CustomSelectItemWidget(
+                label: 'Sim',
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: CustomSelectItemWidget(
-                      label: 'Sim',
-                      icon: Icon(
-                        Icons.chevron_right_rounded,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 20,
-                      ),
-                      onPressed: () async {
-                        await alarmController.remove(id: alarm.id);
-                        await notificationController.cancelScheduledNotifications(id: alarm.id);
-                        Get.back();
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Não, voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+                onPressed: () async {
+                  await alarmController.remove(id: alarm.id);
+                  await notificationController.cancelScheduledNotifications(id: alarm.id);
+                  Get.back();
+                },
+              ),
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Não, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _newOptionsBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'O que deseja fazer?',
-                  style: Theme.of(context).textTheme.bodyMedium,
+      height: MediaQuery.of(context).size.height * 0.3,
+      body: Column(
+        children: [
+          Text(
+            'O que deseja fazer?',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: CustomSelectItemWidget(
+                label: 'Criar alarme para remédio',
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: CustomSelectItemWidget(
-                      label: 'Criar alarme para remédio',
-                      icon: Icon(
-                        Icons.chevron_right_rounded,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        alarmController.clear();
-                        Get.back();
-                        Get.toNamed('/alarm/medicine');
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+                onPressed: () {
+                  alarmController.clear();
+                  Get.back();
+                  Get.toNamed('/alarm/medicine');
+                },
+              ),
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _settingsBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Opções',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        CustomSelectItemWidget(
-                          label: 'Editar informações pessoais',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            Get.back();
-                            Get.toNamed('/user/info');
-                          },
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        CustomSelectItemWidget(
-                          label: 'Sair do app',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            authController.logout();
-                            Get.offAllNamed('/auth');
-                          },
-                        ),
-                      ],
+      height: MediaQuery.of(context).size.height * 0.3,
+      body: Column(
+        children: [
+          Text(
+            'Opções',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  CustomSelectItemWidget(
+                    label: 'Editar informações pessoais',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
                     ),
+                    onPressed: () {
+                      Get.back();
+                      Get.toNamed('/user/info');
+                    },
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Sair do app',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      authController.logout();
+                      Get.offAllNamed('/auth');
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

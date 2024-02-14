@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/user_controller.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -104,7 +105,7 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                             }
                             RegExp regex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$');
                             if (!regex.hasMatch(value)) {
-                              return 'Email invalido, verifique a formatacao';
+                              return 'Email inválido, verifique a formatação';
                             }
                             return null;
                           },
@@ -123,7 +124,7 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                             }
                             RegExp regex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
                             if (!regex.hasMatch(value)) {
-                              return 'Senha invalida, verifique as regras de criacao de senha abaixo';
+                              return 'Senha inválida, verifique as regras de criação de senha abaixo';
                             }
                             return null;
                           },
@@ -147,7 +148,7 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
                           },
                         ),
                         CustomTextButtonWidget(
-                          label: 'Regras de criacao de senha',
+                          label: 'Regras de criação de senha',
                           style: Theme.of(context).textTheme.titleSmall,
                           onPressed: () {
                             _passwordRulesBottomSheet(context);
@@ -199,156 +200,129 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
   }
   
   void _passwordRulesBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.3,
+      body: Column(
+        children: [
+          Text(
+            'Sua senha deve conter:',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
             child: Column(
               children: [
                 Text(
-                  'Sua senha deve conter:',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  'No minimo 8 caracteres',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 20,
+                Text(
+                  'No minimo 1 caractere maiusculo e 1 caractere minusculo',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        'No minimo 8 caracteres',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'No minimo 1 caractere maiusculo e 1 caractere minusculo',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'No minimo 1 caractere numerico',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'No minimo 1 caractere especial',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                Text(
+                  'No minimo 1 caractere numerico',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Ok, entendi',
-                  onPressed: () {
-                    Get.back();
-                  },
+                Text(
+                  'No minimo 1 caractere especial',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, entendi',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _userRegisterSuccessBottomSheet(BuildContext context, UserController userController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.45,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Cadastro realizado com sucesso!',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
             child: Column(
               children: [
                 Text(
-                  'Cadastro realizado com sucesso!',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  'Agora basta entrar no app utilizando seu e-mail e a senha que você definiu, para começar a criar seus alarmes!',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Agora basta entrar no app utilizando seu e-mail e a senha que você definiu, para começar a criar seus alarmes!',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Image.asset(
-                        'assets/img/success.gif',
-                        width: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Ok, voltar para login',
-                  onPressed: () {
-                    Get.offAllNamed('/auth');
-                  },
+                Image.asset(
+                  'assets/img/success.gif',
+                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, voltar para login',
+            onPressed: () {
+              Get.offAllNamed('/auth');
+            },
+          ),
+        ],
+      )
     );
   }
 
   void _userRegisterErrorBottomSheet(BuildContext context, UserController userController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Ops!',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: CustomEmptyWidget(
-                    label: userController.status.errorMessage ?? 'Erro inesperado',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: userController.status.errorMessage ?? 'Erro inesperado',
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

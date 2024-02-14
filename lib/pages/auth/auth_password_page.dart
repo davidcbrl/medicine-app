@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -55,6 +56,10 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                             if (value == null || value.isEmpty) {
                               return 'Escreva o seu e-mail para receber sua nova senha';
                             }
+                            RegExp regex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$');
+                            if (!regex.hasMatch(value)) {
+                              return 'Email inválido, verifique a formatação';
+                            }
                             return null;
                           },
                         ),
@@ -98,94 +103,76 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
   }
 
   void _passwordResetSuccessBottomSheet(BuildContext context, AuthController authController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.45,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Senha redefinida com sucesso!',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
             child: Column(
               children: [
                 Text(
-                  'Senha redefinida com sucesso!',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  'Sua nova senha foi enviada para o e-mail informado, verifique sua caixa de entrada e entre no app novamente.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Sua nova senha foi enviada para o e-mail informado, verifique sua caixa de entrada e entre no app novamente.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Image.asset(
-                        'assets/img/success.gif',
-                        width: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Ok, voltar',
-                  onPressed: () {
-                    Get.offAllNamed('/auth');
-                  },
+                Image.asset(
+                  'assets/img/success.gif',
+                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, voltar',
+            onPressed: () {
+              Get.offAllNamed('/auth');
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _passwordResetErrorBottomSheet(BuildContext context, AuthController authController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Ops!',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: CustomEmptyWidget(
-                    label: authController.status.errorMessage ?? 'Erro inesperado',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+      height: MediaQuery.of(context).size.height * 0.4,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: authController.status.errorMessage ?? 'Erro inesperado',
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

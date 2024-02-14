@@ -11,6 +11,7 @@ import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
@@ -273,94 +274,76 @@ class AlarmReviewObservationView extends StatelessWidget {
   }
 
   void _alarmSuccessBottomSheet(BuildContext context, AlarmController authController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.45,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Alarme para remédio criado com sucesso!',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
             child: Column(
               children: [
                 Text(
-                  'Alarme para remédio criado com sucesso!',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  'Você receberá uma notificação quando estiver na hora de tomar o remédio, mas você também pode visualizar os alarmes na tela inicial.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Você receberá uma notificação quando estiver na hora de tomar o remédio, mas você também pode visualizar os alarmes na tela inicial.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Image.asset(
-                        'assets/img/success.gif',
-                        width: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Ok, voltar para o início',
-                  onPressed: () {
-                    Get.offAllNamed('/home');
-                  },
+                Image.asset(
+                  'assets/img/success.gif',
+                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, voltar para o início',
+            onPressed: () {
+              Get.offAllNamed('/home');
+            },
+          ),
+        ],
+      ),
     );
   }
 
   void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
-    showModalBottomSheet(
+    CustomBottomSheetWidget.show(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Ops!',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: CustomEmptyWidget(
-                    label: alarmController.status.errorMessage ?? 'Erro inesperado',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomTextButtonWidget(
-                  label: 'Voltar',
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: alarmController.status.errorMessage ?? 'Erro inesperado',
             ),
           ),
-        );
-      },
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
     );
   }
 
