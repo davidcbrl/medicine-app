@@ -351,7 +351,7 @@ class _HomePageState extends State<HomePage> {
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 3),
       body: Column(
         children: [
           Text(
@@ -441,12 +441,12 @@ class _HomePageState extends State<HomePage> {
   void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
       body: Column(
         children: [
           Text(
             'Tem certeza que deseja remover esse alarme?',
-            style: Theme.of(context).textTheme.titleSmall,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(
             height: 20,
@@ -486,7 +486,7 @@ class _HomePageState extends State<HomePage> {
   void _newOptionsBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
       body: Column(
         children: [
           Text(
@@ -531,7 +531,7 @@ class _HomePageState extends State<HomePage> {
   void _settingsBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
       body: Column(
         children: [
           Text(

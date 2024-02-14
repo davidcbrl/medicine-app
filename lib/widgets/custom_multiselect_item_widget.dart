@@ -22,7 +22,7 @@ class CustomMultiselectItemWidget extends StatelessWidget {
           color: selected ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary,
           borderRadius: BorderRadius.circular(30),
         ),
-        width: 50,
+        width: 60,
         height: 50,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -121,7 +121,7 @@ class AlarmController extends GetxController with StateMixin {
       alarmList.removeWhere((element) => element.id == id);
       String json = jsonEncode(alarmList);
       StorageProvider.writeJson(key: '/alarms', json: json);
-      get();
+      get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {
@@ -134,7 +134,7 @@ class AlarmController extends GetxController with StateMixin {
   void select(Alarm alarm) {
     id.value = alarm.id ?? 0;
     name.value = alarm.name;
-    quantity.value = alarm.quantity;
+    quantity.value = alarm.quantity ?? 0;
     image.value = alarm.image ?? '';
     doseType.value = DoseType.getDoseTypeList().firstWhere(
       (DoseType element) => element.id == alarm.doseTypeId,

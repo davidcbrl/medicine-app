@@ -58,7 +58,7 @@ class NotificationController extends GetxController {
         : NotificationCalendar(
             hour: notification.time!.hour,
             minute: notification.time!.minute,
-            weekday: notification.weekday!.id,
+            weekday: notification.weekday!.id + 1,
             // allowWhileIdle: true,
             // repeats: true,
           ),

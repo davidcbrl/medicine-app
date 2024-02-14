@@ -18,13 +18,13 @@ class WeekdayType {
 
   static List<WeekdayType> getWeekdayTypeList() {
     return [
+      WeekdayType(id: 0, name: 'Dom'),
       WeekdayType(id: 1, name: 'Seg'),
       WeekdayType(id: 2, name: 'Ter'),
       WeekdayType(id: 3, name: 'Qua'),
       WeekdayType(id: 4, name: 'Qui'),
       WeekdayType(id: 5, name: 'Sex'),
       WeekdayType(id: 6, name: 'Sab'),
-      WeekdayType(id: 7, name: 'Dom'),
     ];
   }
 }
