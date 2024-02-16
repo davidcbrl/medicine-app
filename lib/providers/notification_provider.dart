@@ -192,67 +192,8 @@ class NotificationProvider {
         channelKey: channelKey,
         permissions: permissionsNeeded,
       );
-    } else if (context.mounted) {
-      await showDialog(
-        context: context,
-        builder: (BuildContext ctx) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          title: Text(
-            'Permitir recursos extras',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Para que os alarmes funcionem corretamente, precisamos que permita os recursos a seguir:',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                lockedPermissions.join(', ').replaceAll('NotificationPermission.', ''),
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: Text(
-                'Não permitir',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              )
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(ctx).pop();
-                await AwesomeNotifications().requestPermissionToSendNotifications(
-                  channelKey: channelKey,
-                  permissions: lockedPermissions,
-                );
-                permissionsAllowed = await AwesomeNotifications().checkPermissionList(
-                  channelKey: channelKey,
-                  permissions: lockedPermissions,
-                );
-              },
-              child: Text(
-                'Permitir',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
     }
+
     return permissionsAllowed;
   }
 
