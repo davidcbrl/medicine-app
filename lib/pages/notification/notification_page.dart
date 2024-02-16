@@ -14,7 +14,7 @@ import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key? key, required this.receivedAction}): super(key: key);
+  const NotificationPage({super.key, required this.receivedAction});
 
   final ReceivedAction receivedAction;
 

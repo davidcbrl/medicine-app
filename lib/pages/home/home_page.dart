@@ -289,7 +289,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Text(
-            'Seja bem vindo!',
+            'Seja bem-vindo!',
             style: Theme.of(context).textTheme.labelMedium,
             textAlign: TextAlign.center,
           ),

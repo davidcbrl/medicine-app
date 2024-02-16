@@ -96,12 +96,9 @@ class RouteController extends GetxController {
 
 class CustomMaterialPageRoute<T> extends MaterialPageRoute<T> {
   CustomMaterialPageRoute({
-    required WidgetBuilder builder,
-    required RouteSettings settings,
-  }) : super(
-    builder: builder,
-    settings: settings,
-  );
+    required super.builder,
+    required RouteSettings super.settings,
+  });
 
   @override
   Widget buildTransitions(

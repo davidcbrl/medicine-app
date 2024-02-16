@@ -105,7 +105,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
   void _passwordResetSuccessBottomSheet(BuildContext context, AuthController authController) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.45,
+      height: MediaQuery.of(context).size.height * 0.3,
       body: Column(
         children: [
           Text(
@@ -122,10 +122,6 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                   'Sua nova senha foi enviada para o e-mail informado, verifique sua caixa de entrada e entre no app novamente.',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
-                ),
-                Image.asset(
-                  'assets/img/success.gif',
-                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),

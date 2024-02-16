@@ -1,10 +1,13 @@
+import 'package:medicine/models/buddy.dart';
+
 class User {
   int? id;
   String name;
   String phone;
   String email;
-  String password;
+  String? password;
   String? image;
+  Buddy? buddy;
   String? device;
 
   User({
@@ -12,7 +15,8 @@ class User {
     required this.name,
     required this.phone,
     required this.email,
-    required this.password,
+    this.password,
+    this.buddy,
     this.image,
     this.device,
   });
@@ -23,6 +27,7 @@ class User {
     phone = json['phone'],
     email = json['email'],
     password = json['password'],
+    buddy = json['buddy'] != null ? Buddy.fromJson(json['buddy']) : null,
     image = json['image'],
     device = json['device_name'];
 
@@ -33,6 +38,7 @@ class User {
     'email': email,
     'password': password,
     'password_confirmation': password,
+    'buddy': buddy?.toJson(),
     'image': image,
     'device_name': device,
   };

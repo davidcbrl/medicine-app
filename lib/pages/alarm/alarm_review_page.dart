@@ -276,7 +276,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   void _alarmSuccessBottomSheet(BuildContext context, AlarmController authController) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.45,
+      height: MediaQuery.of(context).size.height * 0.3,
       body: Column(
         children: [
           Text(
@@ -293,10 +293,6 @@ class AlarmReviewObservationView extends StatelessWidget {
                   'Você receberá uma notificação quando estiver na hora de tomar o remédio, mas você também pode visualizar os alarmes na tela inicial.',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
-                ),
-                Image.asset(
-                  'assets/img/success.gif',
-                  width: MediaQuery.of(context).size.height * 0.15,
                 ),
               ],
             ),

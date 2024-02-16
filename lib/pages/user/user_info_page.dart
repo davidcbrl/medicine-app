@@ -240,9 +240,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
           Expanded(
             child: Column(
               children: [
-                Image.asset(
-                  'assets/img/success.gif',
-                  width: MediaQuery.of(context).size.height * 0.15,
+                Text(
+                  ':)',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

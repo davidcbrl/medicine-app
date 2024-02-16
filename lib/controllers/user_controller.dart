@@ -3,17 +3,22 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:medicine/models/buddy.dart';
 import 'package:medicine/models/user.dart';
 import 'package:medicine/providers/api_provider.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class UserController extends GetxController with StateMixin {
+  PageController registerPageController = PageController();
+
   var id = 0.obs;
   var name = ''.obs;
   var phone = ''.obs;
   var email = ''.obs;
   var password = ''.obs;
+  var buddy = Buddy().obs;
   var image = ''.obs;
 
   var loading = false.obs;
@@ -35,7 +40,8 @@ class UserController extends GetxController with StateMixin {
           phone: phone.value,
           email: email.value,
           password: password.value,
-          image: image.isNotEmpty ? image.value : null,
+          image: image.isNotEmpty ? image.value : "",
+          buddy: buddy.value,
           device: await getDeviceName(),
         ),
       );
@@ -59,14 +65,8 @@ class UserController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      String json = StorageProvider.readJson(key: '/user');
-      if (json == '{}') {
-        clear();
-        change([], status: RxStatus.empty());
-        loading.value = false;
-        return;
-      }
-      User user = User.fromJson(jsonDecode(json));
+      Map<String, dynamic> json = await ApiProvider.get(path: '/user');
+      User user = User.fromJson(json);
       select(user);
       change([], status: RxStatus.success());
       loading.value = false;
@@ -82,8 +82,8 @@ class UserController extends GetxController with StateMixin {
     name.value = user.name;
     phone.value = user.phone;
     email.value = user.email;
-    password.value = user.password;
-    image.value = user.image ?? '';
+    password.value = user.password ?? '';
+    image.value = (user.image == 'image' ? null : user.image) ?? '';
   }
 
   void clear() {
