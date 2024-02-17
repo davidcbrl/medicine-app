@@ -3,20 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
-import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/weekday_type.dart';
-import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
+import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
-import 'package:medicine/widgets/custom_select_item_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
 import 'package:medicine/widgets/custom_text_button_widget.dart';
 import 'package:medicine/widgets/custom_text_field_widget.dart';
@@ -29,9 +26,7 @@ class AlarmReviewPage extends StatefulWidget {
 }
 
 class _AlarmReviewPageState extends State<AlarmReviewPage> {
-  final ChatController chatController = Get.find();
   final AlarmController alarmController = Get.find();
-  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -46,27 +41,7 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomAvatarWidget(
-                  image: userController.image.value.isNotEmpty
-                    ? Image.memory(base64Decode(userController.image.value))
-                    : Image.asset('assets/img/ben.png'),
-                  label: userController.name.value.isNotEmpty
-                    ? userController.name.value
-                    : 'Tio Ben',
-                ),
-                CustomSelectItemWidget(
-                  label: 'Falar com meu \nresponsável',
-                  image: Image.asset(
-                    'assets/img/whatsapp.png',
-                    width: 30,
-                  ),
-                  onPressed: () => chatController.launchWhatsapp(),
-                ),
-              ],
-            ),
+            const CustomHeaderWidget(),
             const SizedBox(
               height: 20,
             ),

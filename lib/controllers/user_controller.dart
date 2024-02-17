@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -8,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:medicine/models/buddy.dart';
 import 'package:medicine/models/user.dart';
 import 'package:medicine/providers/api_provider.dart';
-import 'package:medicine/providers/storage_provider.dart';
 
 class UserController extends GetxController with StateMixin {
   PageController registerPageController = PageController();
@@ -18,7 +16,7 @@ class UserController extends GetxController with StateMixin {
   var phone = ''.obs;
   var email = ''.obs;
   var password = ''.obs;
-  var buddy = Buddy().obs;
+  var buddy = Buddy(name: '', phone: '').obs;
   var image = ''.obs;
 
   var loading = false.obs;
@@ -35,7 +33,7 @@ class UserController extends GetxController with StateMixin {
     try {
       UserRequest request = UserRequest(
         user: User(
-          id: id.value == 0 ? UniqueKey().hashCode : id.value,
+          id: id.value == 0 ? null : id.value,
           name: name.value,
           phone: phone.value,
           email: email.value,
@@ -46,11 +44,9 @@ class UserController extends GetxController with StateMixin {
         ),
       );
       await ApiProvider.post(
-        path: '/register',
+        path: request.user.id != null ? '/user' : '/register',
         data: request.user.toJson(),
       );
-      String json = jsonEncode(request.user.toJson());
-      StorageProvider.writeJson(key: '/user', json: json);
       get();
       change([], status: RxStatus.success());
       loading.value = false;
@@ -83,6 +79,7 @@ class UserController extends GetxController with StateMixin {
     phone.value = user.phone;
     email.value = user.email;
     password.value = user.password ?? '';
+    buddy.value = user.buddy ?? Buddy(name: '', phone: '');
     image.value = (user.image == 'image' ? null : user.image) ?? '';
   }
 

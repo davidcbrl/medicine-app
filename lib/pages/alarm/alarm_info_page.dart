@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
-import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm_type.dart';
 import 'package:medicine/models/weekday_type.dart';
-import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
+import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_multiselect_item_widget.dart';
 import 'package:medicine/widgets/custom_option_field_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
@@ -25,9 +21,7 @@ class AlarmInfoPage extends StatefulWidget {
 }
 
 class _AlarmInfoPageState extends State<AlarmInfoPage> {
-  final ChatController chatController = Get.find();
   final AlarmController alarmController = Get.find();
-  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -37,27 +31,7 @@ class _AlarmInfoPageState extends State<AlarmInfoPage> {
           const SizedBox(
             height: 20,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomAvatarWidget(
-                image: userController.image.value.isNotEmpty
-                  ? Image.memory(base64Decode(userController.image.value))
-                  : Image.asset('assets/img/ben.png'),
-                label: userController.name.value.isNotEmpty
-                  ? userController.name.value
-                  : 'Tio Ben',
-              ),
-              CustomSelectItemWidget(
-                label: 'Falar com meu \nresponsável',
-                image: Image.asset(
-                  'assets/img/whatsapp.png',
-                  width: 30,
-                ),
-                onPressed: () => chatController.launchWhatsapp(),
-              ),
-            ],
-          ),
+          const CustomHeaderWidget(),
           const SizedBox(
             height: 20,
           ),

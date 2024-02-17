@@ -1,12 +1,12 @@
 class Buddy {
   int? id;
-  String? name;
-  String? phone;
+  String name;
+  String phone;
 
   Buddy({
     this.id,
-    this.name,
-    this.phone,
+    required this.name,
+    required this.phone,
   });
 
   Buddy.fromJson(Map<String, dynamic> json):

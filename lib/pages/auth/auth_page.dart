@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -18,6 +19,7 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   final AuthController authController = Get.find();
+  final UserController userController = Get.put(UserController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +106,7 @@ class _AuthPageState extends State<AuthPage> {
                     authController.password.value = passwordController.text;
                     await authController.login();
                     if (authController.status.isSuccess) {
+                      userController.get();
                       Get.offAllNamed('/home');
                       return;
                     }
@@ -118,6 +121,7 @@ class _AuthPageState extends State<AuthPage> {
                 label: 'Não possui conta? Criar nova conta',
                 style: Theme.of(context).textTheme.titleSmall,
                 onPressed: () {
+                  userController.clear();
                   Get.toNamed('/user/register');
                 },
               ),

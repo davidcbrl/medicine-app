@@ -23,7 +23,7 @@ class UserRegisterPage extends StatefulWidget {
 }
 
 class _UserRegisterPageState extends State<UserRegisterPage> {
-  final UserController userController = Get.put(UserController(), permanent: true);
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
