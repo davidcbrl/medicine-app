@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:medicine/providers/dio_provider.dart';
 
 class ApiProvider {
-  static const baseUrl = 'http://54.88.145.110/api';
+  static const baseUrl = 'http://54.227.153.203/api';
 
   static Future get({required String path}) async {
     try {

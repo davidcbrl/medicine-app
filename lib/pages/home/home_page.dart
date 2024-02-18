@@ -129,11 +129,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                       if (alarmController.status.isEmpty) ...[
-                        if (alarmController.allEmpty.value) ...[
+                        if (alarmController.welcome.value) ...[
                           _welcomeMessage(context),
                         ] else ...[
                           const CustomEmptyWidget(
                             label: 'Nenhum alarme para esse dia',
+                            showIcon: false,
                           ),
                         ]
                       ],
@@ -283,24 +284,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildWidgetList() {
-    List<Alarm> list = [];
-    for (Alarm alarm in alarmController.alarmList) {
-      for (String time in alarm.times) {
-        alarm.time = time;
-        list.add(Alarm.fromJson(alarm.toJson()));
-      }
-    }
-    list.sort((a, b) {
+    alarmController.alarmList.sort((a, b) {
       int valueA = int.parse(a.time!.split(':')[0]);
       int valueB = int.parse(b.time!.split(':')[0]);
       return valueA.compareTo(valueB);
     });
-    return list.map((Alarm alarm) {
+    return alarmController.alarmList.map((Alarm alarm) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: CustomListItemWidget(
+          prefixLabel: alarm.time?.split(':').take(2).join(':'),
           label: alarm.name,
-          prefixLabel: alarm.time,
           icon: Icon(
             Icons.chevron_right_rounded,
             color: Theme.of(context).colorScheme.secondary,

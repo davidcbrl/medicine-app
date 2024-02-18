@@ -1,10 +1,12 @@
 class Alarm {
   int? id;
   String name;
-  int quantity;
-  int doseTypeId;
+  String? date;
+  int? quantity;
+  int? doseTypeId;
   String? image;
-  int alarmTypeId;
+  int? alarmTypeId;
+  int? taken;
   String? time;
   List<String> times;
   List<int>? weekdayTypeIds;
@@ -14,10 +16,12 @@ class Alarm {
   Alarm({
     this.id,
     required this.name,
-    required this.quantity,
+    this.date,
+    this.quantity,
     this.image,
-    required this.doseTypeId,
-    required this.alarmTypeId,
+    this.doseTypeId,
+    this.alarmTypeId,
+    this.taken,
     this.time,
     required this.times,
     this.weekdayTypeIds,
@@ -28,28 +32,32 @@ class Alarm {
   Alarm.fromJson(Map<String, dynamic> json):
     id = json['id'],
     name = json['name'],
+    date = json['date'],
     quantity = json['quantity'],
     image = json['image'],
     doseTypeId = json['doseTypeId'],
     alarmTypeId = json['alarmTypeId'],
-    time = json['time'],
-    times = json['times']?.cast<String>(),
-    weekdayTypeIds = json['weekdayTypeIds']?.cast<int>(),
+    taken = json['taken'],
+    time = json['hour'],
+    times = (json['hour'] != null) && (json['hours'] == null) ? [json['hour']] : json['hours']?.cast<String>(),
+    weekdayTypeIds = json['days']?.cast<int>(),
     startDate = json['startDate'],
-    observation = json['observation'];
+    observation = json['observations'];
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
-    'quantity': quantity,
+    'date': date,
+    'qty': quantity,
     'image': image,
-    'doseTypeId': doseTypeId,
-    'alarmTypeId': alarmTypeId,
+    'type': doseTypeId,
+    'type_interval': alarmTypeId,
+    'taken': taken,
     'time': time,
-    'times': times,
-    'weekdayTypeIds': weekdayTypeIds,
-    'startDate': startDate,
-    'observation': observation,
+    'hours': times,
+    'days': weekdayTypeIds,
+    'start_date': startDate,
+    'observations': observation,
   };
 }
 
@@ -61,6 +69,21 @@ class AlarmRequest {
   });
 
   AlarmRequest.fromJson(Map<String, dynamic> json):
+    alarm = json['alarm'];
+
+  Map<String, dynamic> toJson() => {
+    'alarm': alarm,
+  };
+}
+
+class AlarmResponse {
+  Alarm alarm;
+
+  AlarmResponse({
+    required this.alarm,
+  });
+
+  AlarmResponse.fromJson(Map<String, dynamic> json):
     alarm = json['alarm'];
 
   Map<String, dynamic> toJson() => {

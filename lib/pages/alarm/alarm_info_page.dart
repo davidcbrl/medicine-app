@@ -346,14 +346,15 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     height: 5,
                   ),
                   CustomOptionFieldWidget(
-                    placeholder: 'Ex: 01/01/2023',
+                    placeholder: 'Ex: 01/01/2024',
                     value: DateFormat('dd/MM/yyyy').format(alarmController.startDateTime.value),
                     onPressed: () async {
+                      DateTime now = DateTime.now();
                       DateTime? startDateTime = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                        initialDate: now,
+                        firstDate: now,
+                        lastDate: now.add(const Duration(days: 365)),
                       );
                       if (startDateTime != null) {
                         setState(() {

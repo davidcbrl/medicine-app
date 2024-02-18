@@ -31,50 +31,55 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
-      body: Obx(
-        () => alarmController.loading.value
-        ? CustomLoadingWidget(
-            loading: alarmController.loading.value,
-          )
-        : Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            const CustomHeaderWidget(),
-            const SizedBox(
-              height: 20,
-            ),
-            const CustomStepperWidget(
-              current: 3,
-              steps: [
-                CustomStepperStep(
-                  icon: Icons.medication_outlined,
-                  label: 'Remédio',
-                ),
-                CustomStepperStep(
-                  icon: Icons.add_alarm_rounded,
-                  label: 'Alarme',
-                ),
-                CustomStepperStep(
-                  icon: Icons.check_circle_outline_rounded,
-                  label: 'Confirmar',
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: PageView(
-                controller: alarmController.reviewPageController,
-                children: const [
-                  AlarmReviewObservationView(),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              const CustomHeaderWidget(),
+              const SizedBox(
+                height: 20,
+              ),
+              const CustomStepperWidget(
+                current: 3,
+                steps: [
+                  CustomStepperStep(
+                    icon: Icons.medication_outlined,
+                    label: 'Remédio',
+                  ),
+                  CustomStepperStep(
+                    icon: Icons.add_alarm_rounded,
+                    label: 'Alarme',
+                  ),
+                  CustomStepperStep(
+                    icon: Icons.check_circle_outline_rounded,
+                    label: 'Confirmar',
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: PageView(
+                  controller: alarmController.reviewPageController,
+                  children: const [
+                    AlarmReviewObservationView(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Obx(
+            () => alarmController.loading.value
+            ? CustomLoadingWidget(
+                loading: alarmController.loading.value,
+              )
+            : Container(),
+          ),
+        ],
       ),
     );
   }
@@ -84,7 +89,6 @@ class AlarmReviewObservationView extends StatelessWidget {
   const AlarmReviewObservationView({super.key});
   @override
   Widget build(BuildContext context) {
-    final NotificationController notificationController = Get.find();
     final AlarmController alarmController = Get.find();
     TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
     return Column(
@@ -193,37 +197,7 @@ class AlarmReviewObservationView extends StatelessWidget {
             alarmController.observation.value = alarmObservationController.text;
             await alarmController.save();
             if (alarmController.status.isSuccess) {
-              for (WeekdayType weekday in alarmController.weekdayTypeList) {
-                for (TimeOfDay time in alarmController.timeList) {
-                  String decoratedTime = _decorateTime(time);
-                  await notificationController.createMedicineNotificationScheduled(
-                    MedicineNotification(
-                      id: alarmController.id.value,
-                      weekday: weekday,
-                      time: time,
-                      title: 'Hora de tomar seu remédio',
-                      body: alarmController.name.value,
-                      image: 'asset://assets/img/background.png',
-                      largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                      payload: {
-                        'json': jsonEncode(
-                          Alarm(
-                            id: alarmController.id.value,
-                            name: alarmController.name.value,
-                            alarmTypeId: alarmController.alarmType.value.id,
-                            doseTypeId: alarmController.doseType.value.id,
-                            quantity: alarmController.quantity.value,
-                            time: decoratedTime,
-                            times: [decoratedTime],
-                            weekdayTypeIds: [weekday.id],
-                            image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
-                          ).toJson(),
-                        ),
-                      },
-                    ),
-                  );
-                }
-              }
+              await _scheduleAlarms(alarmController);
               if (context.mounted) {
                 _alarmSuccessBottomSheet(context, alarmController);
               }
@@ -248,10 +222,45 @@ class AlarmReviewObservationView extends StatelessWidget {
     );
   }
 
+  Future<void> _scheduleAlarms(AlarmController alarmController) async {
+    final NotificationController notificationController = Get.find();
+    for (WeekdayType weekday in alarmController.weekdayTypeList) {
+      for (TimeOfDay time in alarmController.timeList) {
+        String decoratedTime = _decorateTime(time);
+        await notificationController.createMedicineNotificationScheduled(
+          MedicineNotification(
+            id: alarmController.id.value,
+            weekday: weekday,
+            time: time,
+            title: 'Hora de tomar seu remédio',
+            body: alarmController.name.value,
+            image: 'asset://assets/img/background.png',
+            largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+            payload: {
+              'json': jsonEncode(
+                Alarm(
+                  id: alarmController.id.value,
+                  name: alarmController.name.value,
+                  alarmTypeId: alarmController.alarmType.value.id,
+                  doseTypeId: alarmController.doseType.value.id,
+                  quantity: alarmController.quantity.value,
+                  time: decoratedTime,
+                  times: [decoratedTime],
+                  weekdayTypeIds: [weekday.id],
+                  image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
+                ).toJson(),
+              ),
+            },
+          ),
+        );
+      }
+    }
+  }
+
   void _alarmSuccessBottomSheet(BuildContext context, AlarmController authController) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.275,
       body: Column(
         children: [
           Text(

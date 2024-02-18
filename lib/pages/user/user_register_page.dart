@@ -535,7 +535,7 @@ class UserRegisterPasswordView extends StatelessWidget {
   void _userRegisterSuccessBottomSheet(BuildContext context, UserController userController) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.25,
       body: Column(
         children: [
           Text(

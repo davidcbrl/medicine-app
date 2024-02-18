@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/alarm_type.dart';
 import 'package:medicine/models/dose_type.dart';
 import 'package:medicine/models/weekday_type.dart';
+import 'package:medicine/providers/api_provider.dart';
 import 'package:medicine/providers/storage_provider.dart';
 
 class AlarmController extends GetxController with StateMixin {
@@ -28,7 +30,7 @@ class AlarmController extends GetxController with StateMixin {
   var alarmList = <Alarm>[].obs;
 
   var loading = false.obs;
-  var allEmpty = false.obs;
+  var welcome = true.obs;
 
   @override
   onInit() {
@@ -42,24 +44,22 @@ class AlarmController extends GetxController with StateMixin {
     try {
       AlarmRequest request = AlarmRequest(
         alarm: Alarm(
-          id: id.value == 0 ? UniqueKey().hashCode : id.value,
+          id: id.value == 0 ? null : id.value,
           name: name.value,
           quantity: quantity.value,
-          image: image.isNotEmpty ? image.value : null,
+          image: image.isNotEmpty ? image.value : "null",
           doseTypeId: doseType.value.id,
           alarmTypeId: alarmType.value.id,
           times: timeList.map((TimeOfDay element) => _decorateTime(element)).toList(),
           weekdayTypeIds: alarmType.value.id == 1 ? weekdayTypeList.map((WeekdayType element) => element.id).toList() : null,
-          startDate: alarmType.value.id == 2 ? startDateTime.value.toString() : null,
+          startDate: alarmType.value.id == 2 ? startDateTime.value.toString() : DateTime.now().toString(),
           observation: observation.isNotEmpty ? observation.value : null,
         ),
       );
-      if (request.alarm.id == id.value) {
-        alarmList.removeWhere((element) => element.id == id.value);
-      }
-      alarmList.add(request.alarm);
-      String json = jsonEncode(alarmList);
-      StorageProvider.writeJson(key: '/alarms', json: json);
+      await ApiProvider.post(
+        path: request.alarm.id != null ? '/alarm/${request.alarm.id}' : '/alarm',
+        data: request.alarm.toJson(),
+      );
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
@@ -70,41 +70,21 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> get({DateTime? selectedDate}) async {
+  Future<void> get({required DateTime selectedDate}) async {
     loading.value = true;
-    allEmpty.value = false;
     change([], status: RxStatus.loading());
     try {
-      String json = StorageProvider.readJson(key: '/alarms');
-      if (json == '{}') {
+      welcome.value = StorageProvider.readJson(key: '/welcome') != 'false';
+      String date = DateFormat('yyyy-MM-dd').format(selectedDate);
+      List<dynamic> list = await ApiProvider.get(path: '/alarm/from/$date');
+      if (list.isEmpty) {
         alarmList.value = [];
         change([], status: RxStatus.empty());
-        allEmpty.value = true;
         loading.value = false;
         return;
       }
-      List<dynamic> list = jsonDecode(json);
+      StorageProvider.writeJson(key: '/welcome', json: 'false');
       alarmList.value = list.map((element) => Alarm.fromJson(element)).toList();
-      if (selectedDate != null) {
-        alarmList.value = alarmList.where(
-          (Alarm alarm) {
-            if (alarm.alarmTypeId == 1) {
-              return alarm.weekdayTypeIds!.contains(selectedDate.weekday);
-            }
-            if (alarm.alarmTypeId == 2) {
-              DateTime start = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
-              return start.isAtSameMomentAs(selectedDate) || start.isBefore(selectedDate);
-            }
-            return false;
-          },
-        ).toList();
-      }
-      if (alarmList.isEmpty) {
-        alarmList.value = [];
-        change([], status: RxStatus.empty());
-        loading.value = false;
-        return;
-      }
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {
