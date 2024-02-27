@@ -9,7 +9,7 @@ class CustomEmptyWidget extends StatelessWidget {
     super.key,
     required this.label,
     this.size,
-    this.showIcon = true,
+    this.showIcon = false,
   });
 
   @override

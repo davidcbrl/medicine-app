@@ -190,10 +190,16 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
                     ),
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
-                      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 10,
+                      );
                       final bytes = await image!.readAsBytes();
                       setState(() {
                         userController.image.value = base64Encode(bytes);
+                        userController.name.value = nameController.text;
+                        userController.email.value = emailController.text;
+                        userController.phone.value = phoneController.text;
                       });
                     },
                   ),

@@ -121,6 +121,7 @@ class _NotificationPageState extends State<NotificationPage> {
           CustomButtonWidget(
             label: 'Pronto, voltar para alarmes',
             onPressed: () {
+              alarmController.get(selectedDate: DateTime.now());
               Get.offAllNamed('/home');
               return;
             },

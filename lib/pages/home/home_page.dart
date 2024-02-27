@@ -134,7 +134,6 @@ class _HomePageState extends State<HomePage> {
                         ] else ...[
                           const CustomEmptyWidget(
                             label: 'Nenhum alarme para esse dia',
-                            showIcon: false,
                           ),
                         ]
                       ],
@@ -531,8 +530,8 @@ class _HomePageState extends State<HomePage> {
                       size: 20,
                     ),
                     onPressed: () {
-                      authController.logout();
-                      Get.offAllNamed('/auth');
+                      Get.back();
+                      _logoutCheckBottomSheet(context);
                     },
                   ),
                 ],
@@ -544,6 +543,50 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomTextButtonWidget(
             label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _logoutCheckBottomSheet(BuildContext context) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
+      body: Column(
+        children: [
+          Text(
+            'Tem certeza que deseja sair do app?',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: CustomSelectItemWidget(
+                label: 'Sim',
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
+                ),
+                onPressed: () async {
+                  authController.logout();
+                  Get.offAllNamed('/auth');
+                },
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Não, voltar',
             onPressed: () {
               Get.back();
             },

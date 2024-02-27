@@ -44,7 +44,7 @@ class UserController extends GetxController with StateMixin {
         ),
       );
       await ApiProvider.post(
-        path: request.user.id != null ? '/user' : '/register',
+        path: request.user.id != null ? '/user/${request.user.id}' : '/register',
         data: request.user.toJson(),
       );
       get();
@@ -52,7 +52,7 @@ class UserController extends GetxController with StateMixin {
       loading.value = false;
     } catch (error) {
       if (kDebugMode) print(error);
-      change([], status: RxStatus.error('Falha ao salvar usuário'));
+      change([], status: RxStatus.error('Falha ao salvar usuário: $error'));
       loading.value = false;
     }
   }
@@ -90,6 +90,7 @@ class UserController extends GetxController with StateMixin {
     email.value = '';
     password.value = '';
     image = ''.obs;
+    buddy = Buddy(name: '', phone: '').obs;
   }
 
   Future<String> getDeviceName() async {

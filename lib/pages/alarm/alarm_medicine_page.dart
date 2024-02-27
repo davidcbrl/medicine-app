@@ -330,7 +330,10 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
               ),
               onPressed: () async {
                 final ImagePicker picker = ImagePicker();
-                final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                final XFile? image = await picker.pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 10,
+                );
                 final bytes = await image!.readAsBytes();
                 setState(() {
                   alarmController.image.value = base64Encode(bytes);

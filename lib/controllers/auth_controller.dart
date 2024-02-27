@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -33,7 +31,7 @@ class AuthController extends GetxController with StateMixin {
       loading.value = false;
     } catch (error) {
       if (kDebugMode) print(error);
-      change([], status: RxStatus.error('Falha ao realizar login'));
+      change([], status: RxStatus.error('Falha ao realizar login: $error'));
       loading.value = false;
     }
   }
@@ -74,19 +72,23 @@ class AuthController extends GetxController with StateMixin {
   }
 
   Future<String> getDeviceName() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      return '${androidInfo.manufacturer} ${androidInfo.device}';
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      if (kIsWeb) {
+        WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+        return '${webBrowserInfo.userAgent}';
+      }
+      if (GetPlatform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return '${androidInfo.manufacturer} ${androidInfo.device}';
+      }
+      if (GetPlatform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return '${iosInfo.model} ${iosInfo.name}';
+      }
+      return 'NotFound';
+    } catch (e) {
+      return 'Unknown';
     }
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      return '${iosInfo.model} ${iosInfo.name}';
-    }
-    if (kIsWeb) {
-      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-      return '${webBrowserInfo.userAgent}';
-    }
-    return 'Unknown';
   }
 }
