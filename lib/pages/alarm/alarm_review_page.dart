@@ -239,15 +239,12 @@ class AlarmReviewObservationView extends StatelessWidget {
             payload: {
               'json': jsonEncode(
                 Alarm(
-                  id: alarmController.id.value,
+                  id: 1,
                   name: alarmController.name.value,
-                  alarmTypeId: alarmController.alarmType.value.id,
-                  doseTypeId: alarmController.doseType.value.id,
-                  quantity: alarmController.quantity.value,
-                  time: decoratedTime,
-                  times: [decoratedTime],
-                  weekdayTypeIds: [weekday.id],
                   image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
+                  times: [decoratedTime],
+                  observation: alarmController.observation.value,
+                  taken: alarmController.taken.value,
                 ).toJson(),
               ),
             },

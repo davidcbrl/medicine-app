@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       if (alarmController.status.isLoading) ...[
                         CustomLoadingWidget(
-                          loading: alarmController.status.isLoading,
+                          loading: alarmController.loading.value,
                         ),
                       ],
                       if (alarmController.status.isEmpty) ...[
@@ -179,14 +179,11 @@ class _HomePageState extends State<HomePage> {
                       payload: {
                         'json': jsonEncode(
                           Alarm(
-                            id: 0,
                             name: 'Vitamina B12',
-                            alarmTypeId: 1,
-                            doseTypeId: 1,
-                            quantity: 15,
-                            time: '12:00',
                             times: ['12:00'],
                             weekdayTypeIds: [],
+                            observation: 'Tomar com bastante água',
+                            taken: DateTime.now().toString(),
                           ).toJson(),
                         ),
                       }
@@ -289,24 +286,76 @@ class _HomePageState extends State<HomePage> {
       return valueA.compareTo(valueB);
     });
     return alarmController.alarmList.map((Alarm alarm) {
+      String status = _getAlarmStatus(alarm);
+      String? label = alarm.time?.split(':').take(2).join(':');
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: CustomListItemWidget(
-          prefixLabel: alarm.time?.split(':').take(2).join(':'),
-          label: alarm.name,
-          icon: Icon(
-            Icons.chevron_right_rounded,
-            color: Theme.of(context).colorScheme.secondary,
-            size: 20,
-          ),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.tertiary,
-            width: 1,
-          ),
-          onPressed: () => _alarmOptionsBottomSheet(context, alarm),
+        child: Column(
+          children: [
+            if (status == 'pendente') ...[
+              CustomListItemWidget(
+                prefixLabel: label,
+                label: alarm.name,
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
+                ),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  width: 1,
+                ),
+                onPressed: () => _alarmOptionsBottomSheet(context, alarm),
+              ),
+            ],
+            if (status == 'tomado') ...[
+              CustomListItemWidget(
+                prefixLabel: label,
+                label: alarm.name,
+                suffixLabel: 'Tomado',
+                color: Theme.of(context).colorScheme.background,
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
+                ),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  width: 1,
+                ),
+                onPressed: () => _alarmOptionsBottomSheet(context, alarm),
+              ),
+            ],
+            if (status == 'atrasado') ...[
+              CustomListItemWidget(
+                prefixLabel: label,
+                label: alarm .name,
+                suffixLabel: 'Atrasado',
+                color: Theme.of(context).colorScheme.tertiary,
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20,
+                ),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.error,
+                  width: 1,
+                ),
+                onPressed: () => _alarmOptionsBottomSheet(context, alarm),
+              ),
+            ],
+          ],
         ),
       );
     }).toList();
+  }
+
+  String _getAlarmStatus(Alarm alarm) {
+    DateTime now = DateTime.now();
+    DateTime asd = DateTime.parse('${alarm.date} ${alarm.time}');
+    if (asd.isBefore(now) && alarm.taken == null) return 'atrasado';
+    if (alarm.taken != null) return 'tomado';
+    return 'pendente';
   }
 
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {

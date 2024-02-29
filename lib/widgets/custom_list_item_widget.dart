@@ -8,6 +8,7 @@ class CustomListItemWidget extends StatelessWidget {
   final String? suffixLabel;
   final Icon? icon;
   final Border? border;
+  final Color? color;
 
   const CustomListItemWidget({
     super.key,
@@ -18,6 +19,7 @@ class CustomListItemWidget extends StatelessWidget {
     this.suffixLabel,
     this.icon,
     this.border,
+    this.color,
   });
 
   @override
@@ -29,7 +31,7 @@ class CustomListItemWidget extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
+              color: color ?? Theme.of(context).colorScheme.tertiary,
               borderRadius: BorderRadius.circular(30),
               border: border,
             ),

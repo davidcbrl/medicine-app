@@ -6,7 +6,7 @@ class Alarm {
   int? doseTypeId;
   String? image;
   int? alarmTypeId;
-  int? taken;
+  String? taken;
   String? time;
   List<String> times;
   List<int>? weekdayTypeIds;

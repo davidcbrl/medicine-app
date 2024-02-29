@@ -26,6 +26,8 @@ class AlarmController extends GetxController with StateMixin {
   var weekdayTypeList = <WeekdayType>[].obs;
   var startDateTime = DateTime.now().obs;
   var observation = ''.obs;
+  var taken = ''.obs;
+  var date = ''.obs;
 
   var alarmList = <Alarm>[].obs;
 
@@ -94,6 +96,23 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
+  Future<void> take({required Alarm alarm}) async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      await ApiProvider.post(
+        path: '/alarm/${alarm.id}/taken/${DateTime.now().toString()}',
+      );
+      get(selectedDate: DateTime.now());
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao marcar alarme como concluído'));
+      loading.value = false;
+    }
+  }
+
   Future<void> remove({int? id}) async {
     loading.value = true;
     change([], status: RxStatus.loading());
@@ -132,6 +151,8 @@ class AlarmController extends GetxController with StateMixin {
     ).toList();
     startDateTime.value = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
     observation.value = alarm.observation ?? '';
+    date.value = alarm.date ?? '';
+    taken.value = alarm.taken ?? '';
   }
 
   void clear() {
@@ -145,6 +166,8 @@ class AlarmController extends GetxController with StateMixin {
     weekdayTypeList = <WeekdayType>[].obs;
     startDateTime = DateTime.now().obs;
     observation = ''.obs;
+    taken = ''.obs;
+    date = ''.obs;
   }
 
   String _decorateTime(TimeOfDay time) {

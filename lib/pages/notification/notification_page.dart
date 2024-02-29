@@ -42,7 +42,7 @@ class _NotificationPageState extends State<NotificationPage> {
               child: Column(
                 children: [
                   Text(
-                    alarm.time ?? '',
+                    alarm.times.first.split(':').take(2).join(':'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -101,12 +101,12 @@ class _NotificationPageState extends State<NotificationPage> {
                         ],
                       ),
                       if (alarm.observation != null) ...[
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Text(
                           alarm.observation ?? '',
                           style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(
-                          height: 10,
                         ),
                       ],
                       const SizedBox(
@@ -119,9 +119,11 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
           ),
           CustomButtonWidget(
-            label: 'Pronto, voltar para alarmes',
-            onPressed: () {
-              alarmController.get(selectedDate: DateTime.now());
+            label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
+            onPressed: () async {
+              if (alarm.id != null) {
+                await alarmController.take(alarm: alarm);
+              }
               Get.offAllNamed('/home');
               return;
             },
@@ -133,4 +135,5 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
     );
   }
+  
 }
