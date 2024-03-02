@@ -320,25 +320,55 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
         ),
         Expanded(
           child: SingleChildScrollView(
-            child: CustomImagePickerWidget(
-              label: 'Toque para escolher uma foto',
-              image: alarmController.image.value.isNotEmpty ? base64Decode(alarmController.image.value) : null,
-              icon: Icon(
-                Icons.image_search_outlined,
-                color: Theme.of(context).colorScheme.secondary,
-                size: 20,
-              ),
-              onPressed: () async {
-                final ImagePicker picker = ImagePicker();
-                final XFile? image = await picker.pickImage(
-                  source: ImageSource.gallery,
-                  imageQuality: 10,
-                );
-                final bytes = await image!.readAsBytes();
-                setState(() {
-                  alarmController.image.value = base64Encode(bytes);
-                });
-              },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: CustomImagePickerWidget(
+                    label: 'Toque para escolher ${alarmController.image.value.isNotEmpty ? '\n' : ''}uma foto',
+                    image: alarmController.image.value.isNotEmpty ? base64Decode(alarmController.image.value) : null,
+                    icon: Icon(
+                      Icons.image_search_outlined,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 10,
+                      );
+                      final bytes = await image!.readAsBytes();
+                      setState(() {
+                        alarmController.image.value = base64Encode(bytes);
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                if (alarmController.image.value.isNotEmpty) ...[
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        alarmController.image.value = '';
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),

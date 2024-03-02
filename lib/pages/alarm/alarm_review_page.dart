@@ -122,7 +122,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                       height: 5,
                     ),
                     Text(
-                      '${alarmController.quantity.value} ${alarmController.doseType.value.name}',
+                      '${alarmController.quantity.value} ${alarmController.doseType.value.name}'.toLowerCase(),
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(
@@ -174,7 +174,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                     ],
                     if (alarmController.alarmType.value.id == 2) ...[
                       Text(
-                        DateFormat('dd MMMM yyyy').format(alarmController.startDateTime.value),
+                        DateFormat('dd MMMM yyyy, HH:mm').format(alarmController.startDateTime.value),
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       const SizedBox(

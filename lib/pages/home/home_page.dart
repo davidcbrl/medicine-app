@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
-import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
@@ -110,39 +109,17 @@ class _HomePageState extends State<HomePage> {
             height: 10,
           ),
           Expanded(
-            child: Obx(
-              () => LazyLoadScrollView(
-                isLoading: alarmController.loading.value,
-                scrollOffset: 10,
-                onEndOfPage: () => () {},
-                child: RefreshIndicator(
-                  onRefresh: () => alarmController.get(selectedDate: selectedDate),
-                  child: ListView(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      if (alarmController.status.isLoading) ...[
-                        CustomLoadingWidget(
-                          loading: alarmController.loading.value,
-                        ),
-                      ],
-                      if (alarmController.status.isEmpty) ...[
-                        if (alarmController.welcome.value) ...[
-                          _welcomeMessage(context),
-                        ] else ...[
-                          const CustomEmptyWidget(
-                            label: 'Nenhum alarme para esse dia',
-                          ),
-                        ]
-                      ],
-                      if (alarmController.status.isError) ...[
-                        CustomEmptyWidget(
-                          label: alarmController.status.errorMessage ?? 'Erro inesperado',
-                        ),
-                      ],
-                      if (alarmController.status.isSuccess) ...[
+            child: RefreshIndicator(
+              onRefresh: () => alarmController.get(selectedDate: selectedDate),
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  alarmController.obx(
+                    (state) => Column(
+                      children: [
                         Text(
                           'Toque em um alarme abaixo para tomar o remédio',
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -156,9 +133,20 @@ class _HomePageState extends State<HomePage> {
                           height: 100,
                         ),
                       ],
-                    ],
+                    ),
+                    onLoading: CustomLoadingWidget(
+                      loading: alarmController.loading.value,
+                    ),
+                    onEmpty: alarmController.welcome.value
+                      ? _welcomeMessage(context)
+                      : const CustomEmptyWidget(
+                        label: 'Nenhum alarme para esse dia',
+                      ),
+                    onError: (error) => CustomEmptyWidget(
+                      label: alarmController.status.errorMessage ?? 'Erro inesperado',
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),

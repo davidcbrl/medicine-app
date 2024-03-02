@@ -25,6 +25,7 @@ class AlarmController extends GetxController with StateMixin {
   var timeList = <TimeOfDay>[const TimeOfDay(hour: 0, minute: 0)].obs;
   var weekdayTypeList = <WeekdayType>[].obs;
   var startDateTime = DateTime.now().obs;
+  var startHourTime = const TimeOfDay(hour: 0, minute: 0).obs;
   var observation = ''.obs;
   var taken = ''.obs;
   var date = ''.obs;
@@ -62,6 +63,7 @@ class AlarmController extends GetxController with StateMixin {
         path: request.alarm.id != null ? '/alarm/${request.alarm.id}' : '/alarm',
         data: request.alarm.toJson(),
       );
+      StorageProvider.writeJson(key: '/welcome', json: 'false');
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
@@ -85,7 +87,6 @@ class AlarmController extends GetxController with StateMixin {
         loading.value = false;
         return;
       }
-      StorageProvider.writeJson(key: '/welcome', json: 'false');
       alarmList.value = list.map((element) => Alarm.fromJson(element)).toList();
       change([], status: RxStatus.success());
       loading.value = false;

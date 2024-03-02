@@ -339,7 +339,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     height: 10,
                   ),
                   Text(
-                    'Escolha a data de início para o alarme',
+                    'Escolha a data e hora de início para a primeira dose',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(
@@ -359,6 +359,34 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                       if (startDateTime != null) {
                         setState(() {
                           alarmController.startDateTime.value = startDateTime;
+                        });
+                      }
+                    },
+                  ),
+                  CustomOptionFieldWidget(
+                    placeholder: 'Ex: 00:00',
+                    value: _getTimeValueLabel(1, alarmController.startHourTime.value),
+                    onPressed: () async {
+                      TimeOfDay? pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        builder: (BuildContext context, Widget? child) {
+                          return MediaQuery(
+                            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (pickedTime != null) {
+                        setState(() {
+                          alarmController.startHourTime.value = pickedTime;
+                          alarmController.startDateTime.value = DateTime(
+                            alarmController.startDateTime.value.year,
+                            alarmController.startDateTime.value.month,
+                            alarmController.startDateTime.value.day,
+                            pickedTime.hour,
+                            pickedTime.minute,
+                          );
                         });
                       }
                     },

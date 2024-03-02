@@ -180,28 +180,58 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
                   const SizedBox(
                     height: 5,
                   ),
-                  CustomImagePickerWidget(
-                    label: 'Toque para escolher uma foto',
-                    image: userController.image.value.isNotEmpty ? base64Decode(userController.image.value) : null,
-                    icon: Icon(
-                      Icons.image_search_outlined,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image = await picker.pickImage(
-                        source: ImageSource.gallery,
-                        imageQuality: 10,
-                      );
-                      final bytes = await image!.readAsBytes();
-                      setState(() {
-                        userController.image.value = base64Encode(bytes);
-                        userController.name.value = nameController.text;
-                        userController.email.value = emailController.text;
-                        userController.phone.value = phoneController.text;
-                      });
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CustomImagePickerWidget(
+                          label: 'Toque para escolher ${userController.image.value.isNotEmpty ? '\n' : ''}uma foto',
+                          image: userController.image.value.isNotEmpty ? base64Decode(userController.image.value) : null,
+                          icon: Icon(
+                            Icons.image_search_outlined,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () async {
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery,
+                              imageQuality: 10,
+                            );
+                            final bytes = await image!.readAsBytes();
+                            setState(() {
+                              userController.image.value = base64Encode(bytes);
+                              userController.name.value = nameController.text;
+                              userController.email.value = emailController.text;
+                              userController.phone.value = phoneController.text;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      if (userController.image.value.isNotEmpty) ...[
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              userController.image.value = '';
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.tertiary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(
+                              Icons.close_rounded,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
