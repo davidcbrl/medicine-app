@@ -5,9 +5,14 @@ import 'package:get_storage/get_storage.dart';
 import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-void main() async {
-  await NotificationProvider.init();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation(DateTime.now().timeZoneName));
+  await NotificationProvider().init();
   await GetStorage.init();
   runApp(const MyApp());
 }
@@ -24,12 +29,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final RouteController _routeController = Get.put(RouteController(), permanent: true);
   final AuthController _authController = Get.put(AuthController(), permanent: true);
-
-  @override
-  void initState() {
-    NotificationProvider.listen();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

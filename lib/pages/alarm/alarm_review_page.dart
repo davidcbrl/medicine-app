@@ -197,7 +197,7 @@ class AlarmReviewObservationView extends StatelessWidget {
             alarmController.observation.value = alarmObservationController.text;
             await alarmController.save();
             if (alarmController.status.isSuccess) {
-              await _scheduleAlarms(alarmController);
+              // await _scheduleAlarms(alarmController);
               if (context.mounted) {
                 _alarmSuccessBottomSheet(context, alarmController);
               }
@@ -227,27 +227,23 @@ class AlarmReviewObservationView extends StatelessWidget {
     for (WeekdayType weekday in alarmController.weekdayTypeList) {
       for (TimeOfDay time in alarmController.timeList) {
         String decoratedTime = _decorateTime(time);
+        DateTime date = DateTime.now().add(Duration(days: weekday.id));
         await notificationController.createMedicineNotificationScheduled(
-          MedicineNotification(
+          notification: PushNotification(
             id: alarmController.id.value,
-            weekday: weekday,
-            time: time,
             title: 'Hora de tomar seu remédio',
             body: alarmController.name.value,
-            image: 'asset://assets/img/background.png',
-            largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-            payload: {
-              'json': jsonEncode(
-                Alarm(
-                  id: 1,
-                  name: alarmController.name.value,
-                  image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
-                  times: [decoratedTime],
-                  observation: alarmController.observation.value,
-                  taken: alarmController.taken.value,
-                ).toJson(),
-              ),
-            },
+            date: date,
+            payload: jsonEncode(
+              Alarm(
+                id: alarmController.id.value,
+                name: alarmController.name.value,
+                image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
+                times: [decoratedTime],
+                observation: alarmController.observation.value,
+                taken: alarmController.taken.value,
+              ).toJson(),
+            ),
           ),
         );
       }

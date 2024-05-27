@@ -129,9 +129,6 @@ class _HomePageState extends State<HomePage> {
                           height: 10,
                         ),
                         ..._buildWidgetList(),
-                        const SizedBox(
-                          height: 100,
-                        ),
                       ],
                     ),
                     onLoading: CustomLoadingWidget(
@@ -146,6 +143,9 @@ class _HomePageState extends State<HomePage> {
                       label: alarmController.status.errorMessage ?? 'Erro inesperado',
                     ),
                   ),
+                  const SizedBox(
+                    height: 100,
+                  ),
                 ],
               ),
             ),
@@ -159,24 +159,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () => notificationController.createMedicineNotification(
-                    MedicineNotification(
-                      id: 0,
-                      title: 'Hora de tomar seu remédio',
-                      image: 'asset://assets/img/background.png',
-                      payload: {
-                        'json': jsonEncode(
-                          Alarm(
-                            name: 'Vitamina B12',
-                            times: ['12:00'],
-                            weekdayTypeIds: [],
-                            observation: 'Tomar com bastante água',
-                            taken: DateTime.now().toString(),
-                          ).toJson(),
-                        ),
-                      }
-                    ),
-                  ),
+                  onTap: () => _testOptionsBottomSheet(context),
                   child: SizedBox(
                     width: 100,
                     child: Column(
@@ -311,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).colorScheme.tertiary,
                   width: 1,
                 ),
-                onPressed: () => _alarmOptionsBottomSheet(context, alarm),
+                onPressed: () {},
               ),
             ],
             if (status == 'atrasado') ...[
@@ -374,15 +357,11 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () async {
                       Get.back();
                       await notificationController.createMedicineNotification(
-                        MedicineNotification(
-                          id: alarm.id ?? 0,
+                        notification: PushNotification(
+                          id: alarm.id ?? UniqueKey().hashCode,
                           title: 'Hora de tomar seu remédio',
                           body: alarm.name,
-                          image: 'asset://assets/img/background.png',
-                          largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                          payload: {
-                            'json': jsonEncode(alarm.toJson()),
-                          },
+                          payload: jsonEncode(alarm.toJson()),
                         ),
                       );
                     },
@@ -460,8 +439,8 @@ class _HomePageState extends State<HomePage> {
                   size: 20,
                 ),
                 onPressed: () async {
-                  await alarmController.remove(id: alarm.id);
-                  await notificationController.cancelScheduledNotifications(id: alarm.id);
+                  await alarmController.remove(id: alarm.id!);
+                  await notificationController.cancelScheduledNotification(id: alarm.id!);
                   Get.back();
                 },
               ),
@@ -472,6 +451,100 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomTextButtonWidget(
             label: 'Não, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _testOptionsBottomSheet(BuildContext context) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
+      body: Column(
+        children: [
+          Text(
+            'O que deseja fazer?',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  CustomSelectItemWidget(
+                    label: 'Alarme em 10s',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      notificationController.createMedicineNotificationScheduled(
+                        notification: PushNotification(
+                          id: UniqueKey().hashCode,
+                          title: 'Hora de tomar seu remédio',
+                          body: 'Vitamina B12',
+                          date: DateTime.now().add(const Duration(seconds: 10)),
+                          payload: jsonEncode(
+                            Alarm(
+                              id: UniqueKey().hashCode,
+                              name: 'Vitamina B12',
+                              times: ['12:00'],
+                              observation: 'Tomar com bastante água',
+                              taken: DateTime.now().toString(),
+                            ).toJson(),
+                          ),
+                        ),
+                      );
+                      Get.back();
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Alarme imediato',
+                    icon: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      notificationController.createMedicineNotification(
+                        notification: PushNotification(
+                          id: UniqueKey().hashCode,
+                          title: 'Hora de tomar seu remédio',
+                          body: 'Vitamina B12',
+                          payload: jsonEncode(
+                            Alarm(
+                              id: UniqueKey().hashCode,
+                              name: 'Vitamina B12',
+                              times: ['12:00'],
+                              observation: 'Tomar com bastante água',
+                              taken: DateTime.now().toString(),
+                            ).toJson(),
+                          ),
+                        ),
+                      );
+                      Get.back();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
             onPressed: () {
               Get.back();
             },

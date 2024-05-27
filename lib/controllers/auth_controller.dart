@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:medicine/models/auth.dart';
 import 'package:medicine/providers/api_provider.dart';
 import 'package:medicine/providers/storage_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthController extends GetxController with StateMixin {
   var email = ''.obs;
@@ -57,6 +58,10 @@ class AuthController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
+      Uri resetUrl = Uri.parse(ApiProvider.baseUrl).replace(path: '/forgot-password');
+      if (await canLaunchUrl(resetUrl)) {
+        await launchUrl(resetUrl, mode: LaunchMode.externalApplication);
+      }
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {

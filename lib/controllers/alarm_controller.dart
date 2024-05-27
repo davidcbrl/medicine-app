@@ -97,12 +97,12 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> take({required Alarm alarm}) async {
+  Future<void> take({required int id}) async {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
       await ApiProvider.post(
-        path: '/alarm/${alarm.id}/taken/${DateTime.now().toString()}',
+        path: '/alarm/$id/taken/${DateTime.now().toString()}',
       );
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
@@ -114,7 +114,7 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> remove({int? id}) async {
+  Future<void> remove({required int id}) async {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {

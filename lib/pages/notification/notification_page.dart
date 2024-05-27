@@ -1,19 +1,23 @@
 
 import 'dart:convert';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/models/alarm.dart';
+import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
+import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
+import 'package:medicine/widgets/custom_loading_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
+import 'package:medicine/widgets/custom_text_button_widget.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key, required this.receivedAction});
+  const NotificationPage({super.key, required this.data});
 
-  final ReceivedAction receivedAction;
+  final Object? data;
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -21,119 +25,149 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   AlarmController alarmController = Get.find();
+  NotificationController notificationController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    bool hasBigPicture = widget.receivedAction.bigPictureImage != null;
-    Map<String, dynamic> payload = jsonDecode(widget.receivedAction.payload!['json'] ?? '{}');
-    Alarm alarm = Alarm.fromJson(payload);
+    Alarm alarm = Alarm.fromJson(widget.data as Map<String, dynamic>);
     return CustomPageWidget(
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomHeaderWidget(),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    alarm.times.first.split(':').take(2).join(':'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          Column(
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              const CustomHeaderWidget(),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
                     children: [
-                      if (widget.receivedAction.title?.isNotEmpty ?? false) ...[
-                        Text(
-                          widget.receivedAction.title!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
                       Text(
-                        alarm.name,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        alarm.times.first.split(':').take(2).join(':'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
-                      Stack(
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (alarm.image != null) ...[
-                            FadeInImage(
-                              placeholder: const AssetImage('assets/img/placeholder.gif'),
-                              image: Image.memory(
-                                base64Decode(alarm.image ?? '')
-                              ).image,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              fit: BoxFit.cover,
-                            ),
+                          Text(
+                            'Hora de tomar seu remédio',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            alarm.name,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Stack(
+                            children: [
+                              FadeInImage(
+                                placeholder: const AssetImage('assets/img/placeholder.gif'),
+                                image: alarm.image != null
+                                  ? Image.memory(base64Decode(alarm.image!)).image
+                                  : Image.asset('assets/img/background.png').image,
+                                height: MediaQuery.of(context).size.height * 0.4,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          ),
+                          if (alarm.observation != null) ...[
                             const SizedBox(
                               height: 10,
                             ),
-                          ],
-                          if (alarm.image == null && hasBigPicture) ...[
-                            FadeInImage(
-                              placeholder: const AssetImage('assets/img/placeholder.gif'),
-                              image: widget.receivedAction.bigPictureImage!,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(
-                              height: 10,
+                            Text(
+                              alarm.observation ?? '',
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
+                          const SizedBox(
+                            height: 10,
+                          ),
                         ],
-                      ),
-                      if (alarm.observation != null) ...[
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          alarm.observation ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                      const SizedBox(
-                        height: 10,
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+              CustomButtonWidget(
+                label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
+                onPressed: () async {
+                  if (alarm.id != null && alarm.taken == null) {
+                    await alarmController.take(id: alarm.id!);
+                    if (alarmController.status.isError && context.mounted) {
+                      _alarmErrorBottomSheet(context, alarmController);
+                      return;
+                    }
+                  }
+                  Get.offAllNamed('/home');
+                  return;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
           ),
-          CustomButtonWidget(
-            label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
-            onPressed: () async {
-              if (alarm.id != null) {
-                await alarmController.take(alarm: alarm);
-              }
-              Get.offAllNamed('/home');
-              return;
-            },
-          ),
-          const SizedBox(
-            height: 10,
+          Obx(
+            () => alarmController.loading.value
+            ? CustomLoadingWidget(
+                loading: alarmController.loading.value,
+              )
+            : Container(),
           ),
         ],
       ),
     );
   }
-  
+
+  void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: alarmController.status.errorMessage ?? 'Erro inesperado',
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }

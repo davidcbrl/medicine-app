@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +42,7 @@ class UserController extends GetxController with StateMixin {
         ),
       );
       await ApiProvider.post(
-        path: request.user.id != null ? '/user/${request.user.id}' : '/register',
+        path: request.user.id != null ? '/user' : '/register',
         data: request.user.toJson(),
       );
       get();
@@ -94,19 +92,23 @@ class UserController extends GetxController with StateMixin {
   }
 
   Future<String> getDeviceName() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      return '${androidInfo.manufacturer} ${androidInfo.device}';
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      if (kIsWeb) {
+        WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+        return '${webBrowserInfo.userAgent}';
+      }
+      if (GetPlatform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        return '${androidInfo.manufacturer} ${androidInfo.device}';
+      }
+      if (GetPlatform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        return '${iosInfo.model} ${iosInfo.name}';
+      }
+      return 'NotFound';
+    } catch (e) {
+      return 'Unknown';
     }
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      return '${iosInfo.model} ${iosInfo.name}';
-    }
-    if (kIsWeb) {
-      WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-      return '${webBrowserInfo.userAgent}';
-    }
-    return 'Unknown';
   }
 }

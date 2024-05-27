@@ -26,7 +26,6 @@ class _AuthPageState extends State<AuthPage> {
     final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
     TextEditingController passwordController = TextEditingController(text: authController.password.value);
-    authController.getDeviceName();
     return CustomPageWidget(
       body: Obx(
         () => authController.loading.value
@@ -85,8 +84,8 @@ class _AuthPageState extends State<AuthPage> {
                         CustomTextButtonWidget(
                           label: 'Esqueci minha senha',
                           style: Theme.of(context).textTheme.titleSmall,
-                          onPressed: () {
-                            Get.toNamed('/auth/password');
+                          onPressed: () async {
+                            await authController.reset();
                           },
                         ),
                       ],

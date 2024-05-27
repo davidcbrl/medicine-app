@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
@@ -25,6 +26,7 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage> {
   UserController userController = Get.find();
+  AuthController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +186,35 @@ class _UserInfoPageState extends State<UserInfoPage> {
                             color: Theme.of(context).colorScheme.secondary,
                             size: 20,
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            await authController.reset();
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Responsável',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomSelectItemWidget(
+                          label: 'Toque para alterar o responsável',
+                          icon: Icon(
+                            Icons.chevron_right_rounded,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _userBuddyInfoBottomSheet(context, userController);
+                          },
                         ),
                         const SizedBox(
                           height: 40,
@@ -223,6 +253,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               CustomTextButtonWidget(
                 label: 'Voltar',
                 onPressed: () {
+                  userController.get();
                   Get.back();
                 },
               ),
@@ -234,6 +265,93 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 loading: userController.loading.value,
               )
             : Container(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _userBuddyInfoBottomSheet(BuildContext context, UserController userController) {
+    final buddyFormKey = GlobalKey<FormState>();
+    TextEditingController buddyNameController = TextEditingController(text: userController.buddy.value.name);
+    TextEditingController buddyPhoneController = TextEditingController(text: userController.buddy.value.phone);
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 5),
+      scroll: true,
+      keyboard: true,
+      body: Column(
+        children: [
+          Text(
+            'Responsável',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: Form(
+              key: buddyFormKey,
+              child: Column(
+                children: [
+                  CustomTextFieldWidget(
+                    controller: buddyNameController,
+                    label: 'Nome do responsável',
+                    placeholder: 'Tia May',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Escreva o nome do seu responsável para alterar';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFieldWidget(
+                    controller: buddyPhoneController,
+                    label: 'Contato do responsável',
+                    placeholder: '(99) 99999-9999',
+                    formatters: [
+                      MaskTextInputFormatter(
+                        mask: '(##) #####-####',
+                        filter: { "#": RegExp(r'[0-9]') },
+                        type: MaskAutoCompletionType.lazy,
+                      ),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Escreva o contato do seu responsável para alterar';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomButtonWidget(
+            label: 'Confirmar informações do responsável',
+            onPressed: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
+              if (buddyFormKey.currentState!.validate()) {
+                userController.buddy.value.name = buddyNameController.text;
+                userController.buddy.value.phone = buddyPhoneController.text;
+                Get.back();
+              }
+            },
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
           ),
         ],
       ),

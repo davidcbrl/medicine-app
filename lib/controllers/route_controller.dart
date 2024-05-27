@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +10,6 @@ import 'package:medicine/pages/alarm/alarm_medicine_page.dart';
 import 'package:medicine/pages/alarm/alarm_review_page.dart';
 import 'package:medicine/pages/user/user_register_page.dart';
 import 'package:medicine/pages/user/user_info_page.dart';
-import 'package:medicine/providers/notification_provider.dart';
 
 class RouteController extends GetxController {
   static const String authRoute = '/auth';
@@ -31,15 +29,6 @@ class RouteController extends GetxController {
         builder: (_) => !isAuthenticated ? const AuthPage() : const HomePage(),
       ),
     );
-    if (initialRouteName == notificationRoute && NotificationProvider.initialAction != null) {
-      pageStack.add(
-        MaterialPageRoute(
-          builder: (_) => NotificationPage(
-            receivedAction: NotificationProvider.initialAction!,
-          ),
-        ),
-      );
-    }
     return pageStack;
   }
 
@@ -58,10 +47,9 @@ class RouteController extends GetxController {
           builder: (_) => const HomePage(),
         );
       case notificationRoute:
-        ReceivedAction receivedAction = settings.arguments as ReceivedAction;
         return MaterialPageRoute(
           builder: (_) => NotificationPage(
-            receivedAction: receivedAction,
+            data: settings.arguments,
           ),
         );
       case alarmMedicineRoute:
