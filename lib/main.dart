@@ -7,11 +7,13 @@ import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
   tz.initializeTimeZones();
-  tz.setLocalLocation(tz.getLocation(DateTime.now().timeZoneName));
+  tz.setLocalLocation(tz.getLocation(currentTimeZone));
   await NotificationProvider().init();
   await GetStorage.init();
   runApp(const MyApp());
