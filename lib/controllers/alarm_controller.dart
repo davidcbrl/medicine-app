@@ -41,7 +41,7 @@ class AlarmController extends GetxController with StateMixin {
     super.onInit();
   }
 
-  Future<void> save() async {
+  Future<List<Alarm?>> save() async {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
@@ -59,7 +59,7 @@ class AlarmController extends GetxController with StateMixin {
           observation: observation.isNotEmpty ? observation.value : null,
         ),
       );
-      await ApiProvider.post(
+      List<dynamic> response = await ApiProvider.post(
         path: request.alarm.id != null ? '/alarm/${request.alarm.id}' : '/alarm',
         data: request.alarm.toJson(),
       );
@@ -67,10 +67,12 @@ class AlarmController extends GetxController with StateMixin {
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
+      return response.isNotEmpty ? response.map((element) => Alarm.fromJson(element)).toList() : [];
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao salvar alarme'));
       loading.value = false;
+      return [];
     }
   }
 

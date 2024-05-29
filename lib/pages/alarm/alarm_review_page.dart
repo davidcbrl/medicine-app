@@ -27,6 +27,7 @@ class AlarmReviewPage extends StatefulWidget {
 
 class _AlarmReviewPageState extends State<AlarmReviewPage> {
   final AlarmController alarmController = Get.find();
+  final NotificationController notificationController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +77,13 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
             () => alarmController.loading.value
             ? CustomLoadingWidget(
                 loading: alarmController.loading.value,
+              )
+            : Container(),
+          ),
+          Obx(
+            () => notificationController.loading.value
+            ? CustomLoadingWidget(
+                loading: notificationController.loading.value,
               )
             : Container(),
           ),
@@ -195,9 +203,9 @@ class AlarmReviewObservationView extends StatelessWidget {
           onPressed: () async {
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
-            await alarmController.save();
+            List<Alarm?> alarms = await alarmController.save();
             if (alarmController.status.isSuccess) {
-              // await _scheduleAlarms(alarmController);
+              await _scheduleAlarms(alarms);
               if (context.mounted) {
                 _alarmSuccessBottomSheet(context, alarmController);
               }
@@ -222,31 +230,18 @@ class AlarmReviewObservationView extends StatelessWidget {
     );
   }
 
-  Future<void> _scheduleAlarms(AlarmController alarmController) async {
+  Future<void> _scheduleAlarms(List<Alarm?> alarms) async {
     final NotificationController notificationController = Get.find();
-    for (WeekdayType weekday in alarmController.weekdayTypeList) {
-      for (TimeOfDay time in alarmController.timeList) {
-        String decoratedTime = _decorateTime(time);
-        DateTime date = DateTime.now().add(Duration(days: weekday.id));
-        await notificationController.createMedicineNotificationScheduled(
-          notification: PushNotification(
-            id: alarmController.id.value,
-            title: 'Hora de tomar seu remédio',
-            body: alarmController.name.value,
-            date: date,
-            payload: jsonEncode(
-              Alarm(
-                id: alarmController.id.value,
-                name: alarmController.name.value,
-                image: alarmController.image.value.isNotEmpty ? alarmController.image.value : null,
-                times: [decoratedTime],
-                observation: alarmController.observation.value,
-                taken: alarmController.taken.value,
-              ).toJson(),
-            ),
-          ),
-        );
-      }
+    for (Alarm? alarm in alarms) {
+      await notificationController.createMedicineNotificationScheduled(
+        notification: PushNotification(
+          id: alarm!.id ?? UniqueKey().hashCode,
+          title: 'Hora de tomar seu remédio',
+          body: alarm.name,
+          date: DateTime.parse('${alarm.date} ${alarm.hour}'),
+          payload: jsonEncode(alarm.toJson()),
+        ),
+      );
     }
   }
 
@@ -257,7 +252,7 @@ class AlarmReviewObservationView extends StatelessWidget {
       body: Column(
         children: [
           Text(
-            'Alarme para remédio criado com sucesso!',
+            'Alarmes criados com sucesso!',
             style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(
@@ -344,10 +339,5 @@ class AlarmReviewObservationView extends StatelessWidget {
       label = '$label $separator ${weekday.name}';
     }
     return label;
-  }
-  String _decorateTime(TimeOfDay time) {
-    String hour = time.hour.toString().padLeft(2, '0');
-    String minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 }

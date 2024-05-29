@@ -6,7 +6,9 @@ import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/providers/notification_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class NotificationController extends GetxController {
+class NotificationController extends GetxController with StateMixin {
+  var loading = false.obs;
+
   @override
   onInit() {
     super.onInit();
@@ -35,14 +37,44 @@ class NotificationController extends GetxController {
   }
 
   Future<void> createMedicineNotification({required PushNotification notification}) async {
-    await NotificationProvider().notify(notification: notification);
+    try {
+      loading.value = true;
+      change([], status: RxStatus.loading());
+      await NotificationProvider().notify(notification: notification);
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao disparar notificação'));
+      loading.value = false;
+    }
   }
 
   Future<void> createMedicineNotificationScheduled({required PushNotification notification}) async {
-    await NotificationProvider().schedule(notification: notification);
+    try {
+      loading.value = true;
+      change([], status: RxStatus.loading());
+      await NotificationProvider().schedule(notification: notification);
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao agendar notificações'));
+      loading.value = false;
+    }
   }
 
   Future<void> cancelScheduledNotification({required int id}) async {
-    await NotificationProvider().cancel(id: id);
+    try {
+      loading.value = true;
+      change([], status: RxStatus.loading());
+      await NotificationProvider().cancel(id: id);
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao cancelar notificação'));
+      loading.value = false;
+    }
   }
 }

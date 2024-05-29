@@ -2,6 +2,7 @@ class Alarm {
   int? id;
   String name;
   String? date;
+  String? hour;
   int? quantity;
   int? doseTypeId;
   String? image;
@@ -17,6 +18,7 @@ class Alarm {
     this.id,
     required this.name,
     this.date,
+    this.hour,
     this.quantity,
     this.image,
     this.doseTypeId,
@@ -33,6 +35,7 @@ class Alarm {
     id = json['id'],
     name = json['name'],
     date = json['date'],
+    hour = json['hour'],
     quantity = json['quantity'],
     image = json['image'],
     doseTypeId = json['doseTypeId'],
@@ -48,6 +51,7 @@ class Alarm {
     'id': id,
     'name': name,
     'date': date,
+    'hour': hour,
     'qty': quantity,
     'image': image,
     'type': doseTypeId,
