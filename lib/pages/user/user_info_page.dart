@@ -241,7 +241,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       return;
                     }
                     if (userController.status.isError && context.mounted) {
-                      _userInfoErrorBottomSheet(context, userController);
+                      _userInfoErrorBottomSheet(context, userController.status.errorMessage);
                       return;
                     }
                   }
@@ -361,7 +361,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   void _userInfoSuccessBottomSheet(BuildContext context, UserController userController) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: MediaQuery.of(context).size.height * 0.275,
       body: Column(
         children: [
           Text(
@@ -375,7 +375,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             child: Column(
               children: [
                 Text(
-                  ':)',
+                  '[ Mensagem amigável ]',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -396,10 +396,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  void _userInfoErrorBottomSheet(BuildContext context, UserController userController) {
+  void _userInfoErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.45,
       body: Column(
         children: [
           Text(
@@ -411,7 +411,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: userController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(

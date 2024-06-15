@@ -77,4 +77,18 @@ class NotificationController extends GetxController with StateMixin {
       loading.value = false;
     }
   }
+
+  Future<void> cancelAllScheduledNotifications() async {
+    try {
+      loading.value = true;
+      change([], status: RxStatus.loading());
+      await NotificationProvider().cancelAll();
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao cancelar as notificações'));
+      loading.value = false;
+    }
+  }
 }

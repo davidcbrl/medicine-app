@@ -239,7 +239,7 @@ class AlarmMedicineQuantityView extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Qual é a quantidade a ser tomada?',
+          'Quantas doses precisam ser tomadas?',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(
@@ -250,7 +250,7 @@ class AlarmMedicineQuantityView extends StatelessWidget {
             key: formKey,
             child: CustomTextFieldWidget(
               controller: medicineQuantityController,
-              label: 'Preencha a quantidade que precisa tomar',
+              label: 'Preencha a quantidade de alarmes a serem criados',
               placeholder: 'Ex: 10',
               keyboardType: TextInputType.number,
               validator: (value) {

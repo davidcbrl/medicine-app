@@ -114,7 +114,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   if (alarm.id != null && alarm.taken == null) {
                     await alarmController.take(id: alarm.id!);
                     if (alarmController.status.isError && context.mounted) {
-                      _alarmErrorBottomSheet(context, alarmController);
+                      _alarmErrorBottomSheet(context, alarmController.status.errorMessage);
                       return;
                     }
                   }
@@ -139,7 +139,7 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
+  void _alarmErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
       height: MediaQuery.of(context).size.height * 0.45,
@@ -154,7 +154,7 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: alarmController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(

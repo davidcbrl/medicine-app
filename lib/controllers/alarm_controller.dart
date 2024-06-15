@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,8 +35,8 @@ class AlarmController extends GetxController with StateMixin {
 
   @override
   onInit() {
-    get(selectedDate: DateTime.now());
     super.onInit();
+    get(selectedDate: DateTime.now());
   }
 
   Future<List<Alarm?>> save() async {
@@ -64,7 +62,6 @@ class AlarmController extends GetxController with StateMixin {
         data: request.alarm.toJson(),
       );
       StorageProvider.writeJson(key: '/welcome', json: 'false');
-      get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
       return response.isNotEmpty ? response.map((element) => Alarm.fromJson(element)).toList() : [];
@@ -120,9 +117,9 @@ class AlarmController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      alarmList.removeWhere((element) => element.id == id);
-      String json = jsonEncode(alarmList);
-      StorageProvider.writeJson(key: '/alarms', json: json);
+      // await ApiProvider.post(
+      //   path: '/alarm/$id/taken/${DateTime.now().toString()}',
+      // );
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;

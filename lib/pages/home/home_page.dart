@@ -665,12 +665,20 @@ class _HomePageState extends State<HomePage> {
   void _logoutCheckBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
+      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
       body: Column(
         children: [
           Text(
             'Tem certeza que deseja sair do app?',
             style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            'Todos os seus alarmes serão desativados até você entrar novamente',
+            style: Theme.of(context).textTheme.labelMedium,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(
             height: 20,
@@ -686,8 +694,22 @@ class _HomePageState extends State<HomePage> {
                   size: 20,
                 ),
                 onPressed: () async {
-                  authController.logout();
-                  Get.offAllNamed('/auth');
+                  await authController.logout();
+                  if (authController.status.isSuccess) {
+                    await notificationController.cancelAllScheduledNotifications();
+                    if (notificationController.status.isSuccess) {
+                      Get.offAllNamed('/auth');
+                      return;
+                    }
+                    if (notificationController.status.isError && context.mounted) {
+                      _logoutErrorBottomSheet(context, 'Você saiu do app, porém, um ou mais alarmes não puderam ser desativados.');
+                      return;
+                    }
+                  }
+                  if (authController.status.isError && context.mounted) {
+                    _logoutErrorBottomSheet(context, authController.status.errorMessage);
+                    return;
+                  }
                 },
               ),
             ),
@@ -697,6 +719,38 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomTextButtonWidget(
             label: 'Não, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _logoutErrorBottomSheet(BuildContext context, String? message) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: message ?? 'Erro inesperado',
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
             onPressed: () {
               Get.back();
             },

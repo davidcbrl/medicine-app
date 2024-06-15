@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:medicine/models/buddy.dart';
 import 'package:medicine/models/user.dart';
 import 'package:medicine/providers/api_provider.dart';
+import 'package:medicine/providers/storage_provider.dart';
 
 class UserController extends GetxController with StateMixin {
   PageController registerPageController = PageController();
@@ -21,8 +22,10 @@ class UserController extends GetxController with StateMixin {
 
   @override
   onInit() {
-    get();
     super.onInit();
+    if (isAuthenticated()) {
+      get();
+    }
   }
 
   Future<void> save() async {
@@ -110,5 +113,10 @@ class UserController extends GetxController with StateMixin {
     } catch (e) {
       return 'Unknown';
     }
+  }
+
+  bool isAuthenticated() {
+    String token = StorageProvider.readJson(key: '/auth');
+    return token != '{}';
   }
 }

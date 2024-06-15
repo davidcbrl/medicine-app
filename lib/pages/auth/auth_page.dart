@@ -110,7 +110,7 @@ class _AuthPageState extends State<AuthPage> {
                       return;
                     }
                     if (authController.status.isError && context.mounted) {
-                      _authErrorBottomSheet(context, authController);
+                      _authErrorBottomSheet(context, authController.status.errorMessage);
                       return;
                     }
                   }
@@ -130,10 +130,10 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _authErrorBottomSheet(BuildContext context, AuthController authController) {
+  void _authErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.45,
       body: Column(
         children: [
           Text(
@@ -145,7 +145,7 @@ class _AuthPageState extends State<AuthPage> {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: authController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(

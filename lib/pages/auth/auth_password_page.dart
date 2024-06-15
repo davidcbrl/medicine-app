@@ -79,11 +79,11 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                     authController.email.value = emailController.text;
                     await authController.reset();
                     if (authController.status.isSuccess && context.mounted) {
-                      _passwordResetSuccessBottomSheet(context, authController);
+                      _passwordResetSuccessBottomSheet(context);
                       return;
                     }
                     if (authController.status.isError && context.mounted) {
-                      _passwordResetErrorBottomSheet(context, authController);
+                      _passwordResetErrorBottomSheet(context, authController.status.errorMessage);
                       return;
                     }
                   }
@@ -102,10 +102,10 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
     );
   }
 
-  void _passwordResetSuccessBottomSheet(BuildContext context, AuthController authController) {
+  void _passwordResetSuccessBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.275,
       body: Column(
         children: [
           Text(
@@ -140,10 +140,10 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
     );
   }
 
-  void _passwordResetErrorBottomSheet(BuildContext context, AuthController authController) {
+  void _passwordResetErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.45,
       body: Column(
         children: [
           Text(
@@ -155,7 +155,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: authController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(

@@ -98,6 +98,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
+    final NotificationController notificationController = Get.find();
     TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
     return Column(
       children: [
@@ -205,14 +206,33 @@ class AlarmReviewObservationView extends StatelessWidget {
             alarmController.observation.value = alarmObservationController.text;
             List<Alarm?> alarms = await alarmController.save();
             if (alarmController.status.isSuccess) {
-              await _scheduleAlarms(alarms);
-              if (context.mounted) {
-                _alarmSuccessBottomSheet(context, alarmController);
+              await alarmController.get(selectedDate: DateTime.now());
+              bool allScheduled = true;
+              for (Alarm? alarm in alarms) {
+                await notificationController.createMedicineNotificationScheduled(
+                  notification: PushNotification(
+                    id: alarm!.id ?? UniqueKey().hashCode,
+                    title: 'Hora de tomar seu remédio',
+                    body: alarm.name,
+                    date: DateTime.parse('${alarm.date} ${alarm.hour}'),
+                    payload: jsonEncode(alarm.toJson()),
+                  ),
+                );
+                if (notificationController.status.isError && context.mounted) {
+                  allScheduled = false;
+                }
               }
-              return;
+              if (!allScheduled && context.mounted) {
+                _alarmErrorBottomSheet(context, 'A criação dos horários foi realizada com sucesso, porém, um ou mais alarmes não puderam ser agendados.');
+                return;
+              }
+              if (notificationController.status.isSuccess && context.mounted) {
+                _alarmSuccessBottomSheet(context);
+                return;
+              }
             }
             if (alarmController.status.isError && context.mounted) {
-              _alarmErrorBottomSheet(context, alarmController);
+              _alarmErrorBottomSheet(context, alarmController.status.errorMessage);
               return;
             }
           },
@@ -230,22 +250,7 @@ class AlarmReviewObservationView extends StatelessWidget {
     );
   }
 
-  Future<void> _scheduleAlarms(List<Alarm?> alarms) async {
-    final NotificationController notificationController = Get.find();
-    for (Alarm? alarm in alarms) {
-      await notificationController.createMedicineNotificationScheduled(
-        notification: PushNotification(
-          id: alarm!.id ?? UniqueKey().hashCode,
-          title: 'Hora de tomar seu remédio',
-          body: alarm.name,
-          date: DateTime.parse('${alarm.date} ${alarm.hour}'),
-          payload: jsonEncode(alarm.toJson()),
-        ),
-      );
-    }
-  }
-
-  void _alarmSuccessBottomSheet(BuildContext context, AlarmController authController) {
+  void _alarmSuccessBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
       height: MediaQuery.of(context).size.height * 0.275,
@@ -283,7 +288,7 @@ class AlarmReviewObservationView extends StatelessWidget {
     );
   }
 
-  void _alarmErrorBottomSheet(BuildContext context, AlarmController alarmController) {
+  void _alarmErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
       height: MediaQuery.of(context).size.height * 0.45,
@@ -298,7 +303,7 @@ class AlarmReviewObservationView extends StatelessWidget {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: alarmController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(
@@ -326,11 +331,13 @@ class AlarmReviewObservationView extends StatelessWidget {
     }
     return label;
   }
+
   String _getAlarmTypeLabel(int alarmTypeId) {
     if (alarmTypeId == 1) return 'nos dias';
     if (alarmTypeId == 2) return 'a partir do dia';
     return 'O tipo do alarme não foi selecionado';
   }
+
   String _getWeekdayTypeLabel(List<WeekdayType> weekdayTypeList) {
     if (weekdayTypeList.length == 7) return 'Todos os dias';
     String label = '';

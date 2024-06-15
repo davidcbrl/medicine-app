@@ -25,8 +25,8 @@ class NotificationProvider {
   Future<void> notify({required PushNotification notification}) async {
     const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
       'alarms',
-      'alarms',
-      channelDescription: 'alarms',
+      'Alarmes',
+      channelDescription: 'Notificações push de lembrete para os remédios agendados no app.',
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
@@ -90,6 +90,10 @@ class NotificationProvider {
 
   Future<void> cancel({required int id}) async {
     await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  Future<void> cancelAll() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   @pragma('vm:entry-point')

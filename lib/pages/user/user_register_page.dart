@@ -489,11 +489,11 @@ class UserRegisterPasswordView extends StatelessWidget {
               userController.password.value = passwordController.text;
               await userController.save();
               if (userController.status.isSuccess && context.mounted) {
-                _userRegisterSuccessBottomSheet(context, userController);
+                _userRegisterSuccessBottomSheet(context);
                 return;
               }
               if (userController.status.isError && context.mounted) {
-                _userRegisterErrorBottomSheet(context, userController);
+                _userRegisterErrorBottomSheet(context, userController.status.errorMessage);
                 return;
               }
             }
@@ -568,10 +568,10 @@ class UserRegisterPasswordView extends StatelessWidget {
     );
   }
 
-  void _userRegisterSuccessBottomSheet(BuildContext context, UserController userController) {
+  void _userRegisterSuccessBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.275,
       body: Column(
         children: [
           Text(
@@ -606,7 +606,7 @@ class UserRegisterPasswordView extends StatelessWidget {
     );
   }
 
-  void _userRegisterErrorBottomSheet(BuildContext context, UserController userController) {
+  void _userRegisterErrorBottomSheet(BuildContext context, String? message) {
     CustomBottomSheetWidget.show(
       context: context,
       height: MediaQuery.of(context).size.height * 0.45,
@@ -621,7 +621,7 @@ class UserRegisterPasswordView extends StatelessWidget {
           ),
           Expanded(
             child: CustomEmptyWidget(
-              label: userController.status.errorMessage ?? 'Erro inesperado',
+              label: message ?? 'Erro inesperado',
             ),
           ),
           const SizedBox(
