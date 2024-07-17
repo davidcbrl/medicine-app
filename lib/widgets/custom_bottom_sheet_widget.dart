@@ -10,7 +10,7 @@ class CustomBottomSheetWidget {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: scroll,
       builder: (BuildContext context) {
         return Padding(

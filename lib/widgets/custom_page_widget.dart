@@ -23,7 +23,7 @@ class CustomPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
         padding: hasPadding ? const EdgeInsets.all(20) : EdgeInsets.zero,
         child: Stack(

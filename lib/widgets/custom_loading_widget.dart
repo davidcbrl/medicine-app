@@ -16,7 +16,7 @@ class CustomLoadingWidget extends StatelessWidget {
     ? Container()
     : Container(
         alignment: Alignment.center,
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

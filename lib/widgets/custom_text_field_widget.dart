@@ -57,7 +57,7 @@ class CustomTextFieldWidget extends StatelessWidget {
             hintText: placeholder,
             hintStyle: Theme.of(context).textTheme.bodyMedium,
             filled: true,
-            fillColor: readOnly ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.tertiary,
+            fillColor: readOnly ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.tertiary,
             suffixIcon: Padding(
               padding: const EdgeInsets.only(right: 10),
               child: icon,

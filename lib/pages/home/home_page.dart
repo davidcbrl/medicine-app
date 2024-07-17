@@ -284,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                 prefixLabel: label,
                 label: alarm.name,
                 suffixLabel: 'Tomado',
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 icon: Icon(
                   Icons.chevron_right_rounded,
                   color: Theme.of(context).colorScheme.secondary,
