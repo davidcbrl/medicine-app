@@ -20,7 +20,7 @@ class CustomOptionFieldWidget extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.tertiary,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: InkWell(
             onTap: onPressed,

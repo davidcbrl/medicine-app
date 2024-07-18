@@ -36,6 +36,7 @@ class CustomPageWidget extends StatelessWidget {
                   child: Image.asset(
                     'assets/img/background.png',
                     width: (kIsWeb ? 400 : MediaQuery.of(context).size.width) * 0.6,
+                    opacity: const AlwaysStoppedAnimation(0.25),
                   ),
                 ),
               ),

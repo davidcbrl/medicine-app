@@ -25,7 +25,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
-    TextEditingController passwordController = TextEditingController(text: authController.password.value);
+    TextEditingController passwordController = TextEditingController(text: '');
     return CustomPageWidget(
       body: Obx(
         () => authController.loading.value

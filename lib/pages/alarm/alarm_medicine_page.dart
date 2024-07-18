@@ -176,11 +176,6 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
                     children: [
                       CustomSelectItemWidget(
                         label: doseType.name,
-                        icon: Icon(
-                          Icons.chevron_right_rounded,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 20,
-                        ),
                         selected: doseType.id == alarmController.doseType.value.id,
                         onPressed: () {
                           setState(() {
@@ -257,6 +252,10 @@ class AlarmMedicineQuantityView extends StatelessWidget {
                 if (value == null || value.isEmpty) {
                   return 'Preencha a quantidade para continuar';
                 }
+                RegExp regex = RegExp(r'\D');
+                if (regex.hasMatch(value)) {
+                  return 'Valor inválido, preencha apenas números';
+                }
                 return null;
               },
               onChanged: (value) {
@@ -309,6 +308,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
+    bool hasImage = alarmController.image.value.isNotEmpty && alarmController.image.value != 'null';
     return Column(
       children: [
         Text(
@@ -325,8 +325,8 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
               children: [
                 Expanded(
                   child: CustomImagePickerWidget(
-                    label: 'Toque para escolher ${alarmController.image.value.isNotEmpty ? '\n' : ''}uma foto',
-                    image: alarmController.image.value.isNotEmpty ? base64Decode(alarmController.image.value) : null,
+                    label: 'Toque para escolher ${hasImage ? '\n' : ''}uma foto',
+                    image: hasImage ? base64Decode(alarmController.image.value) : null,
                     icon: Icon(
                       Icons.image_search_outlined,
                       color: Theme.of(context).colorScheme.secondary,
@@ -348,7 +348,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
                 const SizedBox(
                   width: 5,
                 ),
-                if (alarmController.image.value.isNotEmpty) ...[
+                if (hasImage) ...[
                   InkWell(
                     onTap: () {
                       setState(() {

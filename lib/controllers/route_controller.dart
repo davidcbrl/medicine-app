@@ -8,6 +8,7 @@ import 'package:medicine/pages/notification/notification_page.dart';
 import 'package:medicine/pages/alarm/alarm_info_page.dart';
 import 'package:medicine/pages/alarm/alarm_medicine_page.dart';
 import 'package:medicine/pages/alarm/alarm_review_page.dart';
+import 'package:medicine/pages/theme/theme_page.dart';
 import 'package:medicine/pages/user/user_register_page.dart';
 import 'package:medicine/pages/user/user_info_page.dart';
 
@@ -21,6 +22,7 @@ class RouteController extends GetxController {
   static const String alarmReviewRoute = '/alarm/review';
   static const String userRegisterRoute = '/user/register';
   static const String userInfoRoute = '/user/info';
+  static const String themeRoute = '/theme';
 
   List<Route<dynamic>> onGenerateInitialRoutes({required String initialRouteName, bool isAuthenticated = false}) {
     List<Route<dynamic>> pageStack = [];
@@ -75,6 +77,11 @@ class RouteController extends GetxController {
       case userInfoRoute:
         return CustomMaterialPageRoute(
           builder: (_) => const UserInfoPage(),
+          settings: settings,
+        );
+      case themeRoute:
+        return CustomMaterialPageRoute(
+          builder: (_) => const ThemePage(),
           settings: settings,
         );
     }

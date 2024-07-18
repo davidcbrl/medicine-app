@@ -106,11 +106,6 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                     children: [
                       CustomSelectItemWidget(
                         label: alarmType.name,
-                        icon: Icon(
-                          Icons.chevron_right_rounded,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 20,
-                        ),
                         selected: alarmType.id == alarmController.alarmType.value.id,
                         onPressed: () {
                           setState(() {
@@ -264,6 +259,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     children: [
                       CustomSelectItemWidget(
                         label: 'Adicionar outro horário',
+                        icon: false,
                         onPressed: () {
                           setState(() {
                             alarmController.timeList.add(const TimeOfDay(hour: 0, minute: 0));
@@ -320,6 +316,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     children: [
                       CustomSelectItemWidget(
                         label: 'Todos os dias',
+                        icon: false,
                         onPressed: () {
                           setState(() {
                             if (alarmController.weekdayTypeList.length == 7) {

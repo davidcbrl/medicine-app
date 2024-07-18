@@ -24,8 +24,8 @@ class CustomLoadingWidget extends StatelessWidget {
               color: Colors.transparent,
               alignment: Alignment.center,
               child: const SizedBox(
-                height: 80,
-                width: 80,
+                height: 50,
+                width: 50,
                 child: CircularProgressIndicator(),
               ),
             ),

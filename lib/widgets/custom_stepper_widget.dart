@@ -46,19 +46,6 @@ class CustomStepperWidget extends StatelessWidget {
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ...List.generate(
-              steps.length, (index) => Text(
-                steps[index].label,
-                style: Theme.of(context).textTheme.labelMedium,
-                textAlign: index == 0 ? TextAlign.start : TextAlign.end,
-                textDirection: index == 0 ? TextDirection.ltr : TextDirection.rtl,
-              ),
-            ),
-          ],
-        )
       ],
     );
   }

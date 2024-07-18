@@ -117,9 +117,9 @@ class AlarmController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
-      // await ApiProvider.post(
-      //   path: '/alarm/$id/taken/${DateTime.now().toString()}',
-      // );
+      await ApiProvider.post(
+        path: '/alarm/delete/$id',
+      );
       get(selectedDate: DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
@@ -147,7 +147,7 @@ class AlarmController extends GetxController with StateMixin {
       (String element) => _decorateTimeOfDay(element),
     ).toList();
     weekdayTypeList.value = WeekdayType.getWeekdayTypeList().where(
-      (WeekdayType element) => alarm.weekdayTypeIds!.contains(element.id),
+      (WeekdayType element) => alarm.weekdayTypeIds != null && alarm.weekdayTypeIds!.contains(element.id),
     ).toList();
     startDateTime.value = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
     observation.value = alarm.observation ?? '';

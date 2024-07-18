@@ -79,7 +79,7 @@ class _NotificationPageState extends State<NotificationPage> {
                             children: [
                               FadeInImage(
                                 placeholder: const AssetImage('assets/img/placeholder.gif'),
-                                image: alarm.image != null
+                                image: alarm.image != null && alarm.image != 'null'
                                   ? Image.memory(base64Decode(alarm.image!)).image
                                   : Image.asset('assets/img/background.png').image,
                                 height: MediaQuery.of(context).size.height * 0.4,

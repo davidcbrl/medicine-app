@@ -32,7 +32,7 @@ class CustomListItemWidget extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: color ?? Theme.of(context).colorScheme.tertiary,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(10),
               border: border,
             ),
             child: Row(

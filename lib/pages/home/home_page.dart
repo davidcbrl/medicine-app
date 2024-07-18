@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
@@ -29,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   AuthController authController = Get.find();
   NotificationController notificationController = Get.put(NotificationController(), permanent: true);
   AlarmController alarmController = Get.put(AlarmController(), permanent: true);
+  SettingController settingController = Get.put(SettingController(), permanent: true);
   final ScrollController _scrollController = ScrollController();
 
   DateTime selectedDate = DateTime.now();
@@ -37,7 +40,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return CustomPageWidget(
       hasPadding: false,
-      hasBackgroundImage: true,
       body: Column(
         children: [
           const SizedBox(
@@ -50,61 +52,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 10,
           ),
-          CalendarCarousel<Event>(
-            height: MediaQuery.of(context).size.height * 0.175,
-            locale: 'pt-br',
-            showHeader: true,
-            pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
-            customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
-            headerMargin: EdgeInsets.zero,
-            headerTextStyle: Theme.of(context).textTheme.bodyMedium,
-            showHeaderButton: true,
-            leftButtonIcon: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: 25,
-              ),
-            ),
-            rightButtonIcon: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: 25,
-              ),
-            ),
-            weekFormat: true,
-            daysHaveCircularBorder: true,
-            showWeekDays: true,
-            weekDayFormat: WeekdayFormat.short,
-            weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,
-            weekendTextStyle: Theme.of(context).textTheme.labelMedium,
-            daysTextStyle: Theme.of(context).textTheme.labelMedium,
-            dayButtonColor: Theme.of(context).colorScheme.tertiary,
-            todayTextStyle: Theme.of(context).textTheme.titleSmall,
-            todayButtonColor: Theme.of(context).colorScheme.tertiary,
-            todayBorderColor: Theme.of(context).colorScheme.primary,
-            selectedDayTextStyle: Theme.of(context).textTheme.displayMedium,
-            selectedDayButtonColor: Theme.of(context).colorScheme.primary,
-            selectedDayBorderColor: Theme.of(context).colorScheme.primary,
-            minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
-            maxSelectedDate: selectedDate.add(const Duration(days: 30)),
-            selectedDateTime: selectedDate,
-            onDayPressed: (DateTime date, List<Event> events) async {
-              setState(() {
-                selectedDate = date;
-              });
-              await alarmController.get(selectedDate: selectedDate);
-            },
-          ),
+          _buildCalendarCarouselBySetting(context),
           const SizedBox(
             height: 10,
           ),
@@ -213,6 +161,154 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  CalendarCarousel<Event> _buildCalendarCarouselBySetting(BuildContext context) {
+    switch (settingController.get(name: 'calendar')) {
+      case '2':
+        return _customCircularCalendarCarouselWidget(context);
+      case '1':
+      default:
+        return _customRetangularCalendarCarouselWidget(context);
+    }
+  }
+
+  CalendarCarousel<Event> _customRetangularCalendarCarouselWidget(BuildContext context) {
+    return CalendarCarousel<Event>(
+      height: MediaQuery.of(context).size.height * 0.15,
+      locale: 'pt-br',
+      showHeader: true,
+      pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
+      customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
+      headerMargin: EdgeInsets.zero,
+      headerTextStyle: Theme.of(context).textTheme.bodyMedium,
+      weekFormat: true,
+      showWeekDays: false,
+      minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
+      maxSelectedDate: selectedDate.add(const Duration(days: 30)),
+      selectedDateTime: selectedDate,
+      daysHaveCircularBorder: false,
+      dayButtonColor: Colors.transparent,
+      todayBorderColor: Colors.transparent,
+      todayButtonColor: Colors.transparent,
+      selectedDayBorderColor: Colors.transparent,
+      selectedDayButtonColor: Colors.transparent,
+      customDayBuilder: _buildCalendarCarouselDayWidget,
+      leftButtonIcon: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.tertiary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Icon(
+          Icons.chevron_left_rounded,
+          color: Theme.of(context).colorScheme.secondary,
+          size: 25,
+        ),
+      ),
+      rightButtonIcon: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.tertiary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Icon(
+          Icons.chevron_right_rounded,
+          color: Theme.of(context).colorScheme.secondary,
+          size: 25,
+        ),
+      ),
+      onDayPressed: (DateTime date, List<Event> events) async {
+        setState(() {
+          selectedDate = date;
+        });
+        await alarmController.get(selectedDate: selectedDate);
+      },
+    );
+  }
+
+  CalendarCarousel<Event> _customCircularCalendarCarouselWidget(BuildContext context) {
+    return CalendarCarousel<Event>(
+      height: MediaQuery.of(context).size.height * 0.175,
+      locale: 'pt-br',
+      showHeader: true,
+      pageScrollPhysics: const AlwaysScrollableScrollPhysics(),
+      customGridViewPhysics: const AlwaysScrollableScrollPhysics(),
+      headerMargin: EdgeInsets.zero,
+      headerTextStyle: Theme.of(context).textTheme.bodyMedium,
+      showHeaderButton: true,
+      leftButtonIcon: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.tertiary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Icon(
+          Icons.chevron_left_rounded,
+          color: Theme.of(context).colorScheme.secondary,
+          size: 25,
+        ),
+      ),
+      rightButtonIcon: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.tertiary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Icon(
+          Icons.chevron_right_rounded,
+          color: Theme.of(context).colorScheme.secondary,
+          size: 25,
+        ),
+      ),
+      weekFormat: true,
+      daysHaveCircularBorder: true,
+      showWeekDays: true,
+      weekDayFormat: WeekdayFormat.short,
+      weekdayTextStyle: Theme.of(context).textTheme.bodyMedium,
+      weekendTextStyle: Theme.of(context).textTheme.labelMedium,
+      daysTextStyle: Theme.of(context).textTheme.labelMedium,
+      dayButtonColor: Theme.of(context).colorScheme.tertiary,
+      todayTextStyle: Theme.of(context).textTheme.titleSmall,
+      todayButtonColor: Theme.of(context).colorScheme.tertiary,
+      todayBorderColor: Theme.of(context).colorScheme.primary,
+      selectedDayTextStyle: Theme.of(context).textTheme.displayMedium,
+      selectedDayButtonColor: Theme.of(context).colorScheme.primary,
+      selectedDayBorderColor: Theme.of(context).colorScheme.primary,
+      minSelectedDate: selectedDate.subtract(const Duration(days: 30)),
+      maxSelectedDate: selectedDate.add(const Duration(days: 30)),
+      selectedDateTime: selectedDate,
+      onDayPressed: (DateTime date, List<Event> events) async {
+        setState(() {
+          selectedDate = date;
+        });
+        await alarmController.get(selectedDate: selectedDate);
+      },
+    );
+  }
+
+  Container _buildCalendarCarouselDayWidget(bool isSelectable, int index, bool isSelectedDay, bool isToday, bool isPrevMonthDay, TextStyle textStyle, bool isNextMonthDay, bool isThisMonthDay, DateTime day) {
+    List<WeekdayType> weekdayTypeList = WeekdayType.getWeekdayTypeListStartingOnModay();
+    return Container(
+      width: 50,
+      decoration: BoxDecoration(
+        color: isSelectedDay ? Theme.of(context).colorScheme.primary : isToday ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.tertiary,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          width: 1,
+          color: isToday || isSelectedDay ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            weekdayTypeList[day.weekday-1].name,
+            style: isSelectedDay ? Theme.of(context).textTheme.displayMedium : isToday ? Theme.of(context).textTheme.titleSmall : Theme.of(context).textTheme.bodyMedium,
+          ),
+          Text(
+            day.day.toString(),
+            style: isSelectedDay ? Theme.of(context).textTheme.displayMedium : isToday ? Theme.of(context).textTheme.titleSmall : Theme.of(context).textTheme.labelMedium,
           ),
         ],
       ),
@@ -332,7 +428,7 @@ class _HomePageState extends State<HomePage> {
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 3),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 3),
       body: Column(
         children: [
           Text(
@@ -349,11 +445,6 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CustomSelectItemWidget(
                     label: 'Alarmar agora para tomar remédio',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () async {
                       Get.back();
                       await notificationController.createMedicineNotification(
@@ -371,11 +462,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   CustomSelectItemWidget(
                     label: 'Editar alarme',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       alarmController.select(alarm);
                       Get.back();
@@ -387,11 +473,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   CustomSelectItemWidget(
                     label: 'Remover alarme',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       Get.back();
                       _removeCheckBottomSheet(context, alarm);
@@ -418,7 +499,7 @@ class _HomePageState extends State<HomePage> {
   void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 1),
       body: Column(
         children: [
           Text(
@@ -433,15 +514,23 @@ class _HomePageState extends State<HomePage> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: CustomSelectItemWidget(
                 label: 'Sim',
-                icon: Icon(
-                  Icons.chevron_right_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 20,
-                ),
                 onPressed: () async {
                   await alarmController.remove(id: alarm.id!);
-                  await notificationController.cancelScheduledNotification(id: alarm.id!);
-                  Get.back();
+                  if (alarmController.status.isSuccess) {
+                    await notificationController.cancelScheduledNotification(id: alarm.id!);
+                    if (notificationController.status.isSuccess && context.mounted) {
+                      Get.back();
+                      return;
+                    }
+                    if (notificationController.status.isError && context.mounted) {
+                      _removeErrorBottomSheet(context, 'A remoção do horário foi realizada com sucesso, porém, o alarme não pôde ser desativado.');
+                      return;
+                    }
+                  }
+                  if (alarmController.status.isError && context.mounted) {
+                    _removeErrorBottomSheet(context, alarmController.status.errorMessage);
+                    return;
+                  }
                 },
               ),
             ),
@@ -460,10 +549,42 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _removeErrorBottomSheet(BuildContext context, String? message) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: message ?? 'Erro inesperado',
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void _testOptionsBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 2),
       body: Column(
         children: [
           Text(
@@ -480,11 +601,6 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CustomSelectItemWidget(
                     label: 'Alarme em 10s',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       notificationController.createMedicineNotificationScheduled(
                         notification: PushNotification(
@@ -511,11 +627,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   CustomSelectItemWidget(
                     label: 'Alarme imediato',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       notificationController.createMedicineNotification(
                         notification: PushNotification(
@@ -557,7 +668,7 @@ class _HomePageState extends State<HomePage> {
   void _newOptionsBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 1),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 1),
       body: Column(
         children: [
           Text(
@@ -572,11 +683,6 @@ class _HomePageState extends State<HomePage> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: CustomSelectItemWidget(
                 label: 'Criar alarme para remédio',
-                icon: Icon(
-                  Icons.chevron_right_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 20,
-                ),
                 onPressed: () {
                   alarmController.clear();
                   Get.back();
@@ -602,7 +708,7 @@ class _HomePageState extends State<HomePage> {
   void _settingsBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 3),
       body: Column(
         children: [
           Text(
@@ -619,11 +725,6 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CustomSelectItemWidget(
                     label: 'Editar informações pessoais',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       Get.back();
                       Get.toNamed('/user/info');
@@ -633,12 +734,17 @@ class _HomePageState extends State<HomePage> {
                     height: 5,
                   ),
                   CustomSelectItemWidget(
+                    label: 'Customizar aparência do app',
+                    onPressed: () {
+                      Get.back();
+                      Get.toNamed('/theme');
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
                     label: 'Sair do app',
-                    icon: Icon(
-                      Icons.chevron_right_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
-                    ),
                     onPressed: () {
                       Get.back();
                       _logoutCheckBottomSheet(context);
@@ -665,7 +771,7 @@ class _HomePageState extends State<HomePage> {
   void _logoutCheckBottomSheet(BuildContext context) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 2),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 2),
       body: Column(
         children: [
           Text(
@@ -688,11 +794,6 @@ class _HomePageState extends State<HomePage> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: CustomSelectItemWidget(
                 label: 'Sim',
-                icon: Icon(
-                  Icons.chevron_right_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 20,
-                ),
                 onPressed: () async {
                   await authController.logout();
                   if (authController.status.isSuccess) {

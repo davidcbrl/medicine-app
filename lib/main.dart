@@ -45,6 +45,7 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Manrope',
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF662C91),
+          primaryContainer: Color(0xFFE8DAF2),
           secondary: Color(0xFF3A3A3A),
           secondaryContainer: Color(0xFF7C7C7C),
           tertiary: Color(0xFFF0F0F0),

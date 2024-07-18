@@ -24,7 +24,7 @@ class CustomTextButtonWidget extends StatelessWidget {
         ),
         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),

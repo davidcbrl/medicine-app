@@ -53,10 +53,14 @@ class NotificationProvider {
 
   Future<void> schedule({required PushNotification notification}) async {
     final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    final DateTime currentDate = DateTime.now();
     tz.TZDateTime tzDateTime = tz.TZDateTime.from(
-      notification.date ?? DateTime.now(),
+      notification.date ?? currentDate,
       tz.getLocation(currentTimeZone)
     );
+    if (tzDateTime.isBefore(currentDate)) {
+      return;
+    }
     const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
       'alarms',
       'alarms',

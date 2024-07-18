@@ -28,7 +28,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           children: [
             Obx(
               () => CustomAvatarWidget(
-                image: userController.image.value.isNotEmpty
+                image: userController.image.value.isNotEmpty && userController.image.value != 'null'
                   ? Image.memory(base64Decode(userController.image.value))
                   : Image.asset('assets/img/ben.png'),
                 label: userController.name.value.isNotEmpty
@@ -38,13 +38,15 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
             ),
             Obx(
               () => CustomSelectItemWidget(
-                label: userController.buddy.value.name.isNotEmpty
-                  ? 'Falar com \n${userController.buddy.value.name}'
-                  : 'Falar com meu \nresponsável',
+                label: userController.buddy.value.name.isNotEmpty 
+                  ? userController.buddy.value.name
+                  : 'Meu responsável',
                 image: Image.asset(
                   'assets/img/whatsapp.png',
                   width: 30,
                 ),
+                icon: false,
+                truncateLabelWithWidth: MediaQuery.of(context).size.width * 0.25,
                 onPressed: () => chatController.launchWhatsapp(
                   phone: userController.buddy.value.phone,
                 ),
