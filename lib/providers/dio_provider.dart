@@ -24,21 +24,34 @@ class DioProvider {
 
   void _setupInterceptor() {
     _dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
-      if (kDebugMode) print('[REQUEST] => METHOD: ${options.method}');
-      if (kDebugMode) print('[REQUEST] => PATH: ${options.baseUrl}${options.path}');
-      if (kDebugMode) print('[REQUEST] => HEADERS: ${options.headers.toString()}');
-      if (options.method.contains('P')) if (kDebugMode) print('[REQUEST] => PAYLOAD: ${options.data}');
       String token = StorageProvider.readJson(key: '/auth');
       if (token != '{}') {
         options.headers['Authorization'] = 'Bearer $token';
-        if (kDebugMode) print('REQUEST[${options.method}] => TOKEN: $token');
+      }
+      if (kDebugMode) {
+        print('''
+          [REQUEST]
+          - METHOD: ${options.method}
+          - PATH: ${options.baseUrl}${options.path}
+          - HEADERS: ${options.headers.toString()}
+          ${options.method.contains('P') ? '- PAYLOAD: ${options.data}' : ''}''');
       }
       return handler.next(options);
     }, onResponse: (response, handler) {
-      if (kDebugMode) print('[RESPONSE] => STATUS: ${response.statusCode}');
+      if (kDebugMode) {
+        print('''
+          [RESPONSE]
+          - STATUS: ${response.statusCode}
+        ''');
+      }
       return handler.next(response);
     }, onError: (DioException error, handler) {
-      if (kDebugMode) print('[ERROR] => MESSAGE: $error');
+      if (kDebugMode) {
+        print('''
+          [ERROR]
+          - MESSAGE: $error
+        ''');
+      }
       return handler.next(error);
     }));
   }
