@@ -58,3 +58,26 @@ class UserRequest {
     'user': user,
   };
 }
+
+class UserPasswordResetRequest {
+  String currentPassword;
+  String newPassword;
+  String newPasswordConfirmation;
+
+  UserPasswordResetRequest({
+    required this.currentPassword,
+    required this.newPassword,
+    required this.newPasswordConfirmation,
+  });
+
+  UserPasswordResetRequest.fromJson(Map<String, dynamic> json):
+    currentPassword = json['current_password'],
+    newPassword = json['password'],
+    newPasswordConfirmation = json['password_confirmed'];
+
+  Map<String, dynamic> toJson() => {
+    'current_password': currentPassword,
+    'password': newPassword,
+    'password_confirmed': newPasswordConfirmation,
+  };
+}

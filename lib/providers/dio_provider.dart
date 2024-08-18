@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:medicine/providers/storage_provider.dart';
@@ -34,7 +36,7 @@ class DioProvider {
           - METHOD: ${options.method}
           - PATH: ${options.baseUrl}${options.path}
           - HEADERS: ${options.headers.toString()}
-          ${options.method.contains('P') ? '- PAYLOAD: ${options.data}' : ''}''');
+          ${options.method.contains('P') ? '- PAYLOAD: ${jsonEncode(options.data)}' : ''}''');
       }
       return handler.next(options);
     }, onResponse: (response, handler) {

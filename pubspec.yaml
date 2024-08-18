@@ -31,6 +31,7 @@ dependencies:
   flutter_local_notifications: ^17.1.2
   timezone: ^0.9.3
   flutter_native_timezone: ^2.0.0
+  aws_client: ^0.6.0
 
 dev_dependencies:
   flutter_test:

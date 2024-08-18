@@ -48,7 +48,7 @@ class AlarmController extends GetxController with StateMixin {
           id: id.value == 0 ? null : id.value,
           name: name.value,
           quantity: quantity.value,
-          image: image.isNotEmpty ? image.value : "null",
+          image: image.isNotEmpty ? image.value : null,
           doseTypeId: doseType.value.id,
           alarmTypeId: alarmType.value.id,
           times: timeList.map((TimeOfDay element) => _decorateTime(element)).toList(),
@@ -113,14 +113,14 @@ class AlarmController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> remove({required int id}) async {
+  Future<void> remove({required int id, DateTime? selectedDate}) async {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
       await ApiProvider.post(
         path: '/alarm/delete/$id',
       );
-      get(selectedDate: DateTime.now());
+      get(selectedDate: selectedDate ?? DateTime.now());
       change([], status: RxStatus.success());
       loading.value = false;
     } catch (error) {

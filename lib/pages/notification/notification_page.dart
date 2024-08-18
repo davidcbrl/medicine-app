@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
@@ -15,7 +13,7 @@ import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_text_button_widget.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key, required this.data});
+  const NotificationPage({super.key, this.data});
 
   final Object? data;
 
@@ -29,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    Alarm alarm = Alarm.fromJson(widget.data as Map<String, dynamic>);
+    Alarm? alarm = widget.data != null ? Alarm.fromJson(widget.data as Map<String, dynamic>) : null;
     return CustomPageWidget(
       body: Stack(
         children: [
@@ -46,82 +44,100 @@ class _NotificationPageState extends State<NotificationPage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Text(
-                        alarm.times.first.split(':').take(2).join(':'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
+                      if (alarm != null) ...[
+                        Text(
+                          alarm.times.first.split(':').take(2).join(':'),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Hora de tomar seu remédio',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            alarm.name,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Stack(
-                            children: [
-                              FadeInImage(
-                                placeholder: const AssetImage('assets/img/placeholder.gif'),
-                                image: alarm.image != null && alarm.image != 'null'
-                                  ? Image.memory(base64Decode(alarm.image!)).image
-                                  : Image.asset('assets/img/background.png').image,
-                                height: MediaQuery.of(context).size.height * 0.4,
-                                fit: BoxFit.cover,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                          if (alarm.observation != null) ...[
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Hora de tomar seu remédio',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
                             Text(
-                              alarm.observation ?? '',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              alarm.name,
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Stack(
+                              children: [
+                                FadeInImage(
+                                  placeholder: const AssetImage('assets/img/placeholder.gif'),
+                                  image: alarm.image != null
+                                    ? Image.network(alarm.image!).image
+                                    : Image.asset('assets/img/background.png').image,
+                                  height: MediaQuery.of(context).size.height * 0.4,
+                                  fit: BoxFit.cover,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
+                            if (alarm.observation != null) ...[
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                alarm.observation ?? '',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                            const SizedBox(
+                              height: 10,
                             ),
                           ],
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
+                      if (alarm == null) ...[
+                        const CustomEmptyWidget(
+                          label: 'Informações do alame não encontradas, retorne a tela inicial e tente disparar o alarme manualmente.',
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
-              CustomButtonWidget(
-                label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
-                onPressed: () async {
-                  if (alarm.id != null && alarm.taken == null) {
-                    await alarmController.take(id: alarm.id!);
-                    if (alarmController.status.isError && context.mounted) {
-                      _alarmErrorBottomSheet(context, alarmController.status.errorMessage);
-                      return;
+              if (alarm != null) ...[
+                CustomButtonWidget(
+                  label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
+                  onPressed: () async {
+                    if (alarm.id != null && alarm.taken == null) {
+                      await alarmController.take(id: alarm.id!);
+                      if (alarmController.status.isError && context.mounted) {
+                        _alarmErrorBottomSheet(context, alarmController.status.errorMessage);
+                        return;
+                      }
                     }
-                  }
-                  Get.offAllNamed('/home');
-                  return;
-                },
-              ),
+                    Get.offAllNamed('/home');
+                    return;
+                  },
+                ),
+              ],
+              if (alarm == null) ...[
+                CustomButtonWidget(
+                  label: 'Retornar para a tela inicial',
+                  onPressed: () async {
+                    Get.offAllNamed('/home');
+                    return;
+                  },
+                ),
+              ],
               const SizedBox(
                 height: 10,
               ),

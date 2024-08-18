@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
-import 'package:medicine/widgets/custom_image_picker_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
@@ -168,70 +164,6 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
                   ),
                   const SizedBox(
                     height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Foto',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: CustomImagePickerWidget(
-                          label: 'Toque para escolher ${userController.image.value.isNotEmpty ? '\n' : ''}uma foto',
-                          image: userController.image.value.isNotEmpty ? base64Decode(userController.image.value) : null,
-                          icon: Icon(
-                            Icons.image_search_outlined,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
-                          onPressed: () async {
-                            final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                              source: ImageSource.gallery,
-                              imageQuality: 10,
-                            );
-                            final bytes = await image!.readAsBytes();
-                            setState(() {
-                              userController.image.value = base64Encode(bytes);
-                              userController.name.value = nameController.text;
-                              userController.email.value = emailController.text;
-                              userController.phone.value = phoneController.text;
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      if (userController.image.value.isNotEmpty) ...[
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              userController.image.value = '';
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.tertiary,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Icon(
-                              Icons.close_rounded,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
                   ),
                 ],
               ),

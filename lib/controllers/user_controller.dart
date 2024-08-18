@@ -39,7 +39,7 @@ class UserController extends GetxController with StateMixin {
           phone: phone.value,
           email: email.value,
           password: password.value,
-          image: image.isNotEmpty ? image.value : "",
+          image: image.isNotEmpty ? image.value : null,
           buddy: buddy.value,
           device: await getDeviceName(),
         ),
@@ -74,6 +74,28 @@ class UserController extends GetxController with StateMixin {
     }
   }
 
+  Future<void> passwordReset({required String currentPassword, required String newPassword}) async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      UserPasswordResetRequest request = UserPasswordResetRequest(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        newPasswordConfirmation: newPassword,
+      );
+      await ApiProvider.post(
+        path: '/password',
+        data: request.toJson(),
+      );
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao alterar senha'));
+      loading.value = false;
+    }
+  }
+
   void select(User user) {
     id.value = user.id ?? 0;
     name.value = user.name;
@@ -81,7 +103,7 @@ class UserController extends GetxController with StateMixin {
     email.value = user.email;
     password.value = user.password ?? '';
     buddy.value = user.buddy ?? Buddy(name: '', phone: '');
-    image.value = (user.image == 'image' ? null : user.image) ?? '';
+    image.value = user.image ?? '';
   }
 
   void clear() {

@@ -515,7 +515,7 @@ class _HomePageState extends State<HomePage> {
               child: CustomSelectItemWidget(
                 label: 'Sim',
                 onPressed: () async {
-                  await alarmController.remove(id: alarm.id!);
+                  await alarmController.remove(id: alarm.id!, selectedDate: selectedDate);
                   if (alarmController.status.isSuccess) {
                     await notificationController.cancelScheduledNotification(id: alarm.id!);
                     if (notificationController.status.isSuccess && context.mounted) {
@@ -808,7 +808,8 @@ class _HomePageState extends State<HomePage> {
                     }
                   }
                   if (authController.status.isError && context.mounted) {
-                    _logoutErrorBottomSheet(context, authController.status.errorMessage);
+                    Get.offAllNamed('/auth');
+                    _logoutErrorBottomSheet(context, 'Falha ao realizar logout, você será direcionado para o login por segurança.');
                     return;
                   }
                 },

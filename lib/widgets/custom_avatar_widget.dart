@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomAvatarWidget extends StatelessWidget {
-  final Image image;
+  final String image;
   final String label;
 
   const CustomAvatarWidget({
@@ -30,7 +30,9 @@ class CustomAvatarWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
               ),
-              child: image,
+              child: image.contains('http')
+                ? Image.network(image)
+                : Image.asset('assets/img/ben.png'),
             ),
           ),
         ),

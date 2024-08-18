@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
@@ -26,7 +26,7 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage> {
   UserController userController = Get.find();
-  AuthController authController = Get.find();
+  CloudController cloudController = Get.put(CloudController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +34,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     TextEditingController emailController = TextEditingController(text: userController.email.value);
     TextEditingController nameController = TextEditingController(text: userController.name.value);
     TextEditingController phoneController = TextEditingController(text: userController.phone.value);
+    bool hasImage = userController.image.value.isNotEmpty;
     return CustomPageWidget(
       body: Stack(
         children: [
@@ -120,8 +121,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
                           children: [
                             Expanded(
                               child: CustomImagePickerWidget(
-                                label: 'Toque para escolher ${userController.image.value.isNotEmpty ? '\n' : ''}uma foto',
-                                image: userController.image.value.isNotEmpty ? base64Decode(userController.image.value) : null,
+                                label: 'Toque para escolher ${hasImage ? '\n' : ''}uma foto',
+                                image: hasImage ? userController.image.value : null,
                                 icon: Icon(
                                   Icons.image_search_outlined,
                                   color: Theme.of(context).colorScheme.secondary,
@@ -143,7 +144,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                             const SizedBox(
                               width: 5,
                             ),
-                            if (userController.image.value.isNotEmpty) ...[
+                            if (hasImage) ...[
                               InkWell(
                                 onTap: () {
                                   setState(() {
@@ -181,13 +182,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         ),
                         CustomSelectItemWidget(
                           label: 'Toque para alterar senha',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
                           onPressed: () async {
-                            await authController.reset();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _userPasswordBottomSheet(context, userController);
                           },
                         ),
                         const SizedBox(
@@ -206,11 +203,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         ),
                         CustomSelectItemWidget(
                           label: 'Toque para alterar o responsável',
-                          icon: Icon(
-                            Icons.chevron_right_rounded,
-                            color: Theme.of(context).colorScheme.secondary,
-                            size: 20,
-                          ),
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
                             _userBuddyInfoBottomSheet(context, userController);
@@ -235,6 +227,19 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     userController.name.value = nameController.text;
                     userController.phone.value = phoneController.text;
                     userController.email.value = emailController.text;
+                    if (userController.image.value.isNotEmpty) {
+                      String imageName = '${UniqueKey().hashCode.toString()}_${userController.id.value.toString()}_image.png';
+                      String? cdnImage = await cloudController.uploadAsset(
+                        type: AssetType.image,
+                        name: imageName,
+                        base64Asset: userController.image.value,
+                      );
+                      if (cloudController.status.isError && context.mounted) {
+                        _userInfoErrorBottomSheet(context, cloudController.status.errorMessage);
+                        return;
+                      }
+                      userController.image.value = cdnImage ?? userController.image.value;
+                    } 
                     await userController.save();
                     if (userController.status.isSuccess && context.mounted) {
                       _userInfoSuccessBottomSheet(context, userController);
@@ -271,13 +276,188 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
+  void _userPasswordBottomSheet(BuildContext context, UserController userController) {
+    final passwordFormKey = GlobalKey<FormState>();
+    TextEditingController currentPasswordController = TextEditingController(text: '');
+    TextEditingController newPasswordController = TextEditingController(text: '');
+    TextEditingController confirmationController = TextEditingController(text: '');
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: (MediaQuery.of(context).size.height * 0.2) + (60 * 7),
+      scroll: true,
+      keyboard: true,
+      body: Column(
+        children: [
+          Text(
+            'Alterar senha',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: Form(
+              key: passwordFormKey,
+              child: Column(
+                children: [
+                  CustomTextFieldWidget(
+                    controller: currentPasswordController,
+                    label: 'Escreva a senha atual a ser alterada:',
+                    placeholder: '*****',
+                    hideText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Escreva uma senha para alterar';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFieldWidget(
+                    controller: newPasswordController,
+                    label: 'Defina nova senha para acessar o app:',
+                    placeholder: '*****',
+                    hideText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Escreva uma senha para alterar';
+                      }
+                      RegExp regex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Senha inválida, verifique as regras de criação de senha abaixo';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextFieldWidget(
+                    controller: confirmationController,
+                    label: 'Repita a nova senha para confirmar:',
+                    placeholder: '*****',
+                    hideText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Escreva a confirmação da senha para alterar';
+                      }
+                      if (value.isNotEmpty && value != newPasswordController.text) {
+                        return 'A senha e a confirmação precisam ser iguais para se cadastrar';
+                      }
+                      return null;
+                    },
+                  ),
+                  CustomTextButtonWidget(
+                    label: 'Regras de criação de senha',
+                    style: Theme.of(context).textTheme.titleSmall,
+                    onPressed: () {
+                      _passwordRulesBottomSheet(context);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomButtonWidget(
+            label: 'Confirmar alteração de senha',
+            onPressed: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
+              if (passwordFormKey.currentState!.validate()) {
+                Get.back();
+                await userController.passwordReset(
+                  currentPassword: currentPasswordController.text,
+                  newPassword: newPasswordController.text,
+                );
+                if (userController.status.isSuccess && context.mounted) {
+                  _userInfoSuccessBottomSheet(context, userController, password: true);
+                  return;
+                }
+                if (userController.status.isError && context.mounted) {
+                  _userInfoErrorBottomSheet(context, userController.status.errorMessage);
+                  return;
+                }
+              }
+            },
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _passwordRulesBottomSheet(BuildContext context) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.275,
+      body: Column(
+        children: [
+          Text(
+            'Sua senha deve conter:',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  'No minimo 8 caracteres',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'No minimo 1 caractere maiusculo e 1 caractere minusculo',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'No minimo 1 caractere numerico',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'No minimo 1 caractere especial',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, entendi',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void _userBuddyInfoBottomSheet(BuildContext context, UserController userController) {
     final buddyFormKey = GlobalKey<FormState>();
     TextEditingController buddyNameController = TextEditingController(text: userController.buddy.value.name);
     TextEditingController buddyPhoneController = TextEditingController(text: userController.buddy.value.phone);
     CustomBottomSheetWidget.show(
       context: context,
-      height: (MediaQuery.of(context).size.height * 0.175) + (50 * 5),
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 5),
       scroll: true,
       keyboard: true,
       body: Column(
@@ -358,14 +538,14 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  void _userInfoSuccessBottomSheet(BuildContext context, UserController userController) {
+  void _userInfoSuccessBottomSheet(BuildContext context, UserController userController, {bool password = false}) {
     CustomBottomSheetWidget.show(
       context: context,
       height: MediaQuery.of(context).size.height * 0.275,
       body: Column(
         children: [
           Text(
-            'Informações salvas com sucesso!',
+            !password ? 'Informações salvas com sucesso!' : 'Senha alterada com sucesso!',
             style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(
@@ -385,12 +565,22 @@ class _UserInfoPageState extends State<UserInfoPage> {
           const SizedBox(
             height: 20,
           ),
-          CustomTextButtonWidget(
-            label: 'Ok, voltar para o início',
-            onPressed: () {
-              Get.offAllNamed('/home');
-            },
-          ),
+          if (!password) ...[
+            CustomTextButtonWidget(
+              label: 'Ok, voltar para o início',
+              onPressed: () {
+                Get.offAllNamed('/home');
+              },
+            ),
+          ],
+          if (password) ...[
+            CustomTextButtonWidget(
+              label: 'Ok, voltar',
+              onPressed: () {
+                Get.back();
+              },
+            ),
+          ],
         ],
       ),
     );

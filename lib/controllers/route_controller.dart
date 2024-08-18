@@ -39,20 +39,24 @@ class RouteController extends GetxController {
       case authRoute:
         return MaterialPageRoute(
           builder: (_) => const AuthPage(),
+          settings: settings,
         );
       case authPasswordRoute:
         return MaterialPageRoute(
           builder: (_) => const AuthPasswordPage(),
+          settings: settings,
         );
       case homeRoute:
         return MaterialPageRoute(
           builder: (_) => const HomePage(),
+          settings: settings,
         );
       case notificationRoute:
         return MaterialPageRoute(
           builder: (_) => NotificationPage(
             data: settings.arguments,
           ),
+          settings: settings,
         );
       case alarmMedicineRoute:
         return CustomMaterialPageRoute(

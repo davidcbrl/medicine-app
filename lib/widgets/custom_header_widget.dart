@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/chat_controller.dart';
@@ -28,9 +26,9 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           children: [
             Obx(
               () => CustomAvatarWidget(
-                image: userController.image.value.isNotEmpty && userController.image.value != 'null'
-                  ? Image.memory(base64Decode(userController.image.value))
-                  : Image.asset('assets/img/ben.png'),
+                image: userController.image.value.isNotEmpty
+                  ? userController.image.value
+                  : 'assets/img/ben.png',
                 label: userController.name.value.isNotEmpty
                   ? userController.name.value
                   : 'Tio Ben',

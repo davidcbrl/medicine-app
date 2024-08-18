@@ -308,7 +308,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
-    bool hasImage = alarmController.image.value.isNotEmpty && alarmController.image.value != 'null';
+    bool hasImage = alarmController.image.value.isNotEmpty;
     return Column(
       children: [
         Text(
@@ -326,7 +326,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
                 Expanded(
                   child: CustomImagePickerWidget(
                     label: 'Toque para escolher ${hasImage ? '\n' : ''}uma foto',
-                    image: hasImage ? base64Decode(alarmController.image.value) : null,
+                    image: hasImage ? alarmController.image.value : null,
                     icon: Icon(
                       Icons.image_search_outlined,
                       color: Theme.of(context).colorScheme.secondary,

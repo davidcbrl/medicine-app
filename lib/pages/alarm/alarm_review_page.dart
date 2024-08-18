@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
+import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
@@ -98,6 +99,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
+    final CloudController cloudController = Get.put(CloudController(), permanent: true);
     final NotificationController notificationController = Get.find();
     TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
     return Column(
@@ -204,6 +206,19 @@ class AlarmReviewObservationView extends StatelessWidget {
           onPressed: () async {
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
+            if (alarmController.image.value.isNotEmpty) {
+              String imageName = '${UniqueKey().hashCode.toString()}_${alarmController.id.value.toString()}_medicine.png';
+              String? cdnImage = await cloudController.uploadAsset(
+                type: AssetType.image,
+                name: imageName,
+                base64Asset: alarmController.image.value,
+              );
+              if (cloudController.status.isError && context.mounted) {
+                _alarmErrorBottomSheet(context, cloudController.status.errorMessage);
+                return;
+              }
+              alarmController.image.value = cdnImage ?? alarmController.image.value;
+            } 
             List<Alarm?> alarms = await alarmController.save();
             if (alarmController.status.isSuccess) {
               await alarmController.get(selectedDate: DateTime.now());

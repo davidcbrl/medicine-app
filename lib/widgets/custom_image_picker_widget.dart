@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class CustomImagePickerWidget extends StatelessWidget {
   final String label;
   final Function() onPressed;
   final Icon? icon;
-  final Uint8List? image;
+  final String? image;
 
   const CustomImagePickerWidget({
     super.key, 
@@ -35,7 +36,9 @@ class CustomImagePickerWidget extends StatelessWidget {
                       SizedBox(
                         height: 80,
                         width: 80,
-                        child: Image.memory(image!),
+                        child: image!.contains('http')
+                          ? Image.network(image!)
+                          : Image.memory(base64Decode(image!)),
                       ),
                       const SizedBox(
                         width: 10,
