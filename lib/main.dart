@@ -85,6 +85,51 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+      darkTheme: ThemeData(
+        fontFamily: 'Manrope',
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF662C91),
+          primaryContainer: Color(0xFF662C91),
+          secondary: Color(0xFFF0F0F0),
+          secondaryContainer: Color(0xFF7C7C7C),
+          tertiary: Color(0xFF220835),
+          surface: Color(0xFF12001F),
+          error: Color(0xFFF4E138),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontSize: 40,
+            fontWeight: FontWeight.w900,
+          ),
+          titleSmall: TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+          ),
+          labelMedium: TextStyle(
+            color: Color(0xFFF0F0F0),
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+          ),
+          bodyMedium: TextStyle(
+            color: Color(0xFFF0F0F0),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          bodySmall: TextStyle(
+            color: Color(0xFFF4E138),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          displayMedium: TextStyle(
+            color: Color(0xFFFFFFFF),
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+      themeMode: ThemeMode.system,
       navigatorKey: MyApp.navigatorKey,
       onGenerateInitialRoutes: (initialRouteName) => _routeController.onGenerateInitialRoutes(
         initialRouteName: initialRouteName,

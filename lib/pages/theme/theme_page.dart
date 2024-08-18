@@ -34,11 +34,57 @@ class _ThemePageState extends State<ThemePage> {
             child: Column(
               children: [
                 Text(
-                  'Temas',
+                  'Customizar app',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(
                   height: 20,
+                ),
+                Text(
+                  'Tema',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                CustomSelectItemWidget(
+                  label: 'Claro',
+                  selected: settingController.get(name: 'theme').isNotEmpty && settingController.get(name: 'theme') == 'ThemeMode.light',
+                  onPressed: () {
+                    Get.changeThemeMode(ThemeMode.light);
+                    settingController.set(name: 'theme', value: ThemeMode.light.toString());
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                CustomSelectItemWidget(
+                  label: 'Escuro',
+                  selected: settingController.get(name: 'theme').isNotEmpty && settingController.get(name: 'theme') == 'ThemeMode.dark',
+                  onPressed: () {
+                    Get.changeThemeMode(ThemeMode.dark);
+                    settingController.set(name: 'theme', value: ThemeMode.dark.toString());
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                CustomSelectItemWidget(
+                  label: 'Automático (dispositivo)',
+                  selected: settingController.get(name: 'theme').isEmpty || settingController.get(name: 'theme') == 'ThemeMode.system',
+                  onPressed: () {
+                    Get.changeThemeMode(ThemeMode.system);
+                    settingController.set(name: 'theme', value: ThemeMode.system.toString());
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 Text(
                   'Estilo do calendário',
