@@ -6,6 +6,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final String label;
   final String placeholder;
   final Icon? icon;
+  final String? suffix;
   final bool hideText;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? formatters;
@@ -20,13 +21,14 @@ class CustomTextFieldWidget extends StatelessWidget {
     required this.label,
     required this.placeholder,
     this.icon,
+    this.suffix,
     this.onChanged,
     this.hideText = false,
     this.validator,
     this.keyboardType,
     this.formatters,
     this.onTap,
-    this.readOnly = false
+    this.readOnly = false,
   });
 
   @override
@@ -58,6 +60,7 @@ class CustomTextFieldWidget extends StatelessWidget {
             hintStyle: Theme.of(context).textTheme.bodyMedium,
             filled: true,
             fillColor: readOnly ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.tertiary,
+            suffixText: suffix,
             suffixIcon: Padding(
               padding: const EdgeInsets.only(right: 10),
               child: icon,

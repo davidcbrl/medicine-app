@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
@@ -24,6 +25,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   AlarmController alarmController = Get.find();
   NotificationController notificationController = Get.find();
+  SettingController settingController = Get.put(SettingController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,9 @@ class _NotificationPageState extends State<NotificationPage> {
                           alarm.times.first.split(':').take(2).join(':'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: settingController.theme.value == 'ThemeMode.dark'
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).colorScheme.primary,
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                           ),

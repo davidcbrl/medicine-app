@@ -27,10 +27,10 @@ class UserInfoPage extends StatefulWidget {
 class _UserInfoPageState extends State<UserInfoPage> {
   UserController userController = Get.find();
   CloudController cloudController = Get.put(CloudController(), permanent: true);
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: userController.email.value);
     TextEditingController nameController = TextEditingController(text: userController.name.value);
     TextEditingController phoneController = TextEditingController(text: userController.phone.value);
@@ -60,50 +60,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         ),
                         const SizedBox(
                           height: 20,
-                        ),
-                        CustomTextFieldWidget(
-                          readOnly: true,
-                          controller: emailController,
-                          label: 'E-mail (somente leitura)',
-                          placeholder: 'tio@ben.com',
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextFieldWidget(
-                          controller: nameController,
-                          label: 'Nome',
-                          placeholder: 'Tio Ben',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Escreva o seu nome para se cadastrar';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextFieldWidget(
-                          controller: phoneController,
-                          label: 'Contato',
-                          placeholder: '(99) 99999-9999',
-                          formatters: [
-                            MaskTextInputFormatter(
-                              mask: '(##) #####-####',
-                              filter: { "#": RegExp(r'[0-9]') },
-                              type: MaskAutoCompletionType.lazy,
-                            ),
-                          ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Escreva o seu contato para se cadastrar';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
                         ),
                         Row(
                           children: [
@@ -169,6 +125,51 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         const SizedBox(
                           height: 10,
                         ),
+                        CustomTextFieldWidget(
+                          readOnly: true,
+                          controller: emailController,
+                          label: 'E-mail (somente leitura)',
+                          placeholder: 'tio@ben.com',
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextFieldWidget(
+                          controller: nameController,
+                          label: 'Nome',
+                          placeholder: 'Tio Ben',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Escreva o seu nome para se cadastrar';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextFieldWidget(
+                          controller: phoneController,
+                          label: 'Contato',
+                          placeholder: '(99) 99999-9999',
+                          keyboardType: TextInputType.number,
+                          formatters: [
+                            MaskTextInputFormatter(
+                              mask: '(##) #####-####',
+                              filter: { "#": RegExp(r'[0-9]') },
+                              type: MaskAutoCompletionType.lazy,
+                            ),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Escreva o seu contato para se cadastrar';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: [
                             Text(
@@ -227,8 +228,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     userController.name.value = nameController.text;
                     userController.phone.value = phoneController.text;
                     userController.email.value = emailController.text;
-                    if (userController.image.value.isNotEmpty) {
-                      String imageName = '${UniqueKey().hashCode.toString()}_${userController.id.value.toString()}_image.png';
+                    if (userController.image.value.isNotEmpty && !userController.image.value.contains('http')) {
+                      String imageName = '${userController.id.value.toString()}_image.png';
                       String? cdnImage = await cloudController.uploadAsset(
                         type: AssetType.image,
                         name: imageName,
@@ -492,6 +493,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     controller: buddyPhoneController,
                     label: 'Contato do responsável',
                     placeholder: '(99) 99999-9999',
+                    keyboardType: TextInputType.number,
                     formatters: [
                       MaskTextInputFormatter(
                         mask: '(##) #####-####',

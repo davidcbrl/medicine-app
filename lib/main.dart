@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:medicine/controllers/auth_controller.dart';
@@ -10,7 +11,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation(currentTimeZone));
@@ -34,13 +36,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 2), () => FlutterNativeSplash.remove());
     if (kIsWeb) return getWeb(context);
     return getApp();
   }
 
   GetMaterialApp getApp() {
     return GetMaterialApp(
-      title: 'Medicine',
+      title: 'MEDS',
       theme: ThemeData(
         fontFamily: 'Manrope',
         colorScheme: const ColorScheme.light(

@@ -23,6 +23,7 @@ class CustomOptionFieldWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: InkWell(
+            borderRadius: BorderRadius.circular(10),
             onTap: onPressed,
             child: Padding(
               padding: const EdgeInsets.all(15),

@@ -1,4 +1,4 @@
-# medicine
+# Meds
 
 Medicine reminder
 

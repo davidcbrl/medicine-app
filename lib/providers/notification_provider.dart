@@ -12,7 +12,7 @@ class NotificationProvider {
 
   Future<void> init() async {
     await flutterLocalNotificationsPlugin.initialize(
-      const InitializationSettings(android: AndroidInitializationSettings('@mipmap/launcher_icon')),
+      const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_launcher')),
       onDidReceiveNotificationResponse: notificationCallback,
       onDidReceiveBackgroundNotificationResponse: notificationCallback,
     );

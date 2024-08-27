@@ -27,47 +27,66 @@ class _AlarmMedicinePageState extends State<AlarmMedicinePage> {
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomHeaderWidget(),
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomStepperWidget(
-            current: 1,
-            steps: [
-              CustomStepperStep(
-                icon: Icons.medication_outlined,
-                label: 'Remédio',
-              ),
-              CustomStepperStep(
-                icon: Icons.add_alarm_rounded,
-                label: 'Alarme',
-              ),
-              CustomStepperStep(
-                icon: Icons.check_circle_outline_rounded,
-                label: 'Confirmar',
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: PageView(
-              controller: alarmController.medicinePageController,
-              children: const [
-                AlarmMedicineNameView(),
-                AlarmMedicineTypeView(),
-                AlarmMedicineQuantityView(),
-                AlarmMedicineImageView(),
+      hasPadding: false,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: CustomHeaderWidget(),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const CustomStepperWidget(
+              current: 1,
+              steps: [
+                CustomStepperStep(
+                  icon: Icons.medication_outlined,
+                  label: 'Remédio',
+                ),
+                CustomStepperStep(
+                  icon: Icons.alarm_rounded,
+                  label: 'Alarme',
+                ),
+                CustomStepperStep(
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'Confirmar',
+                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: PageView(
+                controller: alarmController.medicinePageController,
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmMedicineNameView(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmMedicineTypeView(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmMedicineQuantityView(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmMedicineImageView(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -181,6 +200,10 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
                           setState(() {
                             alarmController.doseType.value = doseType;
                           });
+                          alarmController.medicinePageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
                         },
                       ),
                       const SizedBox(
@@ -234,7 +257,7 @@ class AlarmMedicineQuantityView extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Quantas doses precisam ser tomadas?',
+          'Qual é a dose a ser tomada por alarme?',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(
@@ -245,8 +268,9 @@ class AlarmMedicineQuantityView extends StatelessWidget {
             key: formKey,
             child: CustomTextFieldWidget(
               controller: medicineQuantityController,
-              label: 'Preencha a quantidade de alarmes a serem criados',
+              label: 'Preencha a dose/quantidade em ${alarmController.doseType.value.name.toLowerCase()}',
               placeholder: 'Ex: 10',
+              suffix: alarmController.doseType.value.name.toLowerCase(),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -305,6 +329,7 @@ class AlarmMedicineImageView extends StatefulWidget {
   State<AlarmMedicineImageView> createState() => _AlarmMedicineImageViewState();
 }
 class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
+  String hintText = '';
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
@@ -318,6 +343,15 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
         const SizedBox(
           height: 20,
         ),
+        if (hintText.isNotEmpty) ...[
+          Text(
+            hintText,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+        ],
         Expanded(
           child: SingleChildScrollView(
             child: Row(
@@ -350,6 +384,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
                 ),
                 if (hasImage) ...[
                   InkWell(
+                    borderRadius: BorderRadius.circular(20),
                     onTap: () {
                       setState(() {
                         alarmController.image.value = '';
@@ -378,6 +413,18 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
         CustomButtonWidget(
           label: 'Continuar para alarme',
           onPressed: () {
+            if (alarmController.name.value.isEmpty) {
+              setState(() {
+                hintText = 'Escreva o remédio para continuar';
+              });
+              return;
+            }
+            if (alarmController.quantity.value < 1) {
+              setState(() {
+                hintText = 'Preencha a quantidade de alarmes para continuar';
+              });
+              return;
+            }
             Get.toNamed('/alarm/info');
           },
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/calendar_style.dart';
-import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
@@ -53,7 +52,9 @@ class _ThemePageState extends State<ThemePage> {
                   onPressed: () {
                     Get.changeThemeMode(ThemeMode.light);
                     settingController.set(name: 'theme', value: ThemeMode.light.toString());
-                    setState(() {});
+                    setState(() {
+                      settingController.theme.value = ThemeMode.light.toString();
+                    });
                   },
                 ),
                 const SizedBox(
@@ -65,7 +66,9 @@ class _ThemePageState extends State<ThemePage> {
                   onPressed: () {
                     Get.changeThemeMode(ThemeMode.dark);
                     settingController.set(name: 'theme', value: ThemeMode.dark.toString());
-                    setState(() {});
+                    setState(() {
+                      settingController.theme.value = ThemeMode.dark.toString();
+                    });
                   },
                 ),
                 const SizedBox(
@@ -77,7 +80,9 @@ class _ThemePageState extends State<ThemePage> {
                   onPressed: () {
                     Get.changeThemeMode(ThemeMode.system);
                     settingController.set(name: 'theme', value: ThemeMode.system.toString());
-                    setState(() {});
+                    setState(() {
+                      settingController.theme.value = ThemeMode.system.toString();
+                    });
                   },
                 ),
                 const SizedBox(
@@ -87,7 +92,7 @@ class _ThemePageState extends State<ThemePage> {
                   height: 10,
                 ),
                 Text(
-                  'Estilo do calendário',
+                  'Estilo do calendário (reinicie o app para aplicar)',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(
@@ -117,15 +122,6 @@ class _ThemePageState extends State<ThemePage> {
           ),
           const SizedBox(
             height: 20,
-          ),
-          CustomButtonWidget(
-            label: 'Salvar tema (reinicie o app para aplicar)',
-            onPressed: () {
-              Get.back();
-            },
-          ),
-          const SizedBox(
-            height: 5,
           ),
           CustomTextButtonWidget(
             label: 'Voltar',

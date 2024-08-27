@@ -18,7 +18,7 @@ dependencies:
   http: ^1.2.0
   dio: ^5.0.0
   url_launcher: ^6.1.8
-  flutter_native_splash: ^2.2.17
+  flutter_native_splash: ^2.4.1
   intl: ^0.18.1
   image_picker: ^1.0.7
   shared_preferences: ^2.0.18
@@ -56,24 +56,20 @@ flutter:
   uses-material-design: true
 
 flutter_native_splash:
-  color: "#FFFFFF"
-  color_dark: "#3A3A3A"
-  image: assets/img/logo-text.png
+  color: "#662C91"
+  image: "assets/img/logo-white-transparent.png"
+  android: true
+  ios: true
+  web: false
 
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
-  image_path: "assets/img/icon.png"
-  min_sdk_android: 21
+  remove_alpha_ios: true
+  image_path: "assets/img/icon-white-transparent.png"
+  adaptive_icon_background: "#662C91"
+  adaptive_icon_foreground: "assets/img/icon-white-transparent.png"
   web:
     generate: true
-    image_path: "assets/img/icon.png"
-    background_color: "#FFFFFF"
-    theme_color: "#662C91"
-  windows:
-    generate: true
-    image_path: "assets/img/icon.png"
-    icon_size: 48
-  macos:
-    generate: true
-    image_path: "assets/img/icon.png"
+    image_path: "assets/img/icon-white-transparent.png"
+    background_color: "#662C91"

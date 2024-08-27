@@ -12,6 +12,8 @@ class Alarm {
   List<String> times;
   List<int>? weekdayTypeIds;
   String? startDate;
+  int? treatmentDuration;
+  int? treatmentDurationTypeId;
   String? observation;
 
   Alarm({
@@ -28,6 +30,8 @@ class Alarm {
     required this.times,
     this.weekdayTypeIds,
     this.startDate,
+    this.treatmentDuration,
+    this.treatmentDurationTypeId,
     this.observation,
   });
 
@@ -45,6 +49,8 @@ class Alarm {
     times = (json['hour'] != null) && (json['hours'] == null) ? [json['hour']] : json['hours']?.cast<String>(),
     weekdayTypeIds = json['days']?.cast<int>(),
     startDate = json['startDate'],
+    treatmentDuration = json['treatmentDuration'],
+    treatmentDurationTypeId = json['treatmentDurationTypeId'],
     observation = json['observations'];
 
   Map<String, dynamic> toJson() => {
@@ -61,6 +67,8 @@ class Alarm {
     'hours': times,
     'days': weekdayTypeIds,
     'start_date': startDate,
+    'treatmentDuration': treatmentDuration,
+    'treatmentDurationTypeId': treatmentDurationTypeId,
     'observations': observation,
   };
 }

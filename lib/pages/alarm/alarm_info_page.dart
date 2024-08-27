@@ -26,45 +26,58 @@ class _AlarmInfoPageState extends State<AlarmInfoPage> {
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomHeaderWidget(),
-          const SizedBox(
-            height: 20,
-          ),
-          const CustomStepperWidget(
-            current: 2,
-            steps: [
-              CustomStepperStep(
-                icon: Icons.medication_outlined,
-                label: 'Remédio',
-              ),
-              CustomStepperStep(
-                icon: Icons.add_alarm_rounded,
-                label: 'Alarme',
-              ),
-              CustomStepperStep(
-                icon: Icons.check_circle_outline_rounded,
-                label: 'Confirmar',
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: PageView(
-              controller: alarmController.infoPageController,
-              children: const [
-                AlarmInfoTypeView(),
-                AlarmInfoTimeView(),
+      hasPadding: false,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: CustomHeaderWidget(),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const CustomStepperWidget(
+              current: 2,
+              steps: [
+                CustomStepperStep(
+                  icon: Icons.medication_outlined,
+                  label: 'Remédio',
+                ),
+                CustomStepperStep(
+                  icon: Icons.alarm_rounded,
+                  label: 'Alarme',
+                ),
+                CustomStepperStep(
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'Confirmar',
+                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: PageView(
+                controller: alarmController.infoPageController,
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmInfoTypeView(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: AlarmInfoTimeView(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -114,6 +127,10 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                               alarmController.timeList.value = [const TimeOfDay(hour: 0, minute: 0)];
                             }
                           });
+                          alarmController.infoPageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
                         },
                       ),
                       const SizedBox(
@@ -228,6 +245,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         ),
                         if (alarmController.timeList.length > 1) ...[
                           InkWell(
+                            borderRadius: BorderRadius.circular(20),
                             onTap: () {
                               setState(() {
                                 alarmController.timeList.remove(time);
@@ -397,7 +415,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
           height: 20,
         ),
         CustomButtonWidget(
-          label: 'Continuar para confirmação',
+          label: 'Continuar para tratamento e confirmação',
           onPressed: () {
             if ((alarmController.alarmType.value.id == 1) && alarmController.weekdayTypeList.isEmpty) {
               setState(() {

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/alarm_type.dart';
 import 'package:medicine/models/dose_type.dart';
+import 'package:medicine/models/treatment_duration_type.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/providers/api_provider.dart';
 import 'package:medicine/providers/storage_provider.dart';
@@ -25,10 +26,14 @@ class AlarmController extends GetxController with StateMixin {
   var startDateTime = DateTime.now().obs;
   var startHourTime = const TimeOfDay(hour: 0, minute: 0).obs;
   var observation = ''.obs;
+  var treatmentDuration = 0.obs;
+  var treatmentDurationType = TreatmentDurationType(id: 1, name: 'Dia').obs;
+  var treatmentDurationTypeList = <TreatmentDurationType>[].obs;
   var taken = ''.obs;
   var date = ''.obs;
 
   var alarmList = <Alarm>[].obs;
+  var activeAlarmList = <Alarm>[].obs;
 
   var loading = false.obs;
   var welcome = true.obs;
@@ -36,7 +41,9 @@ class AlarmController extends GetxController with StateMixin {
   @override
   onInit() {
     super.onInit();
-    get(selectedDate: DateTime.now());
+    if (isAuthenticated()) {
+      get(selectedDate: DateTime.now());
+    }
   }
 
   Future<List<Alarm?>> save() async {
@@ -54,6 +61,8 @@ class AlarmController extends GetxController with StateMixin {
           times: timeList.map((TimeOfDay element) => _decorateTime(element)).toList(),
           weekdayTypeIds: alarmType.value.id == 1 ? weekdayTypeList.map((WeekdayType element) => element.id).toList() : null,
           startDate: alarmType.value.id == 2 ? startDateTime.value.toString() : DateTime.now().toString(),
+          treatmentDuration: treatmentDuration.value,
+          treatmentDurationTypeId: treatmentDurationType.value.id,
           observation: observation.isNotEmpty ? observation.value : null,
         ),
       );
@@ -92,6 +101,19 @@ class AlarmController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao buscar alarmes'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> getActive() async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao buscar alarmes ativos'));
       loading.value = false;
     }
   }
@@ -151,6 +173,11 @@ class AlarmController extends GetxController with StateMixin {
     ).toList();
     startDateTime.value = DateTime.parse(alarm.startDate ?? DateTime.now().toString());
     observation.value = alarm.observation ?? '';
+    treatmentDuration.value = alarm.treatmentDuration ?? 0;
+    treatmentDurationType.value = TreatmentDurationType.getTreatmentDurationTypeList().firstWhere(
+      (TreatmentDurationType element) => element.id == alarm.treatmentDurationTypeId,
+      orElse: () => TreatmentDurationType(id: 1, name: 'Dia'),
+    );
     date.value = alarm.date ?? '';
     taken.value = alarm.taken ?? '';
   }
@@ -166,6 +193,8 @@ class AlarmController extends GetxController with StateMixin {
     weekdayTypeList = <WeekdayType>[].obs;
     startDateTime = DateTime.now().obs;
     observation = ''.obs;
+    treatmentDuration = 0.obs;
+    treatmentDurationType = TreatmentDurationType(id: 1, name: 'Dia').obs;
     taken = ''.obs;
     date = ''.obs;
   }
@@ -179,5 +208,10 @@ class AlarmController extends GetxController with StateMixin {
   TimeOfDay _decorateTimeOfDay(String time) {
     List<String> splitted = time.split(':');
     return TimeOfDay(hour: int.parse(splitted[0]), minute: int.parse(splitted[1]));
+  }
+
+  bool isAuthenticated() {
+    String token = StorageProvider.readJson(key: '/auth');
+    return token != '{}';
   }
 }

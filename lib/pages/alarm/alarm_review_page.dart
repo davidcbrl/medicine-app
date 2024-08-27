@@ -8,12 +8,14 @@ import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/treatment_duration_type.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_loading_widget.dart';
+import 'package:medicine/widgets/custom_multiselect_item_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_stepper_widget.dart';
 import 'package:medicine/widgets/custom_text_button_widget.dart';
@@ -33,46 +35,60 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
   @override
   Widget build(BuildContext context) {
     return CustomPageWidget(
+      hasPadding: false,
       body: Stack(
         children: [
-          Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              const CustomHeaderWidget(),
-              const SizedBox(
-                height: 20,
-              ),
-              const CustomStepperWidget(
-                current: 3,
-                steps: [
-                  CustomStepperStep(
-                    icon: Icons.medication_outlined,
-                    label: 'Remédio',
-                  ),
-                  CustomStepperStep(
-                    icon: Icons.add_alarm_rounded,
-                    label: 'Alarme',
-                  ),
-                  CustomStepperStep(
-                    icon: Icons.check_circle_outline_rounded,
-                    label: 'Confirmar',
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Expanded(
-                child: PageView(
-                  controller: alarmController.reviewPageController,
-                  children: const [
-                    AlarmReviewObservationView(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomHeaderWidget(),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const CustomStepperWidget(
+                  current: 3,
+                  steps: [
+                    CustomStepperStep(
+                      icon: Icons.medication_outlined,
+                      label: 'Remédio',
+                    ),
+                    CustomStepperStep(
+                      icon: Icons.alarm_rounded,
+                      label: 'Alarme',
+                    ),
+                    CustomStepperStep(
+                      icon: Icons.check_circle_outline_rounded,
+                      label: 'Confirmar',
+                    ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: alarmController.reviewPageController,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: AlarmReviewTreatmentView(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: AlarmReviewObservationView(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           Obx(
             () => alarmController.loading.value
@@ -90,6 +106,107 @@ class _AlarmReviewPageState extends State<AlarmReviewPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class AlarmReviewTreatmentView extends StatefulWidget {
+  const AlarmReviewTreatmentView({super.key});
+  @override
+  State<AlarmReviewTreatmentView> createState() => _AlarmReviewTreatmentViewState();
+}
+class _AlarmReviewTreatmentViewState extends State<AlarmReviewTreatmentView> {
+  @override
+  Widget build(BuildContext context) {
+    final AlarmController alarmController = Get.find();
+    TextEditingController alarmTreatmentDurationController = TextEditingController(
+      text: alarmController.treatmentDuration.value == 0 ? '' : alarmController.treatmentDuration.value.toString(),
+    );
+    List<TreatmentDurationType> treatmentDurationTypeList = TreatmentDurationType.getTreatmentDurationTypeList();
+    return Column(
+      children: [
+        Text(
+          'Informações de tratamento',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                CustomTextFieldWidget(
+                  controller: alarmTreatmentDurationController,
+                  label: 'Qual a duração do tratamento?',
+                  placeholder: 'Ex: 10',
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Toque para selecionar o tipo de duração',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: (treatmentDurationTypeList.length * 60) > MediaQuery.of(context).size.width ? const EdgeInsets.symmetric(horizontal: 40) : null,
+                  child: Column(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          ...treatmentDurationTypeList.map(
+                            (TreatmentDurationType treatmentDurationType) => CustomMultiselectItemWidget(
+                              label: treatmentDurationType.name,
+                              selected: treatmentDurationType.id == alarmController.treatmentDurationType.value.id,
+                              width: 100,
+                              onPressed: () {
+                                setState(() {
+                                  alarmController.treatmentDuration.value = int.tryParse(alarmTreatmentDurationController.text) ?? 0;
+                                  alarmController.treatmentDurationType.value = treatmentDurationType;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        CustomButtonWidget(
+          label: 'Próximo',
+          onPressed: () {
+            alarmController.treatmentDuration.value = int.tryParse(alarmTreatmentDurationController.text) ?? 0;
+            alarmController.reviewPageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
+          },
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        CustomTextButtonWidget(
+          label: 'Voltar para alarme',
+          onPressed: () {
+            Get.back();
+          },
+        ),
+      ],
     );
   }
 }
@@ -192,6 +309,22 @@ class AlarmReviewObservationView extends StatelessWidget {
                         height: 5,
                       ),
                     ],
+                    if (alarmController.treatmentDuration.value > 0) ...[
+                      Text(
+                        'durante',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '${alarmController.treatmentDuration.value.toString()} ${alarmController.treatmentDurationType.value.name}'.toLowerCase(),
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -207,7 +340,7 @@ class AlarmReviewObservationView extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
             if (alarmController.image.value.isNotEmpty) {
-              String imageName = '${UniqueKey().hashCode.toString()}_${alarmController.id.value.toString()}_medicine.png';
+              String imageName = '${alarmController.id.value.toString()}_medicine.png';
               String? cdnImage = await cloudController.uploadAsset(
                 type: AssetType.image,
                 name: imageName,
@@ -256,9 +389,12 @@ class AlarmReviewObservationView extends StatelessWidget {
           height: 5,
         ),
         CustomTextButtonWidget(
-          label: 'Voltar para alarme',
+          label: 'Voltar',
           onPressed: () {
-            Get.back();
+            alarmController.reviewPageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
           },
         ),
       ],

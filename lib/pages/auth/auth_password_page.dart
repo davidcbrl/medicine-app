@@ -18,10 +18,10 @@ class AuthPasswordPage extends StatefulWidget {
 
 class _AuthPasswordPageState extends State<AuthPasswordPage> {
   final AuthController authController = Get.find();
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
     return CustomPageWidget(
       body: Obx(
@@ -35,7 +35,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                 height: 40,
               ),
               Image.asset(
-                'assets/img/logo.png',
+                'assets/img/logo-purple-transparent.png',
                 height: 80,
               ),
               const SizedBox(

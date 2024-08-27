@@ -27,6 +27,7 @@ class CustomListItemWidget extends StatelessWidget {
     return Column(
       children: [
         InkWell(
+          borderRadius: BorderRadius.circular(10),
           onTap: onPressed,
           child: Container(
             padding: const EdgeInsets.all(20),

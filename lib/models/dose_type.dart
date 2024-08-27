@@ -19,8 +19,11 @@ class DoseType {
   static List<DoseType> getDoseTypeList() {
     return [
       DoseType(id: 1, name: 'Gotas'),
-      DoseType(id: 2, name: 'Pílulas'),
-      DoseType(id: 3, name: 'Ampolas'),
+      DoseType(id: 2, name: 'Comprimidos'),
+      DoseType(id: 3, name: 'Solução (ml)'),
+      DoseType(id: 4, name: 'Injeção'),
+      DoseType(id: 5, name: 'Inalação'),
+      DoseType(id: 6, name: 'Outro'),
     ];
   }
 }

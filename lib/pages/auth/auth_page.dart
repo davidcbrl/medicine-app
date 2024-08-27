@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
+import 'package:medicine/models/alarm.dart';
+import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -20,10 +27,13 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   final AuthController authController = Get.find();
   final UserController userController = Get.put(UserController(), permanent: true);
+  final AlarmController alarmController = Get.put(AlarmController(), permanent: true);
+  final NotificationController notificationController = Get.put(NotificationController(), permanent: true);
+  final SettingController settingController = Get.put(SettingController(), permanent: true);
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     TextEditingController emailController = TextEditingController(text: authController.email.value);
     TextEditingController passwordController = TextEditingController(text: '');
     return CustomPageWidget(
@@ -44,9 +54,13 @@ class _AuthPageState extends State<AuthPage> {
                     key: formKey,
                     child: Column(
                       children: [
-                        Image.asset(
-                          'assets/img/logo.png',
-                          height: 80,
+                        Obx(
+                          () => Image.asset(
+                            settingController.theme.value == 'ThemeMode.dark'
+                              ? 'assets/img/logo-white-transparent.png'
+                              : 'assets/img/logo-purple-transparent.png',
+                            height: 60,
+                          ),
                         ),
                         const SizedBox(
                           height: 40,
@@ -106,7 +120,28 @@ class _AuthPageState extends State<AuthPage> {
                     await authController.login();
                     if (authController.status.isSuccess) {
                       userController.get();
+                      alarmController.get(selectedDate: DateTime.now());
                       Get.offAllNamed('/home');
+                      await alarmController.getActive();
+                      if (alarmController.status.isSuccess) {
+                        await notificationController.enableAllScheduledNotifications(
+                          notifications: alarmController.activeAlarmList.map(
+                            (Alarm alarm) => PushNotification(
+                              id: alarm.id ?? UniqueKey().hashCode,
+                              title: 'Hora de tomar seu remédio',
+                              body: alarm.name,
+                              date: DateTime.parse('${alarm.date} ${alarm.hour}'),
+                              payload: jsonEncode(alarm.toJson()),
+                            ),
+                          ).toList(),
+                        );
+                        if (notificationController.status.isError && context.mounted) {
+                          _authErrorBottomSheet(context, 'Você entrou no app, porém, um ou mais alarmes que já estavam criados não puderam ser reagendados.');
+                        }
+                      }
+                      if (alarmController.status.isError && context.mounted) {
+                        _authErrorBottomSheet(context, 'Você entrou no app, porém, não foi possível reagendar os alarmes que já estavam criados.');
+                      }
                       return;
                     }
                     if (authController.status.isError && context.mounted) {

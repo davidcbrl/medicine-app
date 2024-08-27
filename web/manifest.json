@@ -3,7 +3,7 @@
     "short_name": "medicine",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FFFFFF",
+    "background_color": "#662C91",
     "theme_color": "#662C91",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",

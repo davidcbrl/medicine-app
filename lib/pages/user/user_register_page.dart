@@ -69,10 +69,10 @@ class UserRegisterDataView extends StatefulWidget {
   State<UserRegisterDataView> createState() => _UserRegisterDataViewState();
 }
 class _UserRegisterDataViewState extends State<UserRegisterDataView> {
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final UserController userController = Get.find();
-    final formKey = GlobalKey<FormState>();
     TextEditingController nameController = TextEditingController(text: userController.name.value);
     TextEditingController phoneController = TextEditingController(text: userController.phone.value);
     TextEditingController emailController = TextEditingController(text: userController.email.value);
@@ -130,6 +130,7 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
                     controller: phoneController,
                     label: 'Qual é o seu contato?',
                     placeholder: '(99) 99999-9999',
+                    keyboardType: TextInputType.number,
                     formatters: [
                       MaskTextInputFormatter(
                         mask: '(##) #####-####',
@@ -264,6 +265,7 @@ class UserRegisterBuddyView extends StatelessWidget {
                     controller: phoneController,
                     label: 'Qual é o contato do seu responsável?',
                     placeholder: '(99) 99999-9999',
+                    keyboardType: TextInputType.number,
                     formatters: [
                       MaskTextInputFormatter(
                         mask: '(##) #####-####',

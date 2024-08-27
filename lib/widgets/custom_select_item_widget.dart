@@ -30,6 +30,7 @@ class CustomSelectItemWidget extends StatelessWidget {
         ),
       ),
       child: InkWell(
+        borderRadius: BorderRadius.circular(10),
         onTap: onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
