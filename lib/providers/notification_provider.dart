@@ -5,7 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:medicine/main.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class NotificationProvider {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -52,7 +52,7 @@ class NotificationProvider {
   }
 
   Future<void> schedule({required PushNotification notification}) async {
-    final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
     final DateTime currentDate = DateTime.now();
     tz.TZDateTime tzDateTime = tz.TZDateTime.from(
       notification.date ?? currentDate,

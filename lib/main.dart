@@ -9,13 +9,13 @@ import 'package:medicine/providers/notification_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   Animate.restartOnHotReload=true;
-  final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+  final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation(currentTimeZone));
   await NotificationProvider().init();
