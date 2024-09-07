@@ -384,7 +384,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     onPressed: () async {
                       TimeOfDay? pickedTime = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.now(),
+                        initialTime: alarmController.startHourTime.value,
                         builder: (BuildContext context, Widget? child) {
                           return MediaQuery(
                             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),

@@ -4,11 +4,13 @@ import 'package:medicine/providers/storage_provider.dart';
 
 class SettingController extends GetxController {
   var theme = ''.obs;
+  var calendar = '1'.obs;
 
   @override
   onInit() {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      calendar.value = get(name: 'calendar');
       theme.value = get(name: 'theme');
       switch (theme.value) {
         case 'ThemeMode.light':
@@ -19,6 +21,7 @@ class SettingController extends GetxController {
           break;
         default:
           Get.changeThemeMode(ThemeMode.system);
+          theme.value = Get.isDarkMode ? 'ThemeMode.dark' : 'ThemeMode.light';
       }
     });
   }

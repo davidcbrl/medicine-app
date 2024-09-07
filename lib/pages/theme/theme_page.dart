@@ -92,7 +92,7 @@ class _ThemePageState extends State<ThemePage> {
                   height: 10,
                 ),
                 Text(
-                  'Estilo do calendário (reinicie o app para aplicar)',
+                  'Estilo do calendário',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(
@@ -108,7 +108,9 @@ class _ThemePageState extends State<ThemePage> {
                           : calendarStyle.id.toString() == '1',
                         onPressed: () {
                           settingController.set(name: 'calendar', value: calendarStyle.id.toString());
-                          setState(() {});
+                          setState(() {
+                            settingController.calendar.value = calendarStyle.id.toString();
+                          });
                         },
                       ),
                       const SizedBox(

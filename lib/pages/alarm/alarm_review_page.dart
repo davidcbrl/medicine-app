@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
+import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/models/treatment_duration_type.dart';
@@ -216,6 +217,7 @@ class AlarmReviewObservationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AlarmController alarmController = Get.find();
+    final UserController userController = Get.find();
     final CloudController cloudController = Get.put(CloudController(), permanent: true);
     final NotificationController notificationController = Get.find();
     TextEditingController alarmObservationController = TextEditingController(text: alarmController.observation.value);
@@ -340,7 +342,7 @@ class AlarmReviewObservationView extends StatelessWidget {
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
             if (alarmController.image.value.isNotEmpty) {
-              String imageName = '${alarmController.id.value.toString()}_medicine.png';
+              String imageName = '${UniqueKey().hashCode.toString()}_${userController.id.value.toString()}_medicine.png';
               String? cdnImage = await cloudController.uploadAsset(
                 type: AssetType.image,
                 name: imageName,
@@ -351,7 +353,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                 return;
               }
               alarmController.image.value = cdnImage ?? alarmController.image.value;
-            } 
+            }
             List<Alarm?> alarms = await alarmController.save();
             if (alarmController.status.isSuccess) {
               await alarmController.get(selectedDate: DateTime.now());

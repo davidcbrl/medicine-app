@@ -543,26 +543,12 @@ class _UserInfoPageState extends State<UserInfoPage> {
   void _userInfoSuccessBottomSheet(BuildContext context, UserController userController, {bool password = false}) {
     CustomBottomSheetWidget.show(
       context: context,
-      height: MediaQuery.of(context).size.height * 0.275,
+      height: MediaQuery.of(context).size.height * 0.175,
       body: Column(
         children: [
           Text(
             !password ? 'Informações salvas com sucesso!' : 'Senha alterada com sucesso!',
             style: Theme.of(context).textTheme.labelMedium,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  '[ Mensagem amigável ]',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
           ),
           const SizedBox(
             height: 20,

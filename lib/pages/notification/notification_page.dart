@@ -5,6 +5,7 @@ import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/alarm.dart';
+import 'package:medicine/models/dose_type.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -30,6 +31,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     Alarm? alarm = widget.data != null ? Alarm.fromJson(widget.data as Map<String, dynamic>) : null;
+    List<DoseType> doseTypeList = DoseType.getDoseTypeList();
     return CustomPageWidget(
       body: Stack(
         children: [
@@ -50,13 +52,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         Text(
                           alarm.times.first.split(':').take(2).join(':'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: settingController.theme.value == 'ThemeMode.dark'
-                              ? Theme.of(context).colorScheme.secondary
-                              : Theme.of(context).colorScheme.primary,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(
                           height: 20,
@@ -72,8 +68,8 @@ class _NotificationPageState extends State<NotificationPage> {
                               height: 10,
                             ),
                             Text(
-                              alarm.name,
-                              style: Theme.of(context).textTheme.labelMedium,
+                              '${alarm.quantity.toString()} ${doseTypeList[alarm.doseTypeId ?? 1].name.toLowerCase()} de ${alarm.name}',
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(
                               height: 10,

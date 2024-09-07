@@ -8,11 +8,13 @@ import 'package:medicine/controllers/route_controller.dart';
 import 'package:medicine/providers/notification_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  Animate.restartOnHotReload=true;
   final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation(currentTimeZone));
@@ -61,6 +63,11 @@ class _MyAppState extends State<MyApp> {
             fontSize: 40,
             fontWeight: FontWeight.w900,
           ),
+          titleMedium: TextStyle(
+            color: Color(0xFF3A3A3A),
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+          ),
           titleSmall: TextStyle(
             color: Color(0xFF662C91),
             fontSize: 15,
@@ -70,6 +77,11 @@ class _MyAppState extends State<MyApp> {
             color: Color(0xFF3A3A3A),
             fontSize: 14,
             fontWeight: FontWeight.w900,
+          ),
+          bodyLarge: TextStyle(
+            color: Color(0xFF3A3A3A),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
           bodyMedium: TextStyle(
             color: Color(0xFF3A3A3A),
@@ -105,6 +117,11 @@ class _MyAppState extends State<MyApp> {
             fontSize: 40,
             fontWeight: FontWeight.w900,
           ),
+          titleMedium: TextStyle(
+            color: Color(0xFFF0F0F0),
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+          ),
           titleSmall: TextStyle(
             color: Color(0xFFFFFFFF),
             fontSize: 15,
@@ -114,6 +131,11 @@ class _MyAppState extends State<MyApp> {
             color: Color(0xFFF0F0F0),
             fontSize: 14,
             fontWeight: FontWeight.w900,
+          ),
+          bodyLarge: TextStyle(
+            color: Color(0xFFF0F0F0),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
           bodyMedium: TextStyle(
             color: Color(0xFFF0F0F0),

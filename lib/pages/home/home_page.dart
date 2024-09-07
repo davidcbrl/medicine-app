@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
@@ -12,6 +13,7 @@ import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/medicine_notification.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
+import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_calendar_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
@@ -38,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
 
   DateTime selectedDate = DateTime.now();
+  ValueNotifier<bool> isEmptyMessage = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -57,15 +60,23 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 10,
               ),
-              CustomCalendarWidget(
-                style: settingController.get(name: 'calendar'),
-                selectedDate: selectedDate,
-                onDayPressed: (DateTime date, List<Event> events) async {
-                  setState(() {
-                    selectedDate = date;
-                  });
-                  await alarmController.get(selectedDate: selectedDate);
-                },
+              Obx(
+                () => CustomCalendarWidget(
+                  style: settingController.calendar.value,
+                  selectedDate: selectedDate,
+                  onDayPressed: (DateTime date, List<Event> events) async {
+                    setState(() {
+                      selectedDate = date;
+                      isEmptyMessage.value = false;
+                    });
+                    await alarmController.get(selectedDate: selectedDate);
+                    if (alarmController.status.isEmpty) {
+                      setState(() {
+                        isEmptyMessage.value = true;
+                      });
+                    }
+                  },
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -110,43 +121,66 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          Positioned(
-            right: 20,
-            bottom: 20,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () {
-                alarmController.clear();
-                Get.back();
-                Get.toNamed('/alarm/medicine');
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Criar alarme para remédio',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.add_alarm_rounded,
-                      color: settingController.theme.value == 'ThemeMode.dark'
-                        ? Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).colorScheme.tertiary,
-                      size: 25,
-                    ),
-                  ],
+          if (!isEmptyMessage.value) ...[
+            Positioned(
+              bottom: 20,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: CustomButtonWidget(
+                  label: 'Criar alarme para remédio',
+                  width: MediaQuery.of(context).size.width - (40 * 2),
+                  icon: Icon(
+                    Icons.add_alarm_rounded,
+                    color: settingController.theme.value == 'ThemeMode.dark'
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.tertiary,
+                    size: 25,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isEmptyMessage.value = false;
+                    });
+                    alarmController.clear();
+                    Get.back();
+                    Get.toNamed('/alarm/medicine');
+                  },
                 ),
               ),
             ),
-          ),
+          ],
+          if (isEmptyMessage.value) ...[
+            Positioned(
+              bottom: 20,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: CustomButtonWidget(
+                  label: 'Criar alarme para remédio',
+                  width: MediaQuery.of(context).size.width - (40 * 2),
+                  icon: Icon(
+                    Icons.add_alarm_rounded,
+                    color: settingController.theme.value == 'ThemeMode.dark'
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.tertiary,
+                    size: 25,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isEmptyMessage.value = false;
+                    });
+                    alarmController.clear();
+                    Get.back();
+                    Get.toNamed('/alarm/medicine');
+                  },
+                ),
+              )
+              .animate(onPlay: (controller) => controller.repeat())
+              .scaleXY(begin: 0.93, end: 1.075, curve: Curves.easeInOut, duration: 1000.ms)
+              .then()
+              .scaleXY(begin: 1.075, end: 0.93, curve: Curves.easeInOut, duration: 1000.ms)
+              .animate(onPlay: (controller) => controller.repeat())
+              .shimmer(delay: 3000.ms, duration: 1000.ms),
+            ),
+          ],
         ],
       ),
     );
@@ -319,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                     label: 'Remover alarme',
                     onPressed: () {
                       Get.back();
-                      _removeCheckBottomSheet(context, alarm);
+                      _removeOptionsBottomSheet(context, alarm);
                     },
                   ),
                 ],
@@ -340,14 +374,70 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _removeCheckBottomSheet(BuildContext context, Alarm alarm) {
+  void _removeOptionsBottomSheet(BuildContext context, Alarm alarm) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: (MediaQuery.of(context).size.height * 0.175) + (60 * 2),
+      body: Column(
+        children: [
+          Text(
+            'Deseja remover somente esse alarme ou remover também as próximas ocorrências?',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  CustomSelectItemWidget(
+                    label: 'Remover somente este alarme',
+                    onPressed: () {
+                      Get.back();
+                      _removeCheckBottomSheet(context, alarm, all: false);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  CustomSelectItemWidget(
+                    label: 'Remover este alarme e próximas ocorrências',
+                    onPressed: () {
+                      Get.back();
+                      _removeCheckBottomSheet(context, alarm, all: true);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Não remover, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _removeCheckBottomSheet(BuildContext context, Alarm alarm, {bool all = false}) {
     CustomBottomSheetWidget.show(
       context: context,
       height: (MediaQuery.of(context).size.height * 0.175) + (60 * 1),
       body: Column(
         children: [
           Text(
-            'Tem certeza que deseja remover esse alarme?',
+            'Tem certeza que deseja fazer essa ação?',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(
@@ -359,15 +449,21 @@ class _HomePageState extends State<HomePage> {
               child: CustomSelectItemWidget(
                 label: 'Sim',
                 onPressed: () async {
-                  await alarmController.remove(id: alarm.id!, selectedDate: selectedDate);
+                  Get.back();
+                  List removedIds = await alarmController.remove(id: alarm.id!, selectedDate: selectedDate, all: all);
                   if (alarmController.status.isSuccess) {
-                    await notificationController.cancelScheduledNotification(id: alarm.id!);
-                    if (notificationController.status.isSuccess && context.mounted) {
-                      Get.back();
-                      return;
+                    if (context.mounted) {
+                      _removeSuccessBottomSheet(context);
                     }
-                    if (notificationController.status.isError && context.mounted) {
-                      _removeErrorBottomSheet(context, 'A remoção do horário foi realizada com sucesso, porém, o alarme não pôde ser desativado.');
+                    bool allRemoved = true;
+                    for (int id in removedIds) {
+                      await notificationController.cancelScheduledNotification(id: id);
+                      if (notificationController.status.isError && context.mounted) {
+                        allRemoved = false;
+                      }
+                    }
+                    if (!allRemoved && context.mounted) {
+                      _removeErrorBottomSheet(context, 'A remoção dos horários foi realizada com sucesso, porém, um ou mais alarmes não puderam ser desativados.');
                       return;
                     }
                   }
@@ -384,6 +480,44 @@ class _HomePageState extends State<HomePage> {
           ),
           CustomTextButtonWidget(
             label: 'Não, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _removeSuccessBottomSheet(BuildContext context) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.275,
+      body: Column(
+        children: [
+          Text(
+            'Horários removidos com sucesso!',
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  'Os alarmes estão sendo desativadas me segundo plano.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Ok, voltar',
             onPressed: () {
               Get.back();
             },

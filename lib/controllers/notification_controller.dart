@@ -91,20 +91,4 @@ class NotificationController extends GetxController with StateMixin {
       loading.value = false;
     }
   }
-
-  Future<void> enableAllScheduledNotifications({required List<PushNotification> notifications}) async {
-    try {
-      loading.value = true;
-      change([], status: RxStatus.loading());
-      for (PushNotification notification in notifications) {
-        await createMedicineNotificationScheduled(notification: notification);
-      }
-      change([], status: RxStatus.success());
-      loading.value = false;
-    } catch (error) {
-      if (kDebugMode) print(error);
-      change([], status: RxStatus.error('Falha ao reagendar as notificações'));
-      loading.value = false;
-    }
-  }
 }

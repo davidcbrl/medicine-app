@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:medicine/providers/dio_provider.dart';
 
 class ApiProvider {
-  static const baseUrl = String.fromEnvironment('ENVIRONMENT') == 'DEV' ? 'http://178.128.153.66/api' : 'http://178.128.153.66/api';
+  static const baseUrl = String.fromEnvironment('ENVIRONMENT') == 'DEV' ? 'https://www.meds.services/api' : 'https://www.meds.services/api';
 
   static Future get({required String path}) async {
     try {

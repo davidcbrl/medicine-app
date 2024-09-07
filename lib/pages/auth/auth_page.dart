@@ -122,20 +122,24 @@ class _AuthPageState extends State<AuthPage> {
                       userController.get();
                       alarmController.get(selectedDate: DateTime.now());
                       Get.offAllNamed('/home');
-                      await alarmController.getActive();
+                      await alarmController.getNextWeek();
                       if (alarmController.status.isSuccess) {
-                        await notificationController.enableAllScheduledNotifications(
-                          notifications: alarmController.activeAlarmList.map(
-                            (Alarm alarm) => PushNotification(
+                        bool allScheduled = true;
+                        for (Alarm alarm in alarmController.nextWeekAlarmList) {
+                          await notificationController.createMedicineNotificationScheduled(
+                            notification: PushNotification(
                               id: alarm.id ?? UniqueKey().hashCode,
                               title: 'Hora de tomar seu remédio',
                               body: alarm.name,
                               date: DateTime.parse('${alarm.date} ${alarm.hour}'),
                               payload: jsonEncode(alarm.toJson()),
                             ),
-                          ).toList(),
-                        );
-                        if (notificationController.status.isError && context.mounted) {
+                          );
+                          if (notificationController.status.isError && context.mounted) {
+                            allScheduled = false;
+                          }
+                        }
+                        if (!allScheduled && context.mounted) {
                           _authErrorBottomSheet(context, 'Você entrou no app, porém, um ou mais alarmes que já estavam criados não puderam ser reagendados.');
                         }
                       }
