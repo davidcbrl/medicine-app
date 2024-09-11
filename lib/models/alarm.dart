@@ -40,7 +40,7 @@ class Alarm {
     name = json['name'],
     date = json['date'],
     hour = json['hour'],
-    quantity = json['quantity'],
+    quantity = json['qty'],
     image = json['image'],
     doseTypeId = json['type'],
     alarmTypeId = json['type_interval'],
