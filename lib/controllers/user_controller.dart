@@ -32,6 +32,10 @@ class UserController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
+      if (image.isNotEmpty) {
+        String imageVersion = UniqueKey().hashCode.toString();
+        image.value = '${image.value}?v=$imageVersion';
+      }
       UserRequest request = UserRequest(
         user: User(
           id: id.value == 0 ? null : id.value,
