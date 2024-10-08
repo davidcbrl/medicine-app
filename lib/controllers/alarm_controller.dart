@@ -50,6 +50,10 @@ class AlarmController extends GetxController with StateMixin {
     loading.value = true;
     change([], status: RxStatus.loading());
     try {
+      if (image.isNotEmpty) {
+        String imageVersion = UniqueKey().hashCode.toString();
+        image.value = '${image.value}?v=$imageVersion';
+      }
       AlarmRequest request = AlarmRequest(
         alarm: Alarm(
           id: id.value == 0 ? null : id.value,
