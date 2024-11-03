@@ -15,6 +15,7 @@ class Alarm {
   int? treatmentDuration;
   int? treatmentDurationTypeId;
   String? observation;
+  int? medicineId;
 
   Alarm({
     this.id,
@@ -33,6 +34,7 @@ class Alarm {
     this.treatmentDuration,
     this.treatmentDurationTypeId,
     this.observation,
+    this.medicineId,
   });
 
   Alarm.fromJson(Map<String, dynamic> json):
@@ -51,7 +53,8 @@ class Alarm {
     startDate = json['startDate'],
     treatmentDuration = json['treatmentDuration'],
     treatmentDurationTypeId = json['treatmentDurationTypeId'],
-    observation = json['observations'];
+    observation = json['observations'],
+    medicineId = json['alarm_objects_id'];
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -70,6 +73,7 @@ class Alarm {
     'treatmentDuration': treatmentDuration,
     'treatmentDurationTypeId': treatmentDurationTypeId,
     'observations': observation,
+    'alarm_objects_id': medicineId,
   };
 }
 

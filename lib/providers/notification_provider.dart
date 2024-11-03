@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:medicine/main.dart';
-import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/push_notification.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
@@ -90,6 +90,19 @@ class NotificationProvider {
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       payload: notification.payload,
     );
+  }
+
+  Future<List<PushNotification>> getActive() async {
+    List<ActiveNotification> list = await flutterLocalNotificationsPlugin.getActiveNotifications();
+    if (list.isEmpty) {
+      return [];
+    }
+    return list.map((ActiveNotification notification) => PushNotification(
+      id: notification.id!,
+      title: notification.title!,
+      body: notification.body!,
+      payload: notification.payload!,
+    )).toList();
   }
 
   Future<void> cancel({required int id}) async {

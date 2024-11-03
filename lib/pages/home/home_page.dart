@@ -11,7 +11,7 @@ import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
-import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/push_notification.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_calendar_widget.dart';
@@ -74,6 +74,41 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         isEmptyMessage.value = true;
                       });
+                    }
+                    String alarmControllerSyncDate = alarmController.syncDate.isEmpty ? DateTime.now().toString() : alarmController.syncDate.value;
+                    DateTime syncDate = DateTime.parse(alarmControllerSyncDate);
+                    if (syncDate.isBefore(DateTime.now())) {
+                      await alarmController.getNextWeek();
+                      if (alarmController.status.isSuccess) {
+                        await notificationController.getAllScheduledNotifications();
+                        if (notificationController.status.isSuccess) {
+                          for (PushNotification notification in notificationController.scheduledList) {
+                            alarmController.nextWeekAlarmList.removeWhere((Alarm alarm) => alarm.id == notification.id);
+                          }
+                          if (alarmController.nextWeekAlarmList.isNotEmpty) {
+                            bool allScheduled = true;
+                            for (Alarm alarm in alarmController.nextWeekAlarmList) {
+                              await notificationController.createMedicineNotificationScheduled(
+                                notification: PushNotification(
+                                  id: alarm.id ?? UniqueKey().hashCode,
+                                  title: 'Hora de tomar seu remédio',
+                                  body: alarm.name,
+                                  date: DateTime.parse('${alarm.date} ${alarm.hour}'),
+                                  payload: jsonEncode(alarm.toJson()),
+                                ),
+                              );
+                              if (notificationController.status.isError) {
+                                allScheduled = false;
+                              }
+                            }
+                            if (!allScheduled && context.mounted) {
+                              _removeErrorBottomSheet(context, 'Ops! Uma sincronização estava sendo executada em segundo plano, porém um ou mais alarmes da próxima semana não puderam ser agendados');
+                              return;
+                            }
+                            await alarmController.setSyncDate();
+                          }
+                        }
+                      }
                     }
                   },
                 ),
@@ -458,7 +493,7 @@ class _HomePageState extends State<HomePage> {
                     bool allRemoved = true;
                     for (int id in removedIds) {
                       await notificationController.cancelScheduledNotification(id: id);
-                      if (notificationController.status.isError && context.mounted) {
+                      if (notificationController.status.isError) {
                         allRemoved = false;
                       }
                     }

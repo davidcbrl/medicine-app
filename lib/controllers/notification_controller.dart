@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/push_notification.dart';
 import 'package:medicine/providers/notification_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationController extends GetxController with StateMixin {
   var loading = false.obs;
+  var scheduledList = <PushNotification>[].obs;
 
   @override
   onInit() {
@@ -74,6 +75,20 @@ class NotificationController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao cancelar notificação'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> getAllScheduledNotifications() async {
+    try {
+      loading.value = true;
+      change([], status: RxStatus.loading());
+      scheduledList.value = await NotificationProvider().getActive();
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha buscar notificações agendadas'));
       loading.value = false;
     }
   }

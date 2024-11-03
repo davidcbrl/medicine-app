@@ -68,7 +68,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               height: 10,
                             ),
                             Text(
-                              '${alarm.quantity.toString()} ${doseTypeList[alarm.doseTypeId ?? 1].name.toLowerCase()} de ${alarm.name}',
+                              '${alarm.quantity.toString()} ${doseTypeList[(alarm.doseTypeId ?? 1) - 1].name.toLowerCase()} de ${alarm.name}',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(

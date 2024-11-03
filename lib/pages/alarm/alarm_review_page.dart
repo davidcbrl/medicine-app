@@ -8,7 +8,7 @@ import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
-import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/push_notification.dart';
 import 'package:medicine/models/treatment_duration_type.dart';
 import 'package:medicine/models/weekday_type.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
@@ -368,7 +368,7 @@ class AlarmReviewObservationView extends StatelessWidget {
                     payload: jsonEncode(alarm.toJson()),
                   ),
                 );
-                if (notificationController.status.isError && context.mounted) {
+                if (notificationController.status.isError) {
                   allScheduled = false;
                 }
               }

@@ -37,6 +37,7 @@ class AlarmController extends GetxController with StateMixin {
 
   var loading = false.obs;
   var welcome = true.obs;
+  var syncDate = ''.obs;
 
   @override
   onInit() {
@@ -91,6 +92,7 @@ class AlarmController extends GetxController with StateMixin {
     change([], status: RxStatus.loading());
     try {
       welcome.value = StorageProvider.readJson(key: '/welcome') != 'false';
+      syncDate.value = StorageProvider.readJson(key: '/sync');
       String date = DateFormat('yyyy-MM-dd').format(selectedDate);
       List<dynamic> list = await ApiProvider.get(path: '/alarm/from/$date');
       if (list.isEmpty) {
@@ -127,6 +129,22 @@ class AlarmController extends GetxController with StateMixin {
     } catch (error) {
       if (kDebugMode) print(error);
       change([], status: RxStatus.error('Falha ao buscar alarmes ativos'));
+      loading.value = false;
+    }
+  }
+
+  Future<void> setSyncDate() async {
+    loading.value = true;
+    change([], status: RxStatus.loading());
+    try {
+      DateTime nextDay = DateTime.now().add(const Duration(days: 1));
+      String date = DateFormat('yyyy-MM-dd').format(nextDay);
+      StorageProvider.writeJson(key: '/sync', json: date);
+      change([], status: RxStatus.success());
+      loading.value = false;
+    } catch (error) {
+      if (kDebugMode) print(error);
+      change([], status: RxStatus.error('Falha ao definir data de sincronização'));
       loading.value = false;
     }
   }

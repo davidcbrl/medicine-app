@@ -8,7 +8,7 @@ import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
-import 'package:medicine/models/medicine_notification.dart';
+import 'package:medicine/models/push_notification.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -135,17 +135,18 @@ class _AuthPageState extends State<AuthPage> {
                               payload: jsonEncode(alarm.toJson()),
                             ),
                           );
-                          if (notificationController.status.isError && context.mounted) {
+                          if (notificationController.status.isError) {
                             allScheduled = false;
                           }
                         }
                         if (!allScheduled && context.mounted) {
-                          _authErrorBottomSheet(context, 'Você entrou no app, porém, um ou mais alarmes que já estavam criados não puderam ser reagendados.');
+                          _authErrorBottomSheet(context, 'Você entrou no app, porém, durante uma sincronização que estava sendo executada em segundo plano, um ou mais alarmes que já estavam criados anteriormente não puderam ser reagendados.');
                         }
                       }
                       if (alarmController.status.isError && context.mounted) {
-                        _authErrorBottomSheet(context, 'Você entrou no app, porém, não foi possível reagendar os alarmes que já estavam criados.');
+                        _authErrorBottomSheet(context, 'Você entrou no app, porém, durante uma sincronização que estava sendo executada em segundo plano, não foi possível reagendar os alarmes que já estavam criados anteriormente.');
                       }
+                      await alarmController.setSyncDate();
                       return;
                     }
                     if (authController.status.isError && context.mounted) {
