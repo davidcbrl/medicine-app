@@ -36,6 +36,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController(text: authController.email.value);
     TextEditingController passwordController = TextEditingController(text: '');
+    RxBool showPassword = false.obs;
     return CustomPageWidget(
       body: Obx(
         () => authController.loading.value
@@ -87,7 +88,17 @@ class _AuthPageState extends State<AuthPage> {
                           controller: passwordController,
                           label: 'Qual é a sua senha?',
                           placeholder: '*****',
-                          hideText: true,
+                          hideText: !showPassword.value,
+                          icon: IconButton(
+                            icon: Icon(
+                              showPassword.value ? Icons.visibility : Icons.visibility_off,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              showPassword.value = !showPassword.value;
+                            },
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Escreva a sua senha para entrar';

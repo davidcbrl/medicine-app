@@ -25,24 +25,27 @@ class CustomPageWidget extends StatelessWidget {
       appBar: appBar,
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
-        padding: hasPadding ? const EdgeInsets.all(20) : EdgeInsets.zero,
-        child: Stack(
-          children: [
-            if (hasBackgroundImage) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 60),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Image.asset(
-                    'assets/img/background.png',
-                    width: (kIsWeb ? 400 : MediaQuery.of(context).size.width) * 0.6,
-                    opacity: const AlwaysStoppedAnimation(0.25),
+        padding: const EdgeInsets.only(bottom: 40),
+        child: Padding(
+          padding: hasPadding ? const EdgeInsets.all(20) : EdgeInsets.zero,
+          child: Stack(
+            children: [
+              if (hasBackgroundImage) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 60),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Image.asset(
+                      'assets/img/background.png',
+                      width: (kIsWeb ? 400 : MediaQuery.of(context).size.width) * 0.6,
+                      opacity: const AlwaysStoppedAnimation(0.25),
+                    ),
                   ),
                 ),
-              ),
+              ],
+              body ?? Container(),
             ],
-            body ?? Container(),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: bottomBar,

@@ -5,7 +5,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String placeholder;
-  final Icon? icon;
+  final Widget? icon;
   final String? suffix;
   final bool hideText;
   final TextInputType? keyboardType;

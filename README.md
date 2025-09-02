@@ -4,4 +4,4 @@ Medicine reminder
 
 ## Requirements
 
-Android API 33
+Android API 36

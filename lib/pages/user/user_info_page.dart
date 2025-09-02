@@ -282,6 +282,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
     TextEditingController currentPasswordController = TextEditingController(text: '');
     TextEditingController newPasswordController = TextEditingController(text: '');
     TextEditingController confirmationController = TextEditingController(text: '');
+    RxBool showPasswordCurrent = false.obs;
+    RxBool showPasswordNew = false.obs;
     CustomBottomSheetWidget.show(
       context: context,
       height: (MediaQuery.of(context).size.height * 0.2) + (60 * 7),
@@ -305,7 +307,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     controller: currentPasswordController,
                     label: 'Escreva a senha atual a ser alterada:',
                     placeholder: '*****',
-                    hideText: true,
+                    hideText: !showPasswordCurrent.value,
+                    icon: IconButton(
+                      icon: Icon(
+                        showPasswordCurrent.value ? Icons.visibility : Icons.visibility_off,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        showPasswordCurrent.value = !showPasswordCurrent.value;
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Escreva uma senha para alterar';
@@ -320,7 +332,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     controller: newPasswordController,
                     label: 'Defina nova senha para acessar o app:',
                     placeholder: '*****',
-                    hideText: true,
+                    hideText: !showPasswordNew.value,
+                    icon: IconButton(
+                      icon: Icon(
+                        showPasswordNew.value ? Icons.visibility : Icons.visibility_off,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        showPasswordNew.value = !showPasswordNew.value;
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Escreva uma senha para alterar';
@@ -339,7 +361,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     controller: confirmationController,
                     label: 'Repita a nova senha para confirmar:',
                     placeholder: '*****',
-                    hideText: true,
+                    hideText: !showPasswordNew.value,
+                    icon: IconButton(
+                      icon: Icon(
+                        showPasswordNew.value ? Icons.visibility : Icons.visibility_off,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        showPasswordNew.value = !showPasswordNew.value;
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Escreva a confirmação da senha para alterar';

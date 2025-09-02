@@ -330,6 +330,7 @@ class UserRegisterPasswordView extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     TextEditingController passwordController = TextEditingController(text: userController.password.value);
     TextEditingController confirmationController = TextEditingController(text: '');
+    RxBool showPassword = false.obs;
     return Column(
       children: [
         const CustomStepperWidget(
@@ -370,7 +371,17 @@ class UserRegisterPasswordView extends StatelessWidget {
                     controller: passwordController,
                     label: 'Defina uma senha para acessar o app:',
                     placeholder: '*****',
-                    hideText: true,
+                    hideText: !showPassword.value,
+                    icon: IconButton(
+                      icon: Icon(
+                        showPassword.value ? Icons.visibility : Icons.visibility_off,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        showPassword.value = !showPassword.value;
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Escreva uma senha para se cadastrar';
@@ -389,7 +400,17 @@ class UserRegisterPasswordView extends StatelessWidget {
                     controller: confirmationController,
                     label: 'Repita a senha para confirmar:',
                     placeholder: '*****',
-                    hideText: true,
+                    hideText: !showPassword.value,
+                    icon: IconButton(
+                      icon: Icon(
+                        showPassword.value ? Icons.visibility : Icons.visibility_off,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        showPassword.value = !showPassword.value;
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Escreva a confirmação da senha para se cadastrar';

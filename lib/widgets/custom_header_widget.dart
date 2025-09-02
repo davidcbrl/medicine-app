@@ -143,9 +143,13 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
                 label: 'Sim',
                 onPressed: () {
                   Get.back();
-                  chatController.launchWhatsapp(
-                    phone: userController.buddy.value.phone,
-                  );
+                  try {
+                    chatController.launchWhatsapp(
+                      phone: userController.buddy.value.phone,
+                    );
+                  } catch (error) {
+                    _whatsappErrorBottomSheet(context, 'Não foi possível abrir o whatsapp');
+                  }
                 },
               ),
             ),
@@ -155,6 +159,38 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           ),
           CustomTextButtonWidget(
             label: 'Não, voltar',
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _whatsappErrorBottomSheet(BuildContext context, String? message) {
+    CustomBottomSheetWidget.show(
+      context: context,
+      height: MediaQuery.of(context).size.height * 0.45,
+      body: Column(
+        children: [
+          Text(
+            'Ops!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CustomEmptyWidget(
+              label: message ?? 'Erro inesperado',
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomTextButtonWidget(
+            label: 'Voltar',
             onPressed: () {
               Get.back();
             },

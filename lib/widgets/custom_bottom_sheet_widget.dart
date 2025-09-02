@@ -14,17 +14,20 @@ class CustomBottomSheetWidget {
       isScrollControlled: scroll,
       builder: (BuildContext context) {
         return Padding(
-          padding: keyboard
-            ? EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              )
-            : const EdgeInsets.all(0),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: height ?? MediaQuery.of(context).size.height * 0.4,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: body,
+          padding: const EdgeInsets.only(bottom: 40),
+          child: Padding(
+            padding: keyboard
+              ? EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                )
+              : const EdgeInsets.all(0),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: height ?? MediaQuery.of(context).size.height * 0.4,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: body,
+              ),
             ),
           ),
         );
