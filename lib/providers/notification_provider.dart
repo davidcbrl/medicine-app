@@ -86,8 +86,7 @@ class NotificationProvider {
       notification.body,
       tzDateTime,
       notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, 
       payload: notification.payload,
     );
   }
