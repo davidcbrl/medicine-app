@@ -6,6 +6,7 @@ import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/dose_type.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -117,6 +118,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 CustomButtonWidget(
                   label: alarm.taken == null ? 'Pronto, marcar como tomado' : 'Já tomado, voltar',
                   onPressed: () async {
+                    FirebaseProvider.instance.log(name: 'notification_taken');
                     if (alarm.id != null && alarm.taken == null) {
                       await alarmController.take(id: alarm.id!);
                       if (alarmController.status.isError && context.mounted) {
@@ -133,6 +135,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 CustomButtonWidget(
                   label: 'Retornar para a tela inicial',
                   onPressed: () async {
+                    FirebaseProvider.instance.log(name: 'notification_back');
                     Get.offAllNamed('/home');
                     return;
                   },
@@ -179,6 +182,7 @@ class _NotificationPageState extends State<NotificationPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'notification_error_back');
               Get.back();
             },
           ),

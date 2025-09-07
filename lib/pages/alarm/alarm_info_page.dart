@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/models/alarm_type.dart';
 import 'package:medicine/models/weekday_type.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_multiselect_item_widget.dart';
@@ -121,6 +122,7 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
                         label: alarmType.name,
                         selected: alarmType.id == alarmController.alarmType.value.id,
                         onPressed: () {
+                          FirebaseProvider.instance.log(name: 'alarm_info_recurrence_type');
                           setState(() {
                             alarmController.alarmType.value = alarmType;
                             if (alarmType.id == 2) {
@@ -149,6 +151,7 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_info_next_page');
             alarmController.infoPageController.nextPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn,
@@ -161,6 +164,7 @@ class _AlarmInfoTypeViewState extends State<AlarmInfoTypeView> {
         CustomTextButtonWidget(
           label: 'Voltar ao remédio',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_info_back_step');
             Get.back();
           },
         ),
@@ -221,6 +225,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                             placeholder: 'Ex: 00:00',
                             value: timeValueLabel,
                             onPressed: () async {
+                              FirebaseProvider.instance.log(name: 'alarm_info_time_picker');
                               TimeOfDay? pickedTime = await showTimePicker(
                                 context: context,
                                 initialTime: TimeOfDay.now(),
@@ -247,6 +252,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                           InkWell(
                             borderRadius: BorderRadius.circular(20),
                             onTap: () {
+                              FirebaseProvider.instance.log(name: 'alarm_info_time_remove');
                               setState(() {
                                 alarmController.timeList.remove(time);
                               });
@@ -279,6 +285,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         label: 'Adicionar outro horário',
                         icon: false,
                         onPressed: () {
+                          FirebaseProvider.instance.log(name: 'alarm_info_add_time');
                           setState(() {
                             alarmController.timeList.add(const TimeOfDay(hour: 0, minute: 0));
                           });
@@ -311,6 +318,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                                 label: weekdayType.name,
                                 selected: alarmController.weekdayTypeList.map((WeekdayType element) => element.id).contains(weekdayType.id),
                                 onPressed: () {
+                                  FirebaseProvider.instance.log(name: 'alarm_info_weekday_single');
                                   setState(() {
                                     if (alarmController.weekdayTypeList.map((WeekdayType element) => element.id).contains(weekdayType.id)) {
                                       alarmController.weekdayTypeList.removeWhere((WeekdayType element) => element.id == weekdayType.id);
@@ -336,6 +344,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                         label: 'Todos os dias',
                         icon: false,
                         onPressed: () {
+                          FirebaseProvider.instance.log(name: 'alarm_info_weekday_all');
                           setState(() {
                             if (alarmController.weekdayTypeList.length == 7) {
                               alarmController.weekdayTypeList.clear();
@@ -364,6 +373,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     placeholder: 'Ex: 01/01/2024',
                     value: DateFormat('dd/MM/yyyy').format(alarmController.startDateTime.value),
                     onPressed: () async {
+                      FirebaseProvider.instance.log(name: 'alarm_info_first_dose_date');
                       DateTime now = DateTime.now();
                       DateTime? startDateTime = await showDatePicker(
                         context: context,
@@ -382,6 +392,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
                     placeholder: 'Ex: 00:00',
                     value: _getTimeValueLabel(1, alarmController.startHourTime.value),
                     onPressed: () async {
+                      FirebaseProvider.instance.log(name: 'alarm_info_first_dose_time');
                       TimeOfDay? pickedTime = await showTimePicker(
                         context: context,
                         initialTime: alarmController.startHourTime.value,
@@ -417,6 +428,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
         CustomButtonWidget(
           label: 'Continuar para tratamento e confirmação',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_info_next_step');
             if ((alarmController.alarmType.value.id == 1) && alarmController.weekdayTypeList.isEmpty) {
               setState(() {
                 hintText = 'Selecione os dias da semana para continuar';
@@ -438,6 +450,7 @@ class _AlarmInfoTimeViewState extends State<AlarmInfoTimeView> {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_info_back_page');
             alarmController.infoPageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn,

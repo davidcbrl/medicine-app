@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:medicine/controllers/auth_controller.dart';
 import 'package:medicine/controllers/route_controller.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/providers/notification_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -13,6 +14,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseProvider.instance.init();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   Animate.restartOnHotReload=true;
   final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -156,6 +158,9 @@ class _MyAppState extends State<MyApp> {
       ),
       themeMode: ThemeMode.system,
       navigatorKey: MyApp.navigatorKey,
+      navigatorObservers: [
+        FirebaseProvider.instance.getObserver(),
+      ],
       onGenerateInitialRoutes: (initialRouteName) => _routeController.onGenerateInitialRoutes(
         initialRouteName: initialRouteName,
         isAuthenticated: _authController.isAuthenticated(),

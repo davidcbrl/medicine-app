@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/models/calendar_style.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_page_widget.dart';
 import 'package:medicine/widgets/custom_select_item_widget.dart';
@@ -50,6 +51,7 @@ class _ThemePageState extends State<ThemePage> {
                   label: 'Claro',
                   selected: settingController.get(name: 'theme').isNotEmpty && settingController.get(name: 'theme') == 'ThemeMode.light',
                   onPressed: () {
+                    FirebaseProvider.instance.log(name: 'theme_color_light');
                     Get.changeThemeMode(ThemeMode.light);
                     settingController.set(name: 'theme', value: ThemeMode.light.toString());
                     setState(() {
@@ -64,6 +66,7 @@ class _ThemePageState extends State<ThemePage> {
                   label: 'Escuro',
                   selected: settingController.get(name: 'theme').isNotEmpty && settingController.get(name: 'theme') == 'ThemeMode.dark',
                   onPressed: () {
+                    FirebaseProvider.instance.log(name: 'theme_color_dark');
                     Get.changeThemeMode(ThemeMode.dark);
                     settingController.set(name: 'theme', value: ThemeMode.dark.toString());
                     setState(() {
@@ -78,6 +81,7 @@ class _ThemePageState extends State<ThemePage> {
                   label: 'Automático (dispositivo)',
                   selected: settingController.get(name: 'theme').isEmpty || settingController.get(name: 'theme') == 'ThemeMode.system',
                   onPressed: () {
+                    FirebaseProvider.instance.log(name: 'theme_color_system');
                     Get.changeThemeMode(ThemeMode.system);
                     settingController.set(name: 'theme', value: ThemeMode.system.toString());
                     setState(() {
@@ -107,6 +111,7 @@ class _ThemePageState extends State<ThemePage> {
                           ? calendarStyle.id.toString() == settingController.get(name: 'calendar')
                           : calendarStyle.id.toString() == '1',
                         onPressed: () {
+                          FirebaseProvider.instance.log(name: 'theme_calendar_${calendarStyle.name.toLowerCase()}');
                           settingController.set(name: 'calendar', value: calendarStyle.id.toString());
                           setState(() {
                             settingController.calendar.value = calendarStyle.id.toString();
@@ -128,6 +133,7 @@ class _ThemePageState extends State<ThemePage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'theme_back');
               Get.back();
             },
           ),

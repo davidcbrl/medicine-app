@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/cloud_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -85,6 +86,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                   size: 20,
                                 ),
                                 onPressed: () async {
+                                  FirebaseProvider.instance.log(name: 'user_info_image_picker');
                                   final ImagePicker picker = ImagePicker();
                                   final XFile? image = await picker.pickImage(
                                     source: ImageSource.gallery,
@@ -103,6 +105,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                             if (hasImage) ...[
                               InkWell(
                                 onTap: () {
+                                  FirebaseProvider.instance.log(name: 'user_info_image_remove');
                                   setState(() {
                                     userController.image.value = '';
                                   });
@@ -184,6 +187,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         CustomSelectItemWidget(
                           label: 'Toque para alterar senha',
                           onPressed: () async {
+                            FirebaseProvider.instance.log(name: 'user_info_password');
                             FocusManager.instance.primaryFocus?.unfocus();
                             _userPasswordBottomSheet(context, userController);
                           },
@@ -205,6 +209,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         CustomSelectItemWidget(
                           label: 'Toque para alterar o responsável',
                           onPressed: () {
+                            FirebaseProvider.instance.log(name: 'user_info_buddy');
                             FocusManager.instance.primaryFocus?.unfocus();
                             _userBuddyInfoBottomSheet(context, userController);
                           },
@@ -223,6 +228,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               CustomButtonWidget(
                 label: 'Salvar informações pessoais',
                 onPressed: () async {
+                  FirebaseProvider.instance.log(name: 'user_info_save');
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (formKey.currentState!.validate()) {
                     userController.name.value = nameController.text;
@@ -259,6 +265,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               CustomTextButtonWidget(
                 label: 'Voltar',
                 onPressed: () {
+                  FirebaseProvider.instance.log(name: 'user_info_back');
                   userController.get();
                   Get.back();
                 },
@@ -315,6 +322,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         size: 20,
                       ),
                       onPressed: () {
+                        FirebaseProvider.instance.log(name: 'user_info_password_show_current');
                         showPasswordCurrent.value = !showPasswordCurrent.value;
                       },
                     ),
@@ -340,6 +348,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         size: 20,
                       ),
                       onPressed: () {
+                        FirebaseProvider.instance.log(name: 'user_info_password_show_new');
                         showPasswordNew.value = !showPasswordNew.value;
                       },
                     ),
@@ -369,6 +378,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                         size: 20,
                       ),
                       onPressed: () {
+                        FirebaseProvider.instance.log(name: 'user_info_password_show_new');
                         showPasswordNew.value = !showPasswordNew.value;
                       },
                     ),
@@ -386,6 +396,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     label: 'Regras de criação de senha',
                     style: Theme.of(context).textTheme.titleSmall,
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'user_info_password_rules');
                       _passwordRulesBottomSheet(context);
                     },
                   ),
@@ -402,6 +413,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomButtonWidget(
             label: 'Confirmar alteração de senha',
             onPressed: () async {
+              FirebaseProvider.instance.log(name: 'user_info_password_save');
               FocusManager.instance.primaryFocus?.unfocus();
               if (passwordFormKey.currentState!.validate()) {
                 Get.back();
@@ -423,6 +435,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_info_password_back');
               Get.back();
             },
           ),
@@ -476,6 +489,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomTextButtonWidget(
             label: 'Ok, entendi',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_info_password_rules_back');
               Get.back();
             },
           ),
@@ -553,6 +567,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomButtonWidget(
             label: 'Confirmar informações do responsável',
             onPressed: () async {
+              FirebaseProvider.instance.log(name: 'user_info_buddy_save');
               FocusManager.instance.primaryFocus?.unfocus();
               if (buddyFormKey.currentState!.validate()) {
                 userController.buddy.value.name = buddyNameController.text;
@@ -564,6 +579,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_info_buddy_back');
               Get.back();
             },
           ),
@@ -589,6 +605,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             CustomTextButtonWidget(
               label: 'Ok, voltar para o início',
               onPressed: () {
+                FirebaseProvider.instance.log(name: 'user_info_password_success_back');
                 Get.offAllNamed('/home');
               },
             ),
@@ -597,6 +614,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
             CustomTextButtonWidget(
               label: 'Ok, voltar',
               onPressed: () {
+                FirebaseProvider.instance.log(name: 'user_info_success_back');
                 Get.back();
               },
             ),
@@ -630,6 +648,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_info_error_back');
               Get.back();
             },
           ),

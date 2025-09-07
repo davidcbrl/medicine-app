@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:medicine/controllers/user_controller.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -177,6 +178,7 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'user_register_next_page');
             FocusManager.instance.primaryFocus?.unfocus();
             if (formKey.currentState!.validate()) {
               userController.name.value = nameController.text;
@@ -195,6 +197,7 @@ class _UserRegisterDataViewState extends State<UserRegisterDataView> {
         CustomTextButtonWidget(
           label: 'Já tenho conta, voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'user_register_back_step');
             Get.back();
           },
         ),
@@ -294,6 +297,7 @@ class UserRegisterBuddyView extends StatelessWidget {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'user_register_next_page');
             FocusManager.instance.primaryFocus?.unfocus();
             if (formKey.currentState!.validate()) {
               userController.buddy.value.name = nameController.text;
@@ -311,6 +315,7 @@ class UserRegisterBuddyView extends StatelessWidget {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'user_register_back_page');
             userController.registerPageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -379,6 +384,7 @@ class UserRegisterPasswordView extends StatelessWidget {
                         size: 20,
                       ),
                       onPressed: () {
+                        FirebaseProvider.instance.log(name: 'user_register_show_password');
                         showPassword.value = !showPassword.value;
                       },
                     ),
@@ -408,6 +414,7 @@ class UserRegisterPasswordView extends StatelessWidget {
                         size: 20,
                       ),
                       onPressed: () {
+                        FirebaseProvider.instance.log(name: 'user_register_show_password');
                         showPassword.value = !showPassword.value;
                       },
                     ),
@@ -425,6 +432,7 @@ class UserRegisterPasswordView extends StatelessWidget {
                     label: 'Regras de criação de senha',
                     style: Theme.of(context).textTheme.titleSmall,
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'user_register_password_rules');
                       _passwordRulesBottomSheet(context);
                     },
                   ),
@@ -439,6 +447,7 @@ class UserRegisterPasswordView extends StatelessWidget {
         CustomButtonWidget(
           label: 'Criar nova conta',
           onPressed: () async {
+            FirebaseProvider.instance.log(name: 'user_register_save');
             FocusManager.instance.primaryFocus?.unfocus();
             if (formKey.currentState!.validate()) {
               userController.password.value = passwordController.text;
@@ -460,6 +469,7 @@ class UserRegisterPasswordView extends StatelessWidget {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'user_register_back_page');
             userController.registerPageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -515,6 +525,7 @@ class UserRegisterPasswordView extends StatelessWidget {
           CustomTextButtonWidget(
             label: 'Ok, entendi',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_register_password_rules_back');
               Get.back();
             },
           ),
@@ -553,6 +564,7 @@ class UserRegisterPasswordView extends StatelessWidget {
           CustomTextButtonWidget(
             label: 'Ok, voltar para login',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_register_success_back');
               Get.offAllNamed('/auth');
             },
           ),
@@ -585,6 +597,7 @@ class UserRegisterPasswordView extends StatelessWidget {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'user_register_error_back');
               Get.back();
             },
           ),

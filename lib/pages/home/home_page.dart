@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
@@ -12,6 +13,7 @@ import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/push_notification.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_calendar_widget.dart';
@@ -172,6 +174,7 @@ class _HomePageState extends State<HomePage> {
                     size: 25,
                   ),
                   onPressed: () {
+                    FirebaseProvider.instance.log(name: 'home_create_alarm');
                     setState(() {
                       isEmptyMessage.value = false;
                     });
@@ -199,6 +202,7 @@ class _HomePageState extends State<HomePage> {
                     size: 25,
                   ),
                   onPressed: () {
+                    FirebaseProvider.instance.log(name: 'home_create_alarm_empty');
                     setState(() {
                       isEmptyMessage.value = false;
                     });
@@ -336,6 +340,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _alarmOptionsBottomSheet(BuildContext context, Alarm alarm) {
+    FirebaseProvider.instance.log(name: 'home_alarm_options');
     CustomBottomSheetWidget.show(
       context: context,
       height: (MediaQuery.of(context).size.height * 0.175) + (60 * 3),
@@ -353,9 +358,31 @@ class _HomePageState extends State<HomePage> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
+                  if (kDebugMode) ...[
+                    CustomSelectItemWidget(
+                      label: 'Alarmar daqui 10 segundos',
+                      onPressed: () async {
+                        FirebaseProvider.instance.log(name: 'home_alarm_options_ring_delayed');
+                        DateTime newDateTime = DateTime.now().add(const Duration(seconds: 10));
+                        PushNotification notification = PushNotification(
+                          id: alarm.id ?? UniqueKey().hashCode,
+                          title: 'Hora de tomar seu remédio',
+                          body: alarm.name,
+                          date: newDateTime,
+                          payload: jsonEncode(alarm.toJson()),
+                        );
+                        await notificationController.createMedicineNotificationScheduled(notification: notification);
+                        Get.back();
+                      },
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                  ], 
                   CustomSelectItemWidget(
                     label: 'Tomar remédio agora',
                     onPressed: () async {
+                      FirebaseProvider.instance.log(name: 'home_alarm_options_ring_now');
                       Get.back();
                       PushNotification notification = PushNotification(
                         id: alarm.id ?? UniqueKey().hashCode,
@@ -376,6 +403,7 @@ class _HomePageState extends State<HomePage> {
                   CustomSelectItemWidget(
                     label: 'Editar alarme',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'home_alarm_options_edit');
                       alarmController.select(alarm);
                       Get.back();
                       Get.toNamed('/alarm/medicine');
@@ -387,6 +415,7 @@ class _HomePageState extends State<HomePage> {
                   CustomSelectItemWidget(
                     label: 'Remover alarme',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'home_alarm_options_remove');
                       Get.back();
                       _removeOptionsBottomSheet(context, alarm);
                     },
@@ -401,6 +430,7 @@ class _HomePageState extends State<HomePage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'home_alarm_options_back');
               Get.back();
             },
           ),
@@ -430,6 +460,7 @@ class _HomePageState extends State<HomePage> {
                   CustomSelectItemWidget(
                     label: 'Remover somente este alarme',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'home_alarm_options_remove_single');
                       Get.back();
                       _removeCheckBottomSheet(context, alarm, all: false);
                     },
@@ -440,6 +471,7 @@ class _HomePageState extends State<HomePage> {
                   CustomSelectItemWidget(
                     label: 'Remover este alarme e próximas ocorrências',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'home_alarm_options_remove_all');
                       Get.back();
                       _removeCheckBottomSheet(context, alarm, all: true);
                     },
@@ -457,6 +489,7 @@ class _HomePageState extends State<HomePage> {
           CustomTextButtonWidget(
             label: 'Não remover, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'home_alarm_options_remove_back');
               Get.back();
             },
           ),
@@ -484,6 +517,7 @@ class _HomePageState extends State<HomePage> {
               child: CustomSelectItemWidget(
                 label: 'Sim',
                 onPressed: () async {
+                  FirebaseProvider.instance.log(name: 'home_alarm_options_remove_check_yes');
                   Get.back();
                   List removedIds = await alarmController.remove(id: alarm.id!, selectedDate: selectedDate, all: all);
                   if (alarmController.status.isSuccess) {
@@ -516,6 +550,7 @@ class _HomePageState extends State<HomePage> {
           CustomTextButtonWidget(
             label: 'Não, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'home_alarm_options_remove_check_no');
               Get.back();
             },
           ),
@@ -554,6 +589,7 @@ class _HomePageState extends State<HomePage> {
           CustomTextButtonWidget(
             label: 'Ok, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'home_alarm_options_remove_success_back');
               Get.back();
             },
           ),
@@ -586,6 +622,7 @@ class _HomePageState extends State<HomePage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'home_alarm_options_remove_error_back');
               Get.back();
             },
           ),

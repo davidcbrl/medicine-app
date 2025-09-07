@@ -11,6 +11,7 @@ import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/push_notification.dart';
 import 'package:medicine/models/treatment_duration_type.dart';
 import 'package:medicine/models/weekday_type.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -169,6 +170,7 @@ class _AlarmReviewTreatmentViewState extends State<AlarmReviewTreatmentView> {
                               selected: treatmentDurationType.id == alarmController.treatmentDurationType.value.id,
                               width: 100,
                               onPressed: () {
+                                FirebaseProvider.instance.log(name: 'alarm_review_duration_type');
                                 setState(() {
                                   alarmController.treatmentDuration.value = int.tryParse(alarmTreatmentDurationController.text) ?? 0;
                                   alarmController.treatmentDurationType.value = treatmentDurationType;
@@ -191,6 +193,7 @@ class _AlarmReviewTreatmentViewState extends State<AlarmReviewTreatmentView> {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_review_next_page');
             alarmController.treatmentDuration.value = int.tryParse(alarmTreatmentDurationController.text) ?? 0;
             alarmController.reviewPageController.nextPage(
               duration: const Duration(milliseconds: 300),
@@ -204,6 +207,7 @@ class _AlarmReviewTreatmentViewState extends State<AlarmReviewTreatmentView> {
         CustomTextButtonWidget(
           label: 'Voltar para alarme',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_review_back_step');
             Get.back();
           },
         ),
@@ -339,6 +343,7 @@ class AlarmReviewObservationView extends StatelessWidget {
         CustomButtonWidget(
           label: 'Confirmar e criar alarme',
           onPressed: () async {
+            FirebaseProvider.instance.log(name: 'alarm_review_create_alarm');
             FocusManager.instance.primaryFocus?.unfocus();
             alarmController.observation.value = alarmObservationController.text;
             if (alarmController.image.value.isNotEmpty) {
@@ -393,6 +398,7 @@ class AlarmReviewObservationView extends StatelessWidget {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_review_back_page');
             alarmController.reviewPageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -433,6 +439,7 @@ class AlarmReviewObservationView extends StatelessWidget {
           CustomTextButtonWidget(
             label: 'Ok, voltar para o início',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'alarm_review_success_back');
               Get.offAllNamed('/home');
             },
           ),
@@ -465,6 +472,7 @@ class AlarmReviewObservationView extends StatelessWidget {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'alarm_review_error_back');
               Get.back();
             },
           ),

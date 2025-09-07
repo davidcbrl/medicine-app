@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medicine/controllers/auth_controller.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -74,6 +75,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
               CustomButtonWidget(
                 label: 'Receber nova senha',
                 onPressed: () async {
+                  FirebaseProvider.instance.log(name: 'auth_password_receive_password');
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (formKey.currentState!.validate()) {
                     authController.email.value = emailController.text;
@@ -93,6 +95,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
                 label: 'Lembrei minha senha, voltar',
                 style: Theme.of(context).textTheme.titleSmall,
                 onPressed: () {
+                  FirebaseProvider.instance.log(name: 'auth_password_back');
                   Get.back();
                 },
               ),
@@ -132,6 +135,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
           CustomTextButtonWidget(
             label: 'Ok, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'auth_password_success_back');
               Get.offAllNamed('/auth');
             },
           ),
@@ -164,6 +168,7 @@ class _AuthPasswordPageState extends State<AuthPasswordPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'auth_password_error_back');
               Get.back();
             },
           ),

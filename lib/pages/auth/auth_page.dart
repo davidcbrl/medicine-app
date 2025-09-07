@@ -9,6 +9,7 @@ import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
 import 'package:medicine/models/alarm.dart';
 import 'package:medicine/models/push_notification.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -96,6 +97,7 @@ class _AuthPageState extends State<AuthPage> {
                               size: 20,
                             ),
                             onPressed: () {
+                              FirebaseProvider.instance.log(name: 'auth_show_password');
                               showPassword.value = !showPassword.value;
                             },
                           ),
@@ -110,6 +112,7 @@ class _AuthPageState extends State<AuthPage> {
                           label: 'Esqueci minha senha',
                           style: Theme.of(context).textTheme.titleSmall,
                           onPressed: () async {
+                            FirebaseProvider.instance.log(name: 'auth_forgot_password');
                             await authController.reset();
                           },
                         ),
@@ -124,6 +127,7 @@ class _AuthPageState extends State<AuthPage> {
               CustomButtonWidget(
                 label: 'Entrar',
                 onPressed: () async {
+                  FirebaseProvider.instance.log(name: 'auth_login');
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (formKey.currentState!.validate()) {
                     authController.email.value = emailController.text;
@@ -171,6 +175,7 @@ class _AuthPageState extends State<AuthPage> {
                 label: 'Não possui conta? Criar nova conta',
                 style: Theme.of(context).textTheme.titleSmall,
                 onPressed: () {
+                  FirebaseProvider.instance.log(name: 'auth_register');
                   userController.clear();
                   Get.toNamed('/user/register');
                 },
@@ -205,6 +210,7 @@ class _AuthPageState extends State<AuthPage> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'auth_error_back');
               Get.back();
             },
           ),

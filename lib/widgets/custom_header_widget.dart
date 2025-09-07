@@ -5,6 +5,7 @@ import 'package:medicine/controllers/chat_controller.dart';
 import 'package:medicine/controllers/notification_controller.dart';
 import 'package:medicine/controllers/setting_controller.dart';
 import 'package:medicine/controllers/user_controller.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_avatar_widget.dart';
 import 'package:medicine/widgets/custom_bottom_sheet_widget.dart';
 import 'package:medicine/widgets/custom_empty_widget.dart';
@@ -89,6 +90,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
                 InkWell(
                   borderRadius: BorderRadius.circular(50),
                   onTap: () {
+                    FirebaseProvider.instance.log(name: 'custom_header_user_info');
                     Get.toNamed('/user/info');
                   },
                   child: Obx(
@@ -116,6 +118,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
   }
 
   void _whatsappBottomSheet(BuildContext context) {
+    FirebaseProvider.instance.log(name: 'custom_header_whatsapp');
     CustomBottomSheetWidget.show(
       context: context,
       height: (MediaQuery.of(context).size.height * 0.175) + (60 * 2),
@@ -142,6 +145,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
               child: CustomSelectItemWidget(
                 label: 'Sim',
                 onPressed: () {
+                  FirebaseProvider.instance.log(name: 'custom_header_whatsapp_check_yes');
                   Get.back();
                   try {
                     chatController.launchWhatsapp(
@@ -160,6 +164,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           CustomTextButtonWidget(
             label: 'Não, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'custom_header_whatsapp_check_no');
               Get.back();
             },
           ),
@@ -192,6 +197,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'custom_header_whatsapp_error_back');
               Get.back();
             },
           ),
@@ -201,6 +207,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
   }
 
   void _settingsBottomSheet(BuildContext context) {
+    FirebaseProvider.instance.log(name: 'custom_header_settings');
     CustomBottomSheetWidget.show(
       context: context,
       height: (MediaQuery.of(context).size.height * 0.175) + (60 * 2),
@@ -221,6 +228,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
                   CustomSelectItemWidget(
                     label: 'Customizar aparência do app',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'custom_header_settings_theme');
                       Get.back();
                       Get.toNamed('/theme');
                     },
@@ -231,6 +239,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
                   CustomSelectItemWidget(
                     label: 'Sair do app',
                     onPressed: () {
+                      FirebaseProvider.instance.log(name: 'custom_header_settings_logout');
                       Get.back();
                       _logoutCheckBottomSheet(context);
                     },
@@ -245,6 +254,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'custom_header_settings_back');
               Get.back();
             },
           ),
@@ -280,6 +290,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
               child: CustomSelectItemWidget(
                 label: 'Sim',
                 onPressed: () async {
+                  FirebaseProvider.instance.log(name: 'custom_header_logout_check_yes');
                   await authController.logout();
                   if (authController.status.isSuccess) {
                     await notificationController.cancelAllScheduledNotifications();
@@ -307,6 +318,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           CustomTextButtonWidget(
             label: 'Não, voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'custom_header_logout_check_no');
               Get.back();
             },
           ),
@@ -339,6 +351,7 @@ class _CustomHeaderWidgetState extends State<CustomHeaderWidget> {
           CustomTextButtonWidget(
             label: 'Voltar',
             onPressed: () {
+              FirebaseProvider.instance.log(name: 'custom_header_logout_error_back');
               Get.back();
             },
           ),

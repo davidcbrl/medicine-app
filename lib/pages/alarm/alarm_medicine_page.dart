@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:medicine/controllers/alarm_controller.dart';
 import 'package:medicine/models/dose_type.dart';
+import 'package:medicine/providers/firebase_provider.dart';
 import 'package:medicine/widgets/custom_button_widget.dart';
 import 'package:medicine/widgets/custom_header_widget.dart';
 import 'package:medicine/widgets/custom_image_picker_widget.dart';
@@ -135,6 +136,7 @@ class AlarmMedicineNameView extends StatelessWidget {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_next_page');
             FocusManager.instance.primaryFocus?.unfocus();
             if (formKey.currentState!.validate()) {
               alarmController.name.value = medicineNameController.text;
@@ -151,6 +153,7 @@ class AlarmMedicineNameView extends StatelessWidget {
         CustomTextButtonWidget(
           label: 'Voltar ao início',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_back_step');
             Get.back();
           },
         ),
@@ -197,6 +200,7 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
                         label: doseType.name,
                         selected: doseType.id == alarmController.doseType.value.id,
                         onPressed: () {
+                          FirebaseProvider.instance.log(name: 'alarm_medicine_dose_type');
                           setState(() {
                             alarmController.doseType.value = doseType;
                           });
@@ -222,6 +226,7 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_next_page');
             alarmController.medicinePageController.nextPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn,
@@ -234,6 +239,7 @@ class _AlarmMedicineTypeViewState extends State<AlarmMedicineTypeView> {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_back_page');
             alarmController.medicinePageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -296,6 +302,7 @@ class AlarmMedicineQuantityView extends StatelessWidget {
         CustomButtonWidget(
           label: 'Próximo',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_next_page');
             FocusManager.instance.primaryFocus?.unfocus();
             if (formKey.currentState!.validate()) {
               alarmController.quantity.value = int.tryParse(medicineQuantityController.text) ?? 0;
@@ -312,6 +319,7 @@ class AlarmMedicineQuantityView extends StatelessWidget {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_back_page');
             alarmController.medicinePageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -367,6 +375,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
                       size: 20,
                     ),
                     onPressed: () async {
+                      FirebaseProvider.instance.log(name: 'alarm_medicine_image_picker');
                       final ImagePicker picker = ImagePicker();
                       final XFile? image = await picker.pickImage(
                         source: ImageSource.gallery,
@@ -386,6 +395,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
                   InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () {
+                      FirebaseProvider.instance.log(name: 'alarm_medicine_image_remove');
                       setState(() {
                         alarmController.image.value = '';
                       });
@@ -413,6 +423,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
         CustomButtonWidget(
           label: 'Continuar para alarme',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_next_step');
             if (alarmController.name.value.isEmpty) {
               setState(() {
                 hintText = 'Escreva o remédio para continuar';
@@ -434,6 +445,7 @@ class _AlarmMedicineImageViewState extends State<AlarmMedicineImageView> {
         CustomTextButtonWidget(
           label: 'Voltar',
           onPressed: () {
+            FirebaseProvider.instance.log(name: 'alarm_medicine_back_page');
             alarmController.medicinePageController.previousPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
